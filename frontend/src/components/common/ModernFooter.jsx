@@ -32,7 +32,7 @@ const ModernFooter = () => {
       }}
     >
       <footer
-        className="relative w-full max-w-6xl rounded-3xl overflow-hidden"
+        className="relative w-full max-w-1xl rounded-3xl overflow-hidden"
         style={{
           background: "rgba(0, 0, 0, 0.95)",
           backdropFilter: "blur(10px)",
