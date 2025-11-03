@@ -1,131 +1,119 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navItems = [
+    { label: 'Projects', path: '/' },
+    { label: 'Studio', path: '/studio' },
+    { label: 'Blog', path: '/blog' },
+    { label: 'Media', path: '/media' },
+    { label: 'Contact', path: '/contact' },
+  ];
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-transparent backdrop-blur-md border-b border-white/10">
-      <div className="mr-auto max-w-1xl px-0  ml-0 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Left side - Logo / Title */}
-          <div className="flex items-center space-x-3">
-            <a
-              href="#"
-              className="text-white bg-gray-800/40 px-4 py-2 rounded-md text-lg font-semibold tracking-wide shadow-sm hover:bg-gray-700/50 transition backdrop-blur-sm"
-            >
-              Architect
-            </a>
-          </div>
+    <nav 
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white/95 backdrop-blur-md shadow-lg' 
+          : 'bg-white/80 backdrop-blur-sm'
+      }`}
+    >
+      <style>{`
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .mobile-menu-enter {
+          animation: slideDown 0.3s ease-out;
+        }
+      `}</style>
 
-          {/* Right side (Desktop) */}
-          <div className="hidden sm:flex space-x-4">
-            <a
-              href="#"
-              className="rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
-            >
-              Projects
-            </a>
-            <a
-              href="#"
-              className="rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
-            >
-              Studio
-            </a>
-            <Link
-              to="/blog"
-              className="rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
-            >
-              Blog
-            </Link>
-            <a
-              href="#"
-              className="rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
-            >
-              Media
-            </a>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="group flex items-center space-x-3"
+          >
+            <div className="relative">
+              <div className="w-10 h-10 bg-gradient-to-br from-red-400 to-amber-400 rounded-sm flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+                <span className="text-white font-bold text-lg">J</span>
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-amber-400 rounded-sm transform group-hover:scale-110 transition-transform duration-300"></div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-gray-800 font-light text-lg tracking-wider leading-tight">
+                J.B.K.
+              </span>
+              <span className="text-gray-500 text-[10px] tracking-[0.2em] uppercase">
+                Architecture
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navItems.map((item, index) => (
+              <Link
+                key={index}
+                to={item.path}
+                className="relative px-5 py-2 text-sm font-light text-gray-700 hover:text-gray-900 tracking-wide transition-colors duration-300 group"
+              >
+                {item.label}
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-px bg-gradient-to-r from-red-400 to-amber-400 group-hover:w-3/4 transition-all duration-300"></span>
+              </Link>
+            ))}
             <Link
               to="/contact"
-              className="rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
+              className="ml-4 px-6 py-2 bg-gradient-to-r from-red-400 to-amber-400 text-white text-xs font-semibold tracking-wider rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300"
             >
-              Contact
+              GET IN TOUCH
             </Link>
           </div>
 
-          {/* Hamburger Menu Button (Mobile) */}
-          <div className="sm:hidden flex items-center">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800/40 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition backdrop-blur-sm"
-            >
-              {menuOpen ? (
-                <svg
-                  className="h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
-            </button>
-          </div>
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-300"
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="sm:hidden bg-gray-900/40 backdrop-blur-lg border-t border-white/10">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
+        <div className="md:hidden bg-white border-t border-gray-200 mobile-menu-enter">
+          <div className="px-4 py-6 space-y-3">
+            {navItems.map((item, index) => (
+              <Link
+                key={index}
+                to={item.path}
+                onClick={() => setMenuOpen(false)}
+                className="block px-4 py-3 text-sm font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-300"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Link
+              to="/contact"
+              onClick={() => setMenuOpen(false)}
+              className="block text-center px-6 py-3 bg-gradient-to-r from-red-400 to-amber-400 text-white text-xs font-semibold tracking-wider rounded-full hover:shadow-lg transition-all duration-300"
             >
-              Projects
-            </a>
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
-            >
-              Studio
-            </a>
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
-            >
-              Blog
-            </a>
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
-            >
-              Media
-            </a>
-            <Link to ="/contact"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
-            >
-              Contact
+              GET IN TOUCH
             </Link>
           </div>
         </div>
