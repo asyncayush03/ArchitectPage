@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -43,12 +44,12 @@ const Navbar = () => {
             >
               Media
             </a>
-            <a
-              href="#"
+            <Link
+              to="/contact"
               className="rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
             >
               Contact
-            </a>
+            </Link>
           </div>
 
           {/* Hamburger Menu Button (Mobile) */}
@@ -121,12 +122,11 @@ const Navbar = () => {
             >
               Media
             </a>
-            <a
-              href="#"
+            <Link to ="/contact"
               className="block rounded-md px-3 py-2 text-base font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
             >
               Contact
-            </a>
+            </Link>
           </div>
         </div>
       )}
