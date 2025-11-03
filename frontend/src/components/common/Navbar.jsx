@@ -32,12 +32,12 @@ const Navbar = () => {
             >
               Studio
             </a>
-            <a
-              href="#"
+            <Link
+              to="/blog"
               className="rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"
             >
               Blog
-            </a>
+            </Link>
             <a
               href="#"
               className="rounded-md px-4 py-2 text-sm font-medium text-gray-200 bg-gray-800/40 hover:bg-gray-700/50 hover:text-white transition backdrop-blur-sm shadow-sm"

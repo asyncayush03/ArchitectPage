@@ -4,6 +4,7 @@ import Navbar from './components/common/Navbar'
 import ModernFooter from './components/common/ModernFooter';
 import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import ContactPage from './pages/ContactPage';
+import BlogPage from './pages/BlogPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
     <Routes>
       <Route path='/' element={<div>Home Page</div>} />
       <Route path='/contact' element = {<ContactPage/>}/>
+      <Route path ='/blog' element ={<BlogPage/>}/>
     </Routes>
     <ModernFooter/>
     </BrowserRouter>
