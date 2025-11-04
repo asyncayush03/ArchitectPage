@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Building2, Users, Award, Sparkles, ChevronDown } from "lucide-react";
-import image from "../assets/modern.jpg"; 
+import image from "../assets/modern.jpg";
 
 export default function Studio() {
-  const [hoveredMember, setHoveredMember] = useState(null);
+ 
 
-  // TEAM DATA WITH CONNECTED IMAGE
+
   const architects = [
     { id: 1, name: "Architect 1", role: "Senior Architect", image },
     { id: 2, name: "Architect 2", role: "Lead Designer", image },
@@ -88,7 +88,6 @@ export default function Studio() {
     { id: 1, name: "Client Manager", role: "Client Relations", image },
   ];
 
-  // Project Grid — now using the same imported image
   const projectImages = [
     { title: "Modern Villa", category: "Residential", image },
     { title: "Corporate Hub", category: "Commercial", image },
@@ -105,61 +104,49 @@ export default function Studio() {
     {
       icon: <Users className="w-6 h-6" />,
       title: "Hands-on approach",
-      desc: "Our team of architects constantly oversees projects to maintain the highest standards. This level of attention to detail creates finished spaces that exceed expectations and stand the test of time.",
+      desc: "Our team of architects constantly oversees projects to maintain the highest standards.",
     },
     {
       icon: <Sparkles className="w-6 h-6" />,
       title: "Contemporary style",
-      desc: "We draw inspiration from local environment and heritage. This creates unique, functional, and aesthetically pleasing spaces that harmonize with their surroundings while pushing design boundaries.",
+      desc: "We draw inspiration from local environment and heritage.",
     },
     {
       icon: <Building2 className="w-6 h-6" />,
       title: "Comprehensive approach",
-      desc: "Beyond architectural work, we provide master planning and landscape design services. This allows us to create holistic, sustainable designs that consider every aspect of the built environment.",
+      desc: "Beyond architectural work, we provide master planning and landscape design services.",
     },
     {
       icon: <Award className="w-6 h-6" />,
       title: "Industry recognition",
-      desc: "Our projects have been featured in international architecture publications. This recognition speaks to the quality of our work and innovative approach to contemporary design challenges.",
+      desc: "Our projects have been featured in international architecture publications.",
     },
   ];
+  /* ✅ FLICKER-FREE IMAGE HOVER */
+  const TeamMember = ({ name, role, image }) => (
+  <div className="group relative cursor-pointer">
+    <div className="relative overflow-hidden aspect-square">
+      <img
+        src={image}
+        alt={name}
+        className="w-full h-full object-cover transform-gpu transition-transform duration-300 group-hover:scale-105 will-change-transform"
+        loading="lazy"
+      />
 
-  const TeamMember = ({ name, role, id, image }) => (
-    <div
-      className="group relative cursor-pointer"
-      onMouseEnter={() => setHoveredMember(id)}
-      onMouseLeave={() => setHoveredMember(null)}
-    >
-      <div className="relative overflow-hidden aspect-square">
-        <div className="absolute inset-0">
-          {image ? (
-            <img
-              src={image}
-              alt={name}
-              className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center transition-all duration-500 group-hover:scale-110">
-              <div className="text-center p-4">
-                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-gray-400 to-gray-500 rounded-full mb-3 transition-all duration-500 group-hover:from-amber-500 group-hover:to-amber-600"></div>
-                <p className="text-xs font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">
-                  {name}
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-4">
-          <div>
-            <p className="text-white text-sm font-semibold mb-1">{name}</p>
-            <p className="text-amber-400 text-xs font-light tracking-wide">
-              {role}
-            </p>
-          </div>
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent
+        opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4"
+      >
+        <div>
+          <p className="text-white text-sm font-semibold mb-1">{name}</p>
+          <p className="text-amber-400 text-xs font-light tracking-wide">
+            {role}
+          </p>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 
   const TeamSection = ({ title, members, columns = 4 }) => {
     const gridColsClass = {
@@ -177,15 +164,17 @@ export default function Studio() {
             {title}
           </h2>
         </div>
-        <div className={`grid ${gridColsClass[columns]} gap-6 max-w-6xl mx-auto`}>
+        <div
+          className={`grid ${gridColsClass[columns]} gap-6 max-w-6xl mx-auto`}
+        >
           {members.map((member) => (
             <TeamMember
-              key={member.id}
-              name={member.name}
-              role={member.role}
-              id={`${title}-${member.id}`}
-              image={member.image}
-            />
+  key={member.id}
+  name={member.name}
+  role={member.role}
+  image={member.image}
+/>
+
           ))}
         </div>
       </div>
@@ -197,15 +186,15 @@ export default function Studio() {
       <style>{`
         * {-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
         body {overflow-x: hidden;}
-        @keyframes fade-in {from {opacity: 0;transform: translateY(20px);}to {opacity: 1;transform: translateY(0);}}
-        .animate-fade-in {animation: fade-in 0.8s ease-out;will-change: opacity, transform;}
-        @keyframes float {0%, 100% { transform: translateY(0px); }50% { transform: translateY(-10px); }}
+        @keyframes fade-in {from {opacity: 0;transform: translateY(20px);}to {opacity: 1;transform: translateY(0);} }
+        .animate-fade-in {animation: fade-in 0.8s ease-out;}
+        @keyframes float {0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); }}
         .animate-float {animation: float 3s ease-in-out infinite;}
         .scroll-indicator {animation: bounce 2s infinite;}
-        @keyframes bounce {0%, 100% { transform: translateY(0); }50% { transform: translateY(10px); }}
+        @keyframes bounce {0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); }}
       `}</style>
 
-      {/* Hero Header */}
+      {/* HERO */}
       <header className="relative text-center py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-100/50 to-transparent"></div>
         <div className="relative z-10">
@@ -221,16 +210,18 @@ export default function Studio() {
         </div>
       </header>
 
-      {/* Founders Section */}
+      {/* FOUNDERS */}
       <section className="w-full px-4 sm:px-6 lg:px-8 mb-24">
         <div className="max-w-full mx-auto">
           <div className="relative group overflow-hidden rounded-lg shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+
             <img
               src={image}
               alt="Founders"
-              className="w-full h-auto transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-auto transform-gpu transition-transform duration-500 group-hover:scale-105"
             />
+
             <div className="absolute top-6 right-6 z-20 animate-float">
               <div className="bg-gradient-to-br from-amber-400 to-amber-600 text-black px-6 py-3 text-xs font-bold shadow-lg">
                 <div className="flex items-center gap-2">
@@ -248,7 +239,8 @@ export default function Studio() {
                 Visionary Leadership
               </h2>
               <p className="text-sm text-gray-200 max-w-3xl leading-relaxed">
-                Founded by pioneers in contemporary architecture and sustainable design
+                Founded by pioneers in contemporary architecture and sustainable
+                design
               </p>
             </div>
           </div>
@@ -258,19 +250,19 @@ export default function Studio() {
               <span className="text-2xl font-light text-gray-800 block mb-4">
                 J.B.K. Architecture
               </span>
-              A highly respected architecture firm founded in 2002 by Indar Bir Mehta,
-              Ar. Jyoti Dabir, and Ar. K.R. Mehta Chitrkar. We have completed commercial
-              projects of different scales, including premium line interiors, planning,
-              and landscape designs.
+              A highly respected architecture firm founded in 2002 by Indar Bir
+              Mehta, Ar. Jyoti Dabir, and Ar. K.R. Mehta Chitrkar. We have
+              completed commercial projects of different scales, including
+              premium line interiors, planning, and landscape designs.
             </p>
             <p>
               Many of our works have been featured in international architecture
-              publications. With a holistic approach, the firm focuses on contemporary
-              and sustainable design. We offer a creative response from conception to
-              completion that sets remarkable standards in building and planning.
+              publications. With a holistic approach, the firm focuses on
+              contemporary and sustainable design. We offer a creative response
+              from conception to completion that sets remarkable standards in
+              building and planning.
             </p>
           </div>
-
           {/* Project Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-20 px-4">
             {projectImages.map((img, idx) => (
@@ -281,9 +273,12 @@ export default function Studio() {
                 <img
                   src={img.image}
                   alt={img.title}
-                  className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 aspect-video"
+                  className="w-full h-full object-cover transform-gpu transition-transform duration-300 group-hover:scale-105 aspect-video"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-6">
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent
+                opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6"
+                >
                   <div>
                     <p className="text-white font-semibold text-sm mb-1">
                       {img.title}
@@ -336,19 +331,42 @@ export default function Studio() {
         </div>
       </section>
 
-      {/* Team Sections */}
+      {/* TEAM SECTIONS */}
       <TeamSection title="Architects" members={architects} />
       <TeamSection title="Designers" members={designers} />
-      <TeamSection title="Interior Concept & Design" members={interiorConcept} />
-      <TeamSection title="Construction Management" members={constructionMgmt} columns={3} />
-      <TeamSection title="Civil Engineering" members={civilEngineering} columns={3} />
+      <TeamSection
+        title="Interior Concept & Design"
+        members={interiorConcept}
+      />
+      <TeamSection
+        title="Construction Management"
+        members={constructionMgmt}
+        columns={3}
+      />
+      <TeamSection
+        title="Civil Engineering"
+        members={civilEngineering}
+        columns={3}
+      />
       <TeamSection title="Human Resources" members={hrDepartment} columns={3} />
-      <TeamSection title="Administration" members={adminDepartment} columns={4} />
+      <TeamSection
+        title="Administration"
+        members={adminDepartment}
+        columns={4}
+      />
       <TeamSection title="IT Department" members={itDepartment} columns={2} />
-      <TeamSection title="Public Relations" members={publicRelations} columns={2} />
-      <TeamSection title="Client Engagement" members={clientEngagement} columns={1} />
+      <TeamSection
+        title="Public Relations"
+        members={publicRelations}
+        columns={2}
+      />
+      <TeamSection
+        title="Client Engagement"
+        members={clientEngagement}
+        columns={1}
+      />
 
-      {/* Footer */}
+      {/* FOOTER */}
       <footer className="text-center py-16 text-gray-500 text-sm border-t border-gray-200 mt-24">
         © 2025 J.B.K. Architecture — All Rights Reserved
       </footer>

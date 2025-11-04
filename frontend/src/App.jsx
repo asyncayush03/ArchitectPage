@@ -5,7 +5,8 @@ import ModernFooter from './components/common/ModernFooter';
 import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import ContactPage from './pages/ContactPage';
 import BlogPage from './pages/BlogPage';
-import Studio from './pages/Studio';
+import Studio from './pages/studio';
+import Login from "./pages/login";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
 
       <Route path='/contact' element = {<ContactPage/>}/>
       <Route path ='/blog' element ={<BlogPage/>}/>
+      <Route path="/login" element={<Login />} />
     </Routes>
     <ModernFooter/>
     </BrowserRouter>
