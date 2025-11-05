@@ -1,19 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   LayoutGrid,
   Users,
   FileText,
-  Mail,
   Settings,
   TrendingUp,
-  BarChart3,
   FolderOpen,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
-  const [activeSection, setActiveSection] = useState("overview");
-
   const cards = [
     {
       id: "blogs",
@@ -60,54 +56,23 @@ export default function AdminDashboard() {
               </p>
             </div>
           </div>
-          <nav className="hidden md:flex gap-8">
-            <a
-              href="#"
-              className="text-stone-600 hover:text-stone-900 transition"
-            >
-              Projects
-            </a>
-            <a
-              href="#"
-              className="text-stone-600 hover:text-stone-900 transition"
-            >
-              Studio
-            </a>
-            <a
-              href="#"
-              className="text-stone-600 hover:text-stone-900 transition"
-            >
-              Blog
-            </a>
-            <a
-              href="#"
-              className="text-stone-600 hover:text-stone-900 transition"
-            >
-              Media
-            </a>
-            <a
-              href="#"
-              className="text-stone-600 hover:text-stone-900 transition"
-            >
-              Contact
-            </a>
-          </nav>
+          {/* (optional) top-nav links could go here */}
           <button className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-2 rounded-full font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
             GET IN TOUCH
           </button>
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero */}
       <div className="relative h-72 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-800 via-stone-700 to-stone-600"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-stone-800 via-stone-700 to-stone-600" />
         <div
           className="absolute inset-0 opacity-20"
           style={{
             backgroundImage:
-              'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="white" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+              'url("data:image/svg+xml,%3Csvg width=\\"60\\" height=\\"60\\" viewBox=\\"0 0 60 60\\" xmlns=\\"http://www.w3.org/2000/svg\\"%3E%3Cg fill=\\"none\\" fill-rule=\\"evenodd\\"%3E%3Cg fill=\\"white\\" fill-opacity=\\"0.4\\"%3E%3Cpath d=\\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
           }}
-        ></div>
+        />
         <div className="relative h-full flex flex-col items-center justify-center text-white">
           <LayoutGrid className="w-16 h-16 mb-4 opacity-90" />
           <h2 className="text-5xl font-bold mb-2">Admin Dashboard</h2>
@@ -117,9 +82,9 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main */}
       <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Stats Overview */}
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           {[
             {
@@ -128,6 +93,7 @@ export default function AdminDashboard() {
               change: "+12.5%",
               icon: TrendingUp,
             },
+            
             {
               label: "Active Projects",
               value: "36",
@@ -163,45 +129,38 @@ export default function AdminDashboard() {
         {/* Management Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {cards.map((card) => (
-            <div
-              key={card.id}
-              className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-            >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-              ></div>
-
-              <div className="relative p-8">
+            <Link key={card.id} to={card.to}>
+              <div className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer">
+                {/* hover overlay that doesn't block clicks */}
                 <div
-                  className={`w-16 h-16 bg-gradient-to-br ${card.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <card.icon className="w-8 h-8 text-white" />
-                </div>
-
-                <h3 className="text-2xl font-bold text-stone-800 mb-2 group-hover:text-white transition-colors">
-                  {card.title}
-                </h3>
-                <p className="text-stone-600 mb-6 group-hover:text-white/90 transition-colors">
-                  {card.description}
-                </p>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-stone-500 group-hover:text-white/80 transition-colors">
-                    {card.stats}
-                  </span>
-                  <Link
-                    to={card.to}
-                    className="bg-stone-100 group-hover:bg-white text-stone-800 px-6 py-2 rounded-full font-medium transition-all shadow-md hover:shadow-lg inline-block"
+                  className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`}
+                />
+                <div className="relative p-8">
+                  <div
+                    className={`w-16 h-16 bg-gradient-to-br ${card.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
                   >
-                    Manage
-                  </Link>
+                    <card.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-stone-800 mb-2 group-hover:text-white transition-colors">
+                    {card.title}
+                  </h3>
+                  <p className="text-stone-600 mb-6 group-hover:text-white/90 transition-colors">
+                    {card.description}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-stone-500 group-hover:text-white/80 transition-colors">
+                      {card.stats}
+                    </span>
+                    <span className="bg-stone-100 group-hover:bg-white text-stone-800 px-6 py-2 rounded-full font-medium transition-all shadow-md hover:shadow-lg">
+                      Manage
+                    </span>
+                  </div>
+                </div>
+                <div className="absolute bottom-0 right-0 w-32 h-32 opacity-5">
+                  <card.icon className="w-full h-full" />
                 </div>
               </div>
-
-              <div className="absolute bottom-0 right-0 w-32 h-32 opacity-5">
-                <card.icon className="w-full h-full" />
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -211,26 +170,47 @@ export default function AdminDashboard() {
             Quick Actions
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: "New Project", icon: FolderOpen, color: "emerald" },
-              { label: "Add Member", icon: Users, color: "blue" },
-              { label: "Write Post", icon: FileText, color: "amber" },
-              { label: "Settings", icon: Settings, color: "stone" },
-            ].map((action, i) => (
-              <button
-                key={i}
-                className={`flex flex-col items-center gap-3 p-6 rounded-2xl bg-${action.color}-50 hover:bg-${action.color}-100 transition-all group border border-${action.color}-100`}
-              >
-                <action.icon
-                  className={`w-8 h-8 text-${action.color}-600 group-hover:scale-110 transition-transform`}
-                />
-                <span
-                  className={`text-sm font-medium text-${action.color}-800`}
-                >
-                  {action.label}
-                </span>
-              </button>
-            ))}
+            {/* Using fixed Tailwind classes (avoids purge issues) */}
+            <Link
+              to="/admin/projects"
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-emerald-50 hover:bg-emerald-100 transition-all group border border-emerald-100"
+            >
+              <FolderOpen className="w-8 h-8 text-emerald-600 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-emerald-800">
+                New Project
+              </span>
+            </Link>
+
+            <Link
+              to="/admin/employees"
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-all group border border-blue-100"
+            >
+              <Users className="w-8 h-8 text-blue-600 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-blue-800">
+                Add Member
+              </span>
+            </Link>
+
+            <Link
+              to="/admin/blogs"
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-amber-50 hover:bg-amber-100 transition-all group border border-amber-100"
+            >
+              <FileText className="w-8 h-8 text-amber-600 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-amber-800">
+                Write Post
+              </span>
+            </Link>
+
+            <button
+              type="button"
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-stone-50 hover:bg-stone-100 transition-all group border border-stone-100"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              <Settings className="w-8 h-8 text-stone-600 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium text-stone-800">
+                Settings
+              </span>
+            </button>
           </div>
         </div>
       </div>
