@@ -3,8 +3,6 @@ import { Building2, Users, Award, Sparkles, ChevronDown } from "lucide-react";
 import image from "../assets/modern.jpg";
 
 export default function Studio() {
- 
-
 
   const architects = [
     { id: 1, name: "Architect 1", role: "Senior Architect", image },
