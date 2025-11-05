@@ -10,6 +10,7 @@ import AdminDashboard from "./pages/admin/Dashboard.jsx";
 import AddBlog from "./pages/admin/AddBlog.jsx";
 import AddEmployee from "./pages/admin/AddEmployee.jsx";
 import AddProject from "./pages/admin/AddProject.jsx";
+import Projects from "./pages/Projects.jsx";
 
 
 
@@ -21,7 +22,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={<div>Home Page</div>} />
+          <Route path="/" element={<Projects/>} />
           <Route path="/studio" element={<Studio />} />
 
           <Route path="/contact" element={<ContactPage />} />
