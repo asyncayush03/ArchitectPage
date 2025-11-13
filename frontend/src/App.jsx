@@ -11,8 +11,9 @@ import AddBlog from "./pages/admin/AddBlog.jsx";
 import AddEmployee from "./pages/admin/AddEmployee.jsx";
 import AddProject from "./pages/admin/AddProject.jsx";
 import Projects from "./pages/Projects.jsx";
+import Register from "./pages/register.jsx";
 
-
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 
 
@@ -29,11 +30,12 @@ function App() {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<AdminDashboard />} />
-
+          <Route path = "/register" element ={<Register/>}/>
           {/* Admin Routes */}
-          <Route path="/admin/blogs" element={<AddBlog />} />
-          <Route path="/admin/employees" element={<AddEmployee />} />
-          <Route path="/admin/projects" element={<AddProject />} />
+          <Route path="/admin/blogs" element={
+            <ProtectedRoute><AddBlog /></ProtectedRoute>} />
+          <Route path="/admin/employees" element={<ProtectedRoute><AddEmployee /></ProtectedRoute>} />
+          <Route path="/admin/projects" element={<ProtectedRoute><AddProject /></ProtectedRoute>} />
        
        
         </Routes>

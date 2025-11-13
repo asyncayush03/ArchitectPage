@@ -1,0 +1,48 @@
+# ================================
+# Backend Node Modules
+# ================================
+node_modules/
+
+# ================================
+# Frontend Node Modules
+# ================================
+frontend/node_modules/
+
+# ================================
+# Environment Variables
+# ================================
+.env
+.env.*
+frontend/.env
+frontend/.env.*
+
+# ================================
+# Logs
+# ================================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ================================
+# Build Output
+# ================================
+dist/
+build/
+frontend/dist/
+frontend/build/
+
+# ================================
+# System Files
+# ================================
+.DS_Store
+Thumbs.db
+
+# ================================
+# Editor Files
+# ================================
+.vscode/
+.idea/
+*.swp

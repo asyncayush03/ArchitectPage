@@ -2,36 +2,49 @@ import React, { useState } from "react";
 import { Lock, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import image from "../assets/modern.jpg";
+import axios from "axios";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ Future: Add real authentication logic here
-    // If correct → navigate
-    navigate("/admin");
+    try {
+      const res = await axios.post("/api/v1/admin/login", {
+        email,
+        password,
+      });
+
+      if (res.data.success) {
+        localStorage.setItem("token", res.data.token);
+        console.log("Login Successfully");
+        navigate("/admin");
+      } else {
+        alert(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong");
+    }
   };
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-white via-gray-50 to-white flex items-center justify-center relative overflow-hidden">
 
-      {/* ✅ Background */}
       <img
         src={image}
         alt="background"
         className="absolute inset-0 w-full h-full object-cover opacity-40"
       />
 
-      {/* ✅ Black Overlay */}
       <div className="absolute inset-0 bg-black/40"></div>
 
-      {/* ✅ Login Card */}
       <div className="relative z-10 w-full max-w-md bg-white/70 backdrop-blur-2xl shadow-2xl rounded-2xl border border-white/60 p-10 animate-fade-in">
 
-        {/* Admin badge */}
         <div className="mb-4 flex justify-center">
           <span className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider bg-gradient-to-r from-red-500 to-amber-400 text-white rounded-full shadow-md">
             Admin Login
@@ -47,7 +60,7 @@ export default function Login() {
         </p>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Email */}
+
           <div>
             <label className="text-gray-700 text-sm mb-2 block">Email</label>
             <div className="relative">
@@ -55,13 +68,14 @@ export default function Login() {
               <input
                 type="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-lg bg-white/90 text-gray-700 placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
                 required
               />
             </div>
           </div>
 
-          {/* Password */}
           <div>
             <label className="text-gray-700 text-sm mb-2 block">Password</label>
             <div className="relative">
@@ -70,6 +84,8 @@ export default function Login() {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-12 py-3 rounded-lg bg-white/90 text-gray-700 placeholder-gray-400 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
                 required
               />
@@ -83,7 +99,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Login button */}
           <button
             type="submit"
             className="w-full bg-gradient-to-r from-amber-500 to-red-500 text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-2xl transition-all hover:scale-[1.02]"
@@ -92,22 +107,11 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Admin Notice */}
         <p className="text-[11px] text-center text-red-600 font-medium mt-4">
           ⚠ Authorized personnel only
         </p>
       </div>
 
-      {/* Animation */}
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.8s ease-out;
-        }
-      `}</style>
     </div>
   );
 }
