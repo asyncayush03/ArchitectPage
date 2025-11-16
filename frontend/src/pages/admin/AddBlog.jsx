@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-
-const API_BASE = 'http://localhost:8080/api/v1/admin';
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 export default function AddBlog() {
   const [title, setTitle] = useState('');
@@ -9,11 +9,17 @@ export default function AddBlog() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const navigate = useNavigate();
 
+  const API_BASE = "/api/v1/admin";
+
+  // ------------------------------
+  // Handle image preview
+  // ------------------------------
   const handleFileChange = (e) => {
     const selectedFile = e.target.files && e.target.files[0];
     setFile(selectedFile);
-    
+
     if (selectedFile) {
       const url = URL.createObjectURL(selectedFile);
       setPreviewUrl(url);
@@ -22,12 +28,15 @@ export default function AddBlog() {
     }
   };
 
+  // ------------------------------
+  // Submit blog using AXIOS
+  // ------------------------------
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log('onSubmit called', { title, category, content, file });
+    console.log("onSubmit called", { title, category, content, file });
 
     if (!title.trim()) {
-      alert('Title required');
+      alert("Title required");
       return;
     }
 
@@ -35,49 +44,41 @@ export default function AddBlog() {
       setLoading(true);
 
       const form = new FormData();
-      form.append('title', title);
-      form.append('category', category);
-      form.append('content', content);
-      if (file) form.append('image', file);
+      form.append("title", title);
+      form.append("category", category);
+      form.append("content", content);
+      if (file) form.append("image", file);
 
-      console.log('Sending form data to', `${API_BASE}/blog`);
+      console.log("📤 Sending form data to", `${API_BASE}/blog`);
+
       for (let pair of form.entries()) {
-        console.log('form field:', pair[0], pair[1]);
+        console.log("form field:", pair[0], pair[1]);
       }
 
-      const res = await fetch(`${API_BASE}/blog`, {
-        method: 'POST',
-        body: form,
+      const token = localStorage.getItem("token");
+
+      const res = await axios.post(`${API_BASE}/blog`, form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`, // optional if blogs are not protected
+        },
       });
 
-      console.log('fetch returned', res);
+      console.log("✅ Blog added successfully:", res.data);
+      alert("Blog added successfully!");
+      navigate('/admin/blogs');
 
-      if (!res.ok) {
-        const text = await res.text().catch(() => '<<could not read body>>');
-        console.error('Server returned non-OK status', res.status, text);
-        alert('Error adding blog — server returned ' + res.status);
-        return;
-      }
-
-      let data;
-      try {
-        data = await res.json();
-      } catch (parseErr) {
-        const txt = await res.text();
-        console.warn('Response is not JSON:', txt);
-        data = { ok: true, message: 'Non-JSON response', raw: txt };
-      }
-
-      console.log('Server response data:', data);
-      alert('Blog added successfully');
     } catch (err) {
-      console.error('Error in add blog:', err);
-      alert('Error adding blog (see console for details)');
+      console.error("❌ Error adding blog:", err);
+      alert("Error adding blog (see console)");
     } finally {
       setLoading(false);
     }
   };
 
+  // ------------------------------
+  // UI BELOW — DO NOT TOUCH
+  // ------------------------------
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
@@ -215,10 +216,9 @@ export default function AddBlog() {
                       </svg>
                       Publishing...
                     </span>
-                  ) : (
-                    'Publish Blog Post'
-                  )}
+                  ) : "Publish Blog Post"}
                 </button>
+
                 <button 
                   onClick={() => window.history.back()}
                   className="px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 transition-colors"

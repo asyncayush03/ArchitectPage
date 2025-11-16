@@ -20,7 +20,7 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/api/v1/admin', require('./routes/adminRoute'));
 
 // optionally health
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+// app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
