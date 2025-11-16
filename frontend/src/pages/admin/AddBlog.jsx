@@ -1,162 +1,238 @@
 import React, { useState } from 'react';
-import { FileText, ArrowLeft, Plus, Edit, Trash2, Eye, Search, Filter, Calendar, Tag } from 'lucide-react';
 
-export default function ManageBlogs() {
-  const [blogs, setBlogs] = useState([
-    { id: 1, title: 'Modern Residential Design Trends', date: '2024-10-15', status: 'Published', views: 1234, category: 'Residential' },
-    { id: 2, title: 'Sustainable Architecture Practices', date: '2024-10-20', status: 'Published', views: 2100, category: 'Sustainability' },
-    { id: 3, title: 'Urban Planning in 2024', date: '2024-10-25', status: 'Draft', views: 0, category: 'Urban' },
-    { id: 4, title: 'Minimalist Interior Spaces', date: '2024-10-28', status: 'Published', views: 890, category: 'Interior' },
-    { id: 5, title: 'Biophilic Design Elements', date: '2024-11-01', status: 'Published', views: 1567, category: 'Design' },
-    { id: 6, title: 'Smart Home Integration', date: '2024-11-03', status: 'Draft', views: 0, category: 'Technology' }
-  ]);
+const API_BASE = 'http://localhost:8080/api/v1/admin';
 
-  const [searchQuery, setSearchQuery] = useState('');
+export default function AddBlog() {
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [content, setContent] = useState('');
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
-  const filteredBlogs = blogs.filter(blog =>
-    blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    blog.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files && e.target.files[0];
+    setFile(selectedFile);
+    
+    if (selectedFile) {
+      const url = URL.createObjectURL(selectedFile);
+      setPreviewUrl(url);
+    } else {
+      setPreviewUrl(null);
+    }
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    console.log('onSubmit called', { title, category, content, file });
+
+    if (!title.trim()) {
+      alert('Title required');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const form = new FormData();
+      form.append('title', title);
+      form.append('category', category);
+      form.append('content', content);
+      if (file) form.append('image', file);
+
+      console.log('Sending form data to', `${API_BASE}/blog`);
+      for (let pair of form.entries()) {
+        console.log('form field:', pair[0], pair[1]);
+      }
+
+      const res = await fetch(`${API_BASE}/blog`, {
+        method: 'POST',
+        body: form,
+      });
+
+      console.log('fetch returned', res);
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => '<<could not read body>>');
+        console.error('Server returned non-OK status', res.status, text);
+        alert('Error adding blog — server returned ' + res.status);
+        return;
+      }
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        const txt = await res.text();
+        console.warn('Response is not JSON:', txt);
+        data = { ok: true, message: 'Non-JSON response', raw: txt };
+      }
+
+      console.log('Server response data:', data);
+      alert('Blog added successfully');
+    } catch (err) {
+      console.error('Error in add blog:', err);
+      alert('Error adding blog (see console for details)');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-stone-50 to-neutral-100">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-stone-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-xl">J</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-stone-800">J.B.K.</h1>
-              <p className="text-xs text-stone-500 uppercase tracking-wider">Architecture</p>
-            </div>
-          </div>
-          <nav className="hidden md:flex gap-8">
-            <a href="#" className="text-stone-600 hover:text-stone-900 transition">Projects</a>
-            <a href="#" className="text-stone-600 hover:text-stone-900 transition">Studio</a>
-            <a href="#" className="text-stone-600 hover:text-stone-900 transition">Blog</a>
-            <a href="#" className="text-stone-600 hover:text-stone-900 transition">Media</a>
-            <a href="#" className="text-stone-600 hover:text-stone-900 transition">Contact</a>
-          </nav>
-          <button className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-2 rounded-full font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
-            GET IN TOUCH
-          </button>
-        </div>
-      </header>
-
-      {/* Page Hero */}
-      <div className="relative h-48 overflow-hidden mb-8">
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-800 via-stone-700 to-stone-600"></div>
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="white" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")'
-        }}></div>
-        <div className="relative h-full flex items-center justify-between max-w-7xl mx-auto px-6 text-white">
-          <div className="flex items-center gap-4">
-            <button className="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all backdrop-blur-sm">
-              <ArrowLeft className="w-6 h-6" />
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-4xl font-bold text-gray-900">Create New Blog Post</h1>
+            <button 
+              onClick={() => window.history.back()}
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-amber-600 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Blogs
             </button>
-            <div>
-              <h2 className="text-4xl font-bold mb-1">Manage Blogs</h2>
-              <p className="text-stone-300">Create and edit articles</p>
-            </div>
           </div>
-          <FileText className="w-20 h-20 opacity-30" />
+          <p className="text-gray-600">Share your thoughts with the world</p>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 pb-12">
-        {/* Toolbar */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg mb-6 border border-stone-100">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="flex-1 flex gap-3 w-full md:w-auto">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-5 h-5" />
-                <input 
-                  type="text" 
-                  placeholder="Search articles..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none"
+        {/* Main Form Card */}
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="p-8">
+            <div className="space-y-6">
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Blog Title <span className="text-red-500">*</span>
+                </label>
+                <input
+                  name="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter an engaging title..."
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none"
                 />
               </div>
-              <button className="p-3 border border-stone-200 rounded-xl hover:bg-stone-50 transition">
-                <Filter className="w-5 h-5 text-stone-600" />
-              </button>
-            </div>
-            <button className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all flex items-center gap-2">
-              <Plus className="w-5 h-5" />
-              New Article
-            </button>
-          </div>
-        </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-2xl p-6 shadow-md border border-stone-100">
-            <p className="text-sm text-stone-500 mb-2">Total Articles</p>
-            <p className="text-3xl font-bold text-stone-800">{blogs.length}</p>
-          </div>
-          <div className="bg-white rounded-2xl p-6 shadow-md border border-stone-100">
-            <p className="text-sm text-stone-500 mb-2">Published</p>
-            <p className="text-3xl font-bold text-emerald-600">{blogs.filter(b => b.status === 'Published').length}</p>
-          </div>
-          <div className="bg-white rounded-2xl p-6 shadow-md border border-stone-100">
-            <p className="text-sm text-stone-500 mb-2">Drafts</p>
-            <p className="text-3xl font-bold text-amber-600">{blogs.filter(b => b.status === 'Draft').length}</p>
-          </div>
-          <div className="bg-white rounded-2xl p-6 shadow-md border border-stone-100">
-            <p className="text-sm text-stone-500 mb-2">Total Views</p>
-            <p className="text-3xl font-bold text-blue-600">{blogs.reduce((sum, b) => sum + b.views, 0).toLocaleString()}</p>
-          </div>
-        </div>
+              {/* Category */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Category
+                </label>
+                <input
+                  name="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="e.g., Technology, Lifestyle, Business..."
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none"
+                />
+              </div>
 
-        {/* Blogs List */}
-        <div className="grid grid-cols-1 gap-6">
-          {filteredBlogs.map((blog) => (
-            <div key={blog.id} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border border-stone-100 group">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      blog.status === 'Published' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                    }`}>
-                      {blog.status}
-                    </span>
-                    <span className="text-stone-400 text-sm flex items-center gap-1">
-                      <Tag className="w-4 h-4" />
-                      {blog.category}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-bold text-stone-800 mb-2 group-hover:text-amber-600 transition">
-                    {blog.title}
-                  </h3>
-                  <div className="flex items-center gap-4 text-sm text-stone-500">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {blog.date}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
-                      {blog.views.toLocaleString()} views
-                    </span>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition">
-                    <Edit className="w-5 h-5" />
-                  </button>
-                  <button className="p-2 hover:bg-emerald-50 text-emerald-600 rounded-lg transition">
-                    <Eye className="w-5 h-5" />
-                  </button>
-                  <button className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition">
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+              {/* Content */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Content
+                </label>
+                <textarea
+                  name="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={10}
+                  placeholder="Write your blog content here..."
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none resize-y"
+                />
+                <p className="mt-2 text-sm text-gray-500">
+                  {content.length} characters
+                </p>
+              </div>
+
+              {/* Image Upload */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Featured Image
+                </label>
+                
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-amber-400 transition-colors">
+                  {previewUrl ? (
+                    <div className="space-y-4">
+                      <img 
+                        src={previewUrl} 
+                        alt="Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm text-gray-600">{file?.name}</p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFile(null);
+                            setPreviewUrl(null);
+                          }}
+                          className="text-sm text-red-600 hover:text-red-700 font-medium"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <div className="mt-4">
+                        <label className="cursor-pointer">
+                          <span className="text-amber-600 hover:text-amber-700 font-medium">Upload an image</span>
+                          <span className="text-gray-600"> or drag and drop</span>
+                          <input
+                            name="image"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
+                      <p className="mt-1 text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                    </div>
+                  )}
                 </div>
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-4 pt-6 border-t border-gray-200">
+                <button 
+                  onClick={onSubmit}
+                  disabled={loading}
+                  className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all"
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Publishing...
+                    </span>
+                  ) : (
+                    'Publish Blog Post'
+                  )}
+                </button>
+                <button 
+                  onClick={() => window.history.back()}
+                  className="px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-          ))}
+          </div>
+        </div>
+
+        {/* Helper Text */}
+        <div className="mt-6 text-center text-sm text-gray-500">
+          <p>Need help? Check out our <span className="text-amber-600 hover:underline cursor-pointer">writing guidelines</span></p>
         </div>
       </div>
     </div>

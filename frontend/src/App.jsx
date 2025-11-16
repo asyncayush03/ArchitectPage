@@ -3,6 +3,7 @@ import Navbar from "./components/common/Navbar";
 import ModernFooter from "./components/common/ModernFooter";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ContactPage from "./pages/ContactPage";
+import ManageBlogs from "./pages/admin/ManageBlogs.jsx";
 import BlogPage from "./pages/BlogPage";
 import Studio from "./pages/studio";
 import Login from "./pages/login";
@@ -32,11 +33,11 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path = "/register" element ={<Register/>}/>
           {/* Admin Routes */}
-          <Route path="/admin/blogs" element={
-            <ProtectedRoute><AddBlog /></ProtectedRoute>} />
+          <Route path="/admin/blogs" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
           <Route path="/admin/employees" element={<ProtectedRoute><AddEmployee /></ProtectedRoute>} />
           <Route path="/admin/projects" element={<ProtectedRoute><AddProject /></ProtectedRoute>} />
-       
+          <Route path="/admin/blogs/new" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />
+          
        
         </Routes>
         <ModernFooter />
