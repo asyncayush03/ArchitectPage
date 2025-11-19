@@ -2,6 +2,7 @@
 
 const adminModel = require("../models/adminModel");
 const Blog = require("../models/blogModel");
+const Project = require("../models/projectModel"); // <-- added
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -42,6 +43,13 @@ const upload = multer({
   limits: { fileSize: 2 * 1024 * 1024 },
 }).single("image");
 
+// MULTIPLE IMAGE UPLOADER FOR PROJECTS
+const uploadMultiple = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 4 * 1024 * 1024 },
+}).array("images", 10); // maximum 10 images
+
 
 // ===================================
 // ADMIN REGISTER
@@ -57,7 +65,6 @@ const adminRegister = async (req, res) => {
       });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -76,10 +83,7 @@ const adminRegister = async (req, res) => {
 
   } catch (error) {
     console.log("Register Error:", error);
-    res.status(500).send({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).send({ success: false, message: error.message });
   }
 };
 
@@ -89,24 +93,16 @@ const adminRegister = async (req, res) => {
 // ===================================
 const adminLogin = async (req, res) => {
   try {
-    const user = await adminModel
-      .findOne({ email: req.body.email })
-      .select("+password");
+    const user = await adminModel.findOne({ email: req.body.email }).select("+password");
 
     if (!user) {
-      return res.status(200).send({
-        success: false,
-        message: "User not found",
-      });
+      return res.status(200).send({ success: false, message: "User not found" });
     }
 
     const isMatch = await bcrypt.compare(req.body.password, user.password);
 
     if (!isMatch) {
-      return res.status(200).send({
-        success: false,
-        message: "Invalid Email or Password",
-      });
+      return res.status(200).send({ success: false, message: "Invalid Email or Password" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -121,10 +117,7 @@ const adminLogin = async (req, res) => {
 
   } catch (error) {
     console.log("Login Error:", error);
-    res.status(500).send({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).send({ success: false, message: error.message });
   }
 };
 
@@ -186,7 +179,6 @@ const deleteBlog = async (req, res) => {
       return res.status(404).send({ success: false, message: "Blog not found" });
     }
 
-    // Delete image file
     if (blog.image) {
       const filePath = path.join(process.cwd(), blog.image.replace(/^\//, ""));
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
@@ -203,11 +195,124 @@ const deleteBlog = async (req, res) => {
 };
 
 
-// EXPORT CONTROLLER
+
+// ===================================
+// CREATE PROJECT (MULTIPLE IMAGES + CAPTIONS)
+// ===================================
+const createProject = (req, res) => {
+  uploadMultiple(req, res, async (err) => {
+    try {
+      if (err) {
+        return res.status(400).send({ success: false, message: err.message });
+      }
+
+      const { name, client, status, budget, startDate, type, description } = req.body;
+
+      if (!name || !client || !type) {
+        return res.status(400).json({
+          success: false,
+          message: "Name, Client & Type are required",
+        });
+      }
+
+      // Captions: always convert to array
+      let captions = req.body.captions || [];
+      if (!Array.isArray(captions)) captions = [captions];
+
+      // Build images array
+      const images = (req.files || []).map((file, index) => ({
+        url: `/uploads/${file.filename}`,
+        caption: captions[index] || "",
+      }));
+
+      const project = await Project.create({
+        name,
+        client,
+        type,
+        budget,
+        startDate,
+        status,
+        description,
+        images,
+      });
+
+      return res.status(201).send({
+        success: true,
+        message: "Project created successfully",
+        project,
+      });
+
+    } catch (error) {
+      console.log("Create Project Error:", error);
+      res.status(500).send({ success: false, message: "Server error" });
+    }
+  });
+};
+
+
+
+// ===================================
+// GET ALL PROJECTS
+// ===================================
+const getProjects = async (req, res) => {
+  try {
+    const projects = await Project.find().sort({ createdAt: -1 });
+    return res.send({ success: true, projects });
+  } catch (error) {
+    console.log("Fetch Projects Error:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
+};
+
+
+// ===================================
+// DELETE PROJECT
+// ===================================
+const deleteProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).send({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    // Delete each image file
+    for (const img of project.images) {
+      const filePath = path.join(process.cwd(), img.url.replace(/^\//, ""));
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch (e) {
+          console.log("File delete error:", e);
+        }
+      }
+    }
+
+    await Project.findByIdAndDelete(req.params.id);
+
+    return res.send({
+      success: true,
+      message: "Project deleted successfully",
+    });
+
+  } catch (error) {
+    console.log("Delete Project Error:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
+};
+
+
+// EXPORT ALL
 module.exports = {
   adminLogin,
   adminRegister,
   createBlog,
   getBlogs,
   deleteBlog,
+  createProject,
+  getProjects,
+  deleteProject,
 };

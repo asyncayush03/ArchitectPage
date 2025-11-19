@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { FolderOpen, ArrowLeft, Plus, Edit, Trash2, Search, Filter, Calendar, DollarSign, Building } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function ManageProjects() {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([
     { id: 1, name: 'Riverside Residence', client: 'John & Mary Smith', status: 'In Progress', progress: 65, budget: '$850K', startDate: '2024-06-01', type: 'Residential', description: 'Modern family home with river views' },
     { id: 2, name: 'Downtown Office Complex', client: 'Tech Innovations Inc', status: 'Planning', progress: 20, budget: '$2.5M', startDate: '2024-09-15', type: 'Commercial', description: 'Multi-story office building' },
@@ -22,7 +24,7 @@ export default function ManageProjects() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-stone-50 to-neutral-100">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-stone-200 sticky top-0 z-50">
+      {/* <header className="bg-white/80 backdrop-blur-md border-b border-stone-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -44,7 +46,7 @@ export default function ManageProjects() {
             GET IN TOUCH
           </button>
         </div>
-      </header>
+      </header> */}
 
       {/* Page Hero */}
       <div className="relative h-48 overflow-hidden mb-8">
@@ -88,7 +90,7 @@ export default function ManageProjects() {
             </div>
             <button className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all flex items-center gap-2">
               <Plus className="w-5 h-5" />
-              New Project
+              <Link to="/admin/projects/new">Add New Project</Link>
             </button>
           </div>
         </div>

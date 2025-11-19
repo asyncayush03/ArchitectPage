@@ -6,6 +6,9 @@ const {
   createBlog,
   getBlogs,
   deleteBlog,
+  createProject,
+  getProjects,
+  deleteProject,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -18,5 +21,9 @@ router.post("/register", adminRegister);
 router.post("/blog", createBlog);
 router.get("/blog", getBlogs);
 router.delete("/blog/:id", deleteBlog);
+
+router.post("/project", (createProject));
+router.get("/project", (getProjects));
+router.delete("/project/:id", (deleteProject));
 
 module.exports = router;

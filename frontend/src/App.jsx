@@ -10,13 +10,12 @@ import Login from "./pages/login";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
 import AddBlog from "./pages/admin/AddBlog.jsx";
 import AddEmployee from "./pages/admin/AddEmployee.jsx";
-import AddProject from "./pages/admin/AddProject.jsx";
 import Projects from "./pages/Projects.jsx";
 import Register from "./pages/register.jsx";
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-
-
+import ManageProjects from "./pages/admin/ManageProjects.jsx";
+import AddProjects from "./pages/admin/AddProjects.jsx";
 
 function App() {
   return (
@@ -34,9 +33,13 @@ function App() {
           <Route path = "/register" element ={<Register/>}/>
           {/* Admin Routes */}
           <Route path="/admin/blogs" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
-          <Route path="/admin/employees" element={<ProtectedRoute><AddEmployee /></ProtectedRoute>} />
-          <Route path="/admin/projects" element={<ProtectedRoute><AddProject /></ProtectedRoute>} />
           <Route path="/admin/blogs/new" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />
+
+          <Route path="/admin/employees" element={<ProtectedRoute><AddEmployee /></ProtectedRoute>} />
+
+          <Route path="/admin/projects" element={<ProtectedRoute><ManageProjects /></ProtectedRoute>} />
+          <Route path="/admin/projects/new" element={<ProtectedRoute><AddProjects /></ProtectedRoute>} />
+
           
        
         </Routes>
