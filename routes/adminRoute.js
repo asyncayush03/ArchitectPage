@@ -9,7 +9,8 @@ const {
   createProject,
   getProjects,
   deleteProject,
-  getProjectById
+  getProjectById,
+  updateProject   
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -27,4 +28,6 @@ router.post("/project", (createProject));
 router.get("/project", (getProjects));
 router.delete("/project/:id", (deleteProject));
 router.get("/project/:id", getProjectById);
+router.put("/project/:id", updateProject);
+
 module.exports = router;

@@ -320,6 +320,29 @@ const getProjectById = async (req, res) => {
     res.status(500).send({ success: false, message: "Server error" });
   }
 };
+const updateProject = async (req, res) => {
+  try {
+    const project = await Project.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Project updated successfully",
+      project,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
 
 
 // EXPORT ALL
@@ -333,4 +356,5 @@ module.exports = {
   getProjects,
   deleteProject,
   getProjectById,
+  updateProject   
 };

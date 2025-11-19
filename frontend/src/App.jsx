@@ -19,6 +19,7 @@ import AddProjects from "./pages/admin/AddProjects.jsx";
 import Home from "./pages/home.jsx";
 import ProjectDetails from "./pages/ProjectDetails.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import EditProject from "./pages/admin/EditProject.jsx";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
 
           <Route path="/admin/projects" element={<ProtectedRoute><ManageProjects /></ProtectedRoute>} />
           <Route path="/admin/projects/new" element={<ProtectedRoute><AddProjects /></ProtectedRoute>} />
+          <Route path="/admin/projects/edit/:id" element={<EditProject />} />
 
           
        

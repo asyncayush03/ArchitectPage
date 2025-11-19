@@ -40,7 +40,8 @@ export default function ManageProjects() {
   // DELETE PROJECT
   // ---------------------------------------------------
   const deleteProject = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this project?")) return;
+    if (!window.confirm("Are you sure you want to delete this project?"))
+      return;
 
     try {
       await axios.delete(`/api/v1/admin/project/${id}`);
@@ -66,14 +67,16 @@ export default function ManageProjects() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-stone-50 to-neutral-100">
-
       {/* Page Header */}
       <div className="relative h-48 overflow-hidden mb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-600"></div>
 
         <div className="relative h-full flex items-center justify-between max-w-7xl mx-auto px-6 text-white">
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate(-1)} className="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all backdrop-blur-sm">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all backdrop-blur-sm"
+            >
               <ArrowLeft className="w-6 h-6" />
             </button>
 
@@ -89,11 +92,9 @@ export default function ManageProjects() {
 
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-6 pb-12">
-
         {/* Toolbar */}
         <div className="bg-white rounded-2xl p-6 shadow-lg mb-6 border border-stone-100">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-
             {/* Search Bar */}
             <div className="flex-1 flex gap-3 w-full md:w-auto">
               <div className="relative flex-1">
@@ -119,7 +120,6 @@ export default function ManageProjects() {
             >
               <Plus className="w-5 h-5" /> Add New Project
             </Link>
-
           </div>
         </div>
 
@@ -127,22 +127,30 @@ export default function ManageProjects() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-2xl p-6 shadow-md border border-stone-100">
             <p className="text-sm text-stone-500 mb-2">Total Projects</p>
-            <p className="text-3xl font-bold text-stone-800">{projects.length}</p>
+            <p className="text-3xl font-bold text-stone-800">
+              {projects.length}
+            </p>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-md border border-stone-100">
             <p className="text-sm text-stone-500 mb-2">In Progress</p>
-            <p className="text-3xl font-bold text-blue-600">{projects.filter((p) => p.status === "In Progress").length}</p>
+            <p className="text-3xl font-bold text-blue-600">
+              {projects.filter((p) => p.status === "In Progress").length}
+            </p>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-md border border-stone-100">
             <p className="text-sm text-stone-500 mb-2">Completed</p>
-            <p className="text-3xl font-bold text-emerald-600">{projects.filter((p) => p.status === "Completed").length}</p>
+            <p className="text-3xl font-bold text-emerald-600">
+              {projects.filter((p) => p.status === "Completed").length}
+            </p>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-md border border-stone-100">
             <p className="text-sm text-stone-500 mb-2">Planning</p>
-            <p className="text-3xl font-bold text-amber-600">{projects.filter((p) => p.status === "Planning").length}</p>
+            <p className="text-3xl font-bold text-amber-600">
+              {projects.filter((p) => p.status === "Planning").length}
+            </p>
           </div>
         </div>
 
@@ -154,7 +162,6 @@ export default function ManageProjects() {
               className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border border-stone-100 group"
             >
               <div className="flex flex-col md:flex-row gap-6">
-
                 {/* Icon */}
                 <div className="w-full md:w-48 h-32 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
                   <FolderOpen className="w-12 h-12 text-white opacity-50" />
@@ -168,8 +175,12 @@ export default function ManageProjects() {
                         {project.name}
                       </h3>
 
-                      <p className="text-stone-500 text-sm">Client: {project.client}</p>
-                      <p className="text-stone-400 text-xs mt-1">{project.description}</p>
+                      <p className="text-stone-500 text-sm">
+                        Client: {project.client}
+                      </p>
+                      <p className="text-stone-400 text-xs mt-1">
+                        {project.description}
+                      </p>
                     </div>
 
                     <span
@@ -191,21 +202,27 @@ export default function ManageProjects() {
                       <p className="text-xs text-stone-500 flex items-center gap-1">
                         <Building className="w-3 h-3" /> Type
                       </p>
-                      <p className="text-sm font-semibold text-stone-700">{project.type}</p>
+                      <p className="text-sm font-semibold text-stone-700">
+                        {project.type}
+                      </p>
                     </div>
 
                     <div>
                       <p className="text-xs text-stone-500 flex items-center gap-1">
                         <DollarSign className="w-3 h-3" /> Budget
                       </p>
-                      <p className="text-sm font-semibold text-stone-700">{project.budget}</p>
+                      <p className="text-sm font-semibold text-stone-700">
+                        {project.budget}
+                      </p>
                     </div>
 
                     <div>
                       <p className="text-xs text-stone-500 flex items-center gap-1">
                         <Calendar className="w-3 h-3" /> Start Date
                       </p>
-                      <p className="text-sm font-semibold text-stone-700">{project.startDate}</p>
+                      <p className="text-sm font-semibold text-stone-700">
+                        {project.startDate}
+                      </p>
                     </div>
                   </div>
 
@@ -237,7 +254,12 @@ export default function ManageProjects() {
                       View Details
                     </button>
 
-                    <button className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition">
+                    <button
+                      onClick={() =>
+                        navigate(`/admin/projects/edit/${project._id}`)
+                      }
+                      className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition"
+                    >
                       <Edit className="w-4 h-4" />
                     </button>
 
@@ -248,13 +270,11 @@ export default function ManageProjects() {
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-
                 </div>
               </div>
             </div>
           ))}
         </div>
-
       </div>
     </div>
   );
