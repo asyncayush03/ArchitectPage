@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Instagram,
@@ -14,9 +14,9 @@ import {
 const ModernFooter = () => {
   const [hoveredItem, setHoveredItem] = useState(null);
   const [hoveredSocial, setHoveredSocial] = useState(null);
-
+  const navigate = useNavigate();
   const quickLinks = [
-    { label: "Projects", url: "/" },
+    { label: "Projects", url: "/projects" },
     { label: "Studio", url: "/studio" },
     { label: "Blog", url: "/blog" },
     { label: "Media", url: "/media" },
@@ -117,7 +117,7 @@ const ModernFooter = () => {
           </div>
 
           {/* NEWSLETTER */}
-          <div>
+          {/* <div>
             <h5 className="text-gray-800 font-semibold text-sm tracking-wider mb-4 uppercase">
               Newsletter
             </h5>
@@ -135,8 +135,8 @@ const ModernFooter = () => {
                 JOIN
               </button>
             </div>
-          </div>
-        </div>
+          </div>*/}
+        </div> 
 
         {/* BOTTOM */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
@@ -170,6 +170,8 @@ const ModernFooter = () => {
             >
               Admin Access
             </Link>
+            
+
           </div>
 
           {/* SOCIAL */}

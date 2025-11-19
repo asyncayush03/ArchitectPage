@@ -16,21 +16,28 @@ import Register from "./pages/register.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ManageProjects from "./pages/admin/ManageProjects.jsx";
 import AddProjects from "./pages/admin/AddProjects.jsx";
+import Home from "./pages/home.jsx";
+import ProjectDetails from "./pages/ProjectDetails.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 function App() {
   return (
     <>
       <BrowserRouter>
+      <ScrollToTop/>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Projects/>} />
+          <Route path="/" element={<Home/>} />
           <Route path="/studio" element={<Studio />} />
-
+          <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path = "/register" element ={<Register/>}/>
+          <Route path="/projects/:id" element={<ProjectDetails />} />
+          
+
           {/* Admin Routes */}
           <Route path="/admin/blogs" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
           <Route path="/admin/blogs/new" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />

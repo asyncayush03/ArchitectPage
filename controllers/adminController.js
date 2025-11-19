@@ -304,6 +304,23 @@ const deleteProject = async (req, res) => {
   }
 };
 
+// GET ONE PROJECT BY ID
+const getProjectById = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).send({ success: false, message: "Project not found" });
+    }
+
+    res.send({ success: true, project });
+
+  } catch (error) {
+    console.log("Get Project Error:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
+};
+
 
 // EXPORT ALL
 module.exports = {
@@ -315,4 +332,5 @@ module.exports = {
   createProject,
   getProjects,
   deleteProject,
+  getProjectById,
 };

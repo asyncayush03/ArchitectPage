@@ -1,10 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown, ArrowRight, MapPin, Calendar, Maximize2 } from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Projects = () => {
+  const navigate = useNavigate();
+
   const [activeFilter, setActiveFilter] = useState("all");
   const [hoveredProject, setHoveredProject] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PROJECTS_PER_PAGE = 15;
+ // ----------------------------
+// FETCH PROJECTS FROM BACKEND
+// ----------------------------
+useEffect(() => {
+  const loadProjects = async () => {
+    try {
+      const res = await axios.get("/api/v1/admin/project");  // ✅ FIXED PATH
+      console.log("Fetched Projects:", res.data);
 
+      setProjects(res.data.projects || []);
+    } catch (error) {
+      console.log("Error loading projects", error);
+    }
+  };
+
+  loadProjects();
+}, []);
+
+useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter]);
+
+  // ----------------------------
+  // FILTERS
+  // ----------------------------
   const categories = [
     { id: "all", label: "All Projects" },
     { id: "interiors", label: "Interiors" },
@@ -13,133 +44,17 @@ const Projects = () => {
     { id: "product", label: "Product Design" },
   ];
 
-  const projects = [
-    {
-      id: 1,
-      title: "Modern Villa Residence",
-      category: "architecture",
-      location: "Mumbai, India",
-      year: "2024",
-      area: "5,000 sq ft",
-      desc: "A contemporary residential masterpiece blending minimalist design with sustainable architecture.",
-      img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 2,
-      title: "Luxury Penthouse Interior",
-      category: "interiors",
-      location: "Delhi, India",
-      year: "2024",
-      area: "3,500 sq ft",
-      desc: "Sophisticated interior design featuring bespoke furniture and elegant material palette.",
-      img: "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 3,
-      title: "Corporate Headquarters",
-      category: "commercial",
-      location: "Bangalore, India",
-      year: "2024",
-      area: "25,000 sq ft",
-      desc: "Dynamic office space designed to foster collaboration and innovation in the tech industry.",
-      img: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 4,
-      title: "Custom Furniture Collection",
-      category: "product",
-      location: "Studio Design",
-      year: "2024",
-      area: "Collection",
-      desc: "Handcrafted furniture pieces combining traditional craftsmanship with modern aesthetics.",
-      img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 5,
-      title: "Boutique Hotel Design",
-      category: "interiors",
-      location: "Goa, India",
-      year: "2023",
-      area: "15,000 sq ft",
-      desc: "Coastal-inspired interiors creating a tranquil retreat experience for discerning travelers.",
-      img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 6,
-      title: "Urban Mixed-Use Complex",
-      category: "architecture",
-      location: "Pune, India",
-      year: "2023",
-      area: "50,000 sq ft",
-      desc: "Innovative mixed-use development integrating residential, retail, and public spaces.",
-      img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 7,
-      title: "Retail Flagship Store",
-      category: "commercial",
-      location: "Mumbai, India",
-      year: "2023",
-      area: "8,000 sq ft",
-      desc: "Brand-focused retail environment with striking visual merchandising and customer flow.",
-      img: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 8,
-      title: "Lighting Design Series",
-      category: "product",
-      location: "Studio Design",
-      year: "2023",
-      area: "Collection",
-      desc: "Sculptural lighting fixtures that blur the line between art and functional design.",
-      img: "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 9,
-      title: "Heritage Home Restoration",
-      category: "architecture",
-      location: "Jaipur, India",
-      year: "2023",
-      area: "7,500 sq ft",
-      desc: "Careful restoration preserving historical character while introducing modern amenities.",
-      img: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 10,
-      title: "Contemporary Apartment",
-      category: "interiors",
-      location: "Hyderabad, India",
-      year: "2023",
-      area: "2,800 sq ft",
-      desc: "Open-plan living space with carefully curated art and custom millwork throughout.",
-      img: "https://images.unsplash.com/photo-1502672260066-6bc35f0a9e06?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 11,
-      title: "Innovation Center",
-      category: "commercial",
-      location: "Chennai, India",
-      year: "2022",
-      area: "35,000 sq ft",
-      desc: "Flexible workspace designed for startups and creative enterprises with shared amenities.",
-      img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1000&q=80",
-    },
-    {
-      id: 12,
-      title: "Modular Shelving System",
-      category: "product",
-      location: "Studio Design",
-      year: "2022",
-      area: "Collection",
-      desc: "Versatile storage solution with endless configurations for residential and commercial use.",
-      img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=80",
-    },
-  ];
+   const filteredProjects =
+  activeFilter === "all"
+    ? projects
+    : projects.filter((p) => p.type?.toLowerCase() === activeFilter);
 
-  const filteredProjects = activeFilter === "all" 
-    ? projects 
-    : projects.filter(p => p.category === activeFilter);
 
+  const indexOfLast = currentPage * PROJECTS_PER_PAGE;
+  const indexOfFirst = indexOfLast - PROJECTS_PER_PAGE;
+  const currentProjects = filteredProjects.slice(indexOfFirst, indexOfLast);
+
+  const totalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
       <style>{`
@@ -195,177 +110,119 @@ const Projects = () => {
       {/* Projects Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-32">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project, index) => (
-            <div
-              key={project.id}
-              className={`group relative overflow-hidden rounded-lg shadow-lg cursor-pointer transform hover:shadow-2xl transition-all duration-500 animate-fade-in stagger-${(index % 3) + 1}`}
-              onMouseEnter={() => setHoveredProject(project.id)}
-              onMouseLeave={() => setHoveredProject(null)}
-            >
-              {/* Image Container */}
-              <div className="relative h-80 overflow-hidden">
-                <img
-                  src={project.img}
-                  alt={project.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                
-                {/* Category Badge */}
-                <div className="absolute top-4 right-4 z-20">
-                  <div className="bg-white/90 backdrop-blur-sm px-4 py-1 text-xs font-semibold text-gray-800 tracking-wide uppercase">
-                    {project.category}
-                  </div>
-                </div>
+         {currentProjects.map((project, index) => {
+            const firstImage = project.images?.[0]?.url
+              ? `http://localhost:8080${project.images[0].url}`
+              : "https://via.placeholder.com/800x600?text=No+Image";
 
-                {/* Zoom Icon on Hover */}
-                <div 
-                  className="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300"
-                >
-                  <Maximize2 className="w-5 h-5 text-gray-800" />
-                </div>
+            return (
+              <div
+                key={project._id}
+                className={`group relative overflow-hidden rounded-lg shadow-lg cursor-pointer transform hover:shadow-2xl transition-all duration-500 animate-fade-in stagger-${
+                  (index % 3) + 1
+                }`}
+                onMouseEnter={() => setHoveredProject(project._id)}
+                onMouseLeave={() => setHoveredProject(null)}
+                onClick={() => navigate(`/projects/${project._id}`)}
+              >
+                <div className="relative h-80 overflow-hidden">
+                  <img
+                    src={firstImage}
+                    alt={project.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80 group-hover:opacity-100 transition-all duration-500 z-10"></div>
-
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-20">
-                  <h3 className="text-xl font-light mb-2 tracking-wide group-hover:text-amber-400 transition-colors duration-300">
-                    {project.title}
-                  </h3>
-                  
-                  <div className="flex items-center gap-4 mb-3 text-xs text-gray-300">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3" />
-                      <span>{project.location}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      <span>{project.year}</span>
+                  {/* Category */}
+                  <div className="absolute top-4 right-4 z-20">
+                    <div className="bg-white/90 backdrop-blur-sm px-4 py-1 text-xs font-semibold text-gray-800 tracking-wide uppercase">
+                      {project.type || "Project"}
                     </div>
                   </div>
 
-                  <p className="text-xs text-gray-300 mb-1">
-                    {project.area}
-                  </p>
-                  
-                  <p className="text-sm text-gray-200 leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                    {project.desc}
-                  </p>
+                  {/* Zoom icon */}
+                  <div className="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300">
+                    <Maximize2 className="w-5 h-5 text-gray-800" />
+                  </div>
 
-                  {/* View Project Link */}
-                  <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold tracking-wide opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                    <span>VIEW PROJECT</span>
-                    <ArrowRight className="w-4 h-4" />
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80 group-hover:opacity-100 transition-all duration-500 z-10"></div>
+
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-20">
+                    <h3 className="text-xl font-light mb-2 tracking-wide group-hover:text-amber-400 transition-colors duration-300">
+                      {project.name}
+                    </h3>
+
+                    <div className="flex items-center gap-4 mb-3 text-xs text-gray-300">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        <span>{project.location || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        <span>
+                          {project.startDate
+                            ? new Date(project.startDate).getFullYear()
+                            : "----"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-gray-200 leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                      {project.description?.slice(0, 100)}...
+                    </p>
+
+                    <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold tracking-wide opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                      <span>VIEW PROJECT</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Load More Button */}
-        <div className="text-center mt-16">
-          <button className="group inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-red-400 to-amber-400 text-white text-xs font-semibold tracking-wider rounded-full hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-            LOAD MORE PROJECTS
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-          </button>
-        </div>
+        {filteredProjects.length === 0 && (
+          <p className="text-center text-gray-500 mt-10">
+            No projects found in this category.
+          </p>
+        )}
+
+        {/* PAGINATION BUTTONS */}
+{totalPages > 1 && (
+  <div className="flex justify-center items-center gap-4 mt-16">
+    <button
+      disabled={currentPage === 1}
+      onClick={() => setCurrentPage((p) => p - 1)}
+      className={`px-5 py-2 text-sm rounded-lg border ${
+        currentPage === 1
+          ? "bg-gray-200 cursor-not-allowed"
+          : "bg-white hover:bg-gray-100"
+      }`}
+    >
+      Previous
+    </button>
+
+    <span className="text-gray-700 text-sm">
+      Page {currentPage} of {totalPages}
+    </span>
+
+    <button
+      disabled={currentPage === totalPages}
+      onClick={() => setCurrentPage((p) => p + 1)}
+      className={`px-5 py-2 text-sm rounded-lg border ${
+        currentPage === totalPages
+          ? "bg-gray-200 cursor-not-allowed"
+          : "bg-white hover:bg-gray-100"
+      }`}
+    >
+      Next
+    </button>
+  </div>
+)}
+
       </section>
-
-      {/* Category Highlights */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-32">
-        <div className="relative mb-12">
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-px bg-gradient-to-r from-transparent via-red-400 to-transparent"></div>
-          <h2 className="text-center text-red-400 text-sm tracking-[0.3em] font-light relative bg-white inline-block left-1/2 -translate-x-1/2 px-6">
-            OUR EXPERTISE
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="group p-8 rounded-lg bg-white shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-amber-200 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-400/20 to-amber-400/20 rounded-full flex items-center justify-center text-2xl font-light text-gray-800 group-hover:scale-110 transition-transform duration-300">
-              I
-            </div>
-            <h3 className="font-semibold text-gray-800 mb-2 text-base group-hover:text-amber-600 transition-colors">
-              Interiors
-            </h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Sophisticated residential and hospitality interiors
-            </p>
-          </div>
-
-          <div className="group p-8 rounded-lg bg-white shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-amber-200 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-400/20 to-amber-400/20 rounded-full flex items-center justify-center text-2xl font-light text-gray-800 group-hover:scale-110 transition-transform duration-300">
-              A
-            </div>
-            <h3 className="font-semibold text-gray-800 mb-2 text-base group-hover:text-amber-600 transition-colors">
-              Architecture
-            </h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Contemporary structures and sustainable design
-            </p>
-          </div>
-
-          <div className="group p-8 rounded-lg bg-white shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-amber-200 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-400/20 to-amber-400/20 rounded-full flex items-center justify-center text-2xl font-light text-gray-800 group-hover:scale-110 transition-transform duration-300">
-              C
-            </div>
-            <h3 className="font-semibold text-gray-800 mb-2 text-base group-hover:text-amber-600 transition-colors">
-              Commercial
-            </h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Corporate offices and retail environments
-            </p>
-          </div>
-
-          <div className="group p-8 rounded-lg bg-white shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-amber-200 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-400/20 to-amber-400/20 rounded-full flex items-center justify-center text-2xl font-light text-gray-800 group-hover:scale-110 transition-transform duration-300">
-              P
-            </div>
-            <h3 className="font-semibold text-gray-800 mb-2 text-base group-hover:text-amber-600 transition-colors">
-              Product Design
-            </h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Custom furniture and lighting collections
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      {/* <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-32">
-        <div className="relative p-12 sm:p-16 rounded-lg bg-gradient-to-br from-gray-100 to-white border border-gray-200 shadow-xl overflow-hidden text-center">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-200/30 to-red-200/30 rounded-full blur-3xl"></div>
-          <div className="relative z-10">
-            <h3 className="text-2xl sm:text-3xl font-light text-gray-800 mb-4 tracking-wide">
-              Have a Project in Mind?
-            </h3>
-            <p className="text-gray-600 text-sm mb-8 max-w-xl mx-auto leading-relaxed">
-              Let's collaborate to create something exceptional. Get in touch to discuss your vision.
-            </p>
-            <a
-              href="/contact"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-red-400 to-amber-400 text-white text-xs font-semibold tracking-wider rounded-full hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-            >
-              START A PROJECT
-              <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
-      </section> */}
-
-      {/* Footer */}
-      {/* <footer className="text-center py-16 text-gray-500 text-sm border-t border-gray-200">
-        <h3 className="text-lg font-light text-gray-800 mb-2 tracking-wide">
-          J.B.K. Architecture
-        </h3>
-        <p className="text-xs tracking-wider">
-          Creating timeless spaces
-        </p>
-        <p className="mt-4 text-xs">
-          © 2025 J.B.K. Architecture — All Rights Reserved
-        </p>
-      </footer> */}
     </div>
   );
 };

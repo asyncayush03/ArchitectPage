@@ -15,7 +15,7 @@ const Navbar = () => {
   }, []);
 
   const navItems = [
-    { label: 'Projects', path: '/' },
+    { label: 'Projects', path: '/projects' },
     { label: 'Studio', path: '/studio' },
     { label: 'Blog', path: '/blog' },
     { label: 'Media', path: '/media' },
@@ -76,12 +76,12 @@ const Navbar = () => {
                 </Link>
               ))}
 
-              <Link
+              {/* <Link
                 to="/contact"
                 className="ml-4 px-6 py-2 bg-gradient-to-r from-red-400 to-amber-400 text-white text-xs font-semibold tracking-wider rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300"
               >
                 GET IN TOUCH
-              </Link>
+              </Link> */}
             </div>
 
             {/* Mobile Menu Button */}
@@ -110,13 +110,13 @@ const Navbar = () => {
                 </Link>
               ))}
 
-              <Link
+              {/* <Link
                 to="/contact"
                 onClick={() => setMenuOpen(false)}
                 className="block text-center px-6 py-3 bg-gradient-to-r from-red-400 to-amber-400 text-white text-xs font-semibold tracking-wider rounded-full hover:shadow-lg transition-all duration-300"
               >
                 GET IN TOUCH
-              </Link>
+              </Link> */}
             </div>
           </div>
         )}

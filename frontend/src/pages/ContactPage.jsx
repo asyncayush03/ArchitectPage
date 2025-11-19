@@ -334,7 +334,7 @@ const ContactPage = () => {
         </div>
       </section>
 
-      {/* Footer CTA */}
+      {/* Footer CTA
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-32 animate-fade-in">
         <div className="relative p-12 sm:p-16 rounded-lg bg-gradient-to-br from-gray-100 to-white border border-gray-200 shadow-xl overflow-hidden text-center">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-200/30 to-red-200/30 rounded-full blur-3xl animate-float"></div>
@@ -354,7 +354,7 @@ const ContactPage = () => {
             </a>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       {/* <footer className="text-center py-16 text-gray-500 text-sm border-t border-gray-200">

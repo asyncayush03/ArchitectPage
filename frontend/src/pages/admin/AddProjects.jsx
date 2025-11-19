@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import { ArrowLeft, Plus, Upload, Trash2, Image as ImageIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Upload,
+  Trash2,
+  Image as ImageIcon,
+} from "lucide-react";
 import axios from "axios";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function AddProjects() {
   const [project, setProject] = useState({
@@ -12,6 +19,7 @@ export default function AddProjects() {
     status: "",
     description: "",
   });
+  const navigate = useNavigate();
 
   const [images, setImages] = useState([]);
 
@@ -22,7 +30,7 @@ export default function AddProjects() {
     const updated = files.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
-      caption: ""
+      caption: "",
     }));
 
     setImages((prev) => [...prev, ...updated]);
@@ -66,7 +74,7 @@ export default function AddProjects() {
 
       alert("Project added successfully!");
       console.log("Project Added:", res.data);
-
+      navigate("/admin/projects");
     } catch (error) {
       console.error("Error adding project:", error.response?.data || error);
       alert("Error adding project");
@@ -75,7 +83,6 @@ export default function AddProjects() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-stone-50 to-neutral-100 pb-16">
-
       {/* Page Header */}
       <div className="relative h-52 bg-gradient-to-r from-emerald-700 to-teal-600 text-white mb-10">
         <div className="max-w-6xl mx-auto h-full flex items-center justify-between px-6">
@@ -94,11 +101,12 @@ export default function AddProjects() {
 
       {/* Form Card */}
       <div className="max-w-5xl mx-auto bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
-        <h2 className="text-2xl font-bold text-stone-800 mb-6">Project Information</h2>
+        <h2 className="text-2xl font-bold text-stone-800 mb-6">
+          Project Information
+        </h2>
 
         <form className="space-y-6" onSubmit={submitProject}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             {/* Name */}
             <div>
               <label className="text-sm text-stone-600">Project Name</label>
@@ -106,7 +114,9 @@ export default function AddProjects() {
                 type="text"
                 className="w-full mt-1 px-4 py-3 border rounded-xl focus:ring focus:ring-emerald-300"
                 value={project.name}
-                onChange={(e) => setProject({ ...project, name: e.target.value })}
+                onChange={(e) =>
+                  setProject({ ...project, name: e.target.value })
+                }
                 required
               />
             </div>
@@ -118,7 +128,9 @@ export default function AddProjects() {
                 type="text"
                 className="w-full mt-1 px-4 py-3 border rounded-xl"
                 value={project.client}
-                onChange={(e) => setProject({ ...project, client: e.target.value })}
+                onChange={(e) =>
+                  setProject({ ...project, client: e.target.value })
+                }
                 required
               />
             </div>
@@ -126,13 +138,20 @@ export default function AddProjects() {
             {/* Type */}
             <div>
               <label className="text-sm text-stone-600">Type</label>
-              <input
-                type="text"
+              <select
                 className="w-full mt-1 px-4 py-3 border rounded-xl"
                 value={project.type}
-                onChange={(e) => setProject({ ...project, type: e.target.value })}
+                onChange={(e) =>
+                  setProject({ ...project, type: e.target.value })
+                }
                 required
-              />
+              >
+                <option value="">Select Project Type</option>
+                <option value="interiors">Interiors</option>
+                <option value="architecture">Architecture</option>
+                <option value="commercial">Commercial</option>
+                <option value="product">Product Design</option>
+              </select>
             </div>
 
             {/* Budget */}
@@ -142,7 +161,9 @@ export default function AddProjects() {
                 type="text"
                 className="w-full mt-1 px-4 py-3 border rounded-xl"
                 value={project.budget}
-                onChange={(e) => setProject({ ...project, budget: e.target.value })}
+                onChange={(e) =>
+                  setProject({ ...project, budget: e.target.value })
+                }
                 required
               />
             </div>
@@ -154,7 +175,9 @@ export default function AddProjects() {
                 type="date"
                 className="w-full mt-1 px-4 py-3 border rounded-xl"
                 value={project.startDate}
-                onChange={(e) => setProject({ ...project, startDate: e.target.value })}
+                onChange={(e) =>
+                  setProject({ ...project, startDate: e.target.value })
+                }
                 required
               />
             </div>
@@ -165,7 +188,9 @@ export default function AddProjects() {
               <select
                 className="w-full mt-1 px-4 py-3 border rounded-xl"
                 value={project.status}
-                onChange={(e) => setProject({ ...project, status: e.target.value })}
+                onChange={(e) =>
+                  setProject({ ...project, status: e.target.value })
+                }
                 required
               >
                 <option value="">Select</option>
@@ -183,14 +208,18 @@ export default function AddProjects() {
               rows={6}
               className="w-full mt-1 px-4 py-3 border rounded-xl"
               value={project.description}
-              onChange={(e) => setProject({ ...project, description: e.target.value })}
+              onChange={(e) =>
+                setProject({ ...project, description: e.target.value })
+              }
               required
             ></textarea>
           </div>
 
           {/* Image Upload */}
           <div>
-            <label className="text-sm text-stone-600 block mb-2">Project Images</label>
+            <label className="text-sm text-stone-600 block mb-2">
+              Project Images
+            </label>
 
             <label className="block w-full py-8 border-2 border-dashed rounded-xl text-center cursor-pointer bg-stone-50">
               <Upload className="mx-auto w-10 h-10 text-stone-400" />
@@ -207,7 +236,10 @@ export default function AddProjects() {
             {/* Image Preview Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
               {images.map((img, index) => (
-                <div key={index} className="relative bg-white border rounded-xl shadow p-3">
+                <div
+                  key={index}
+                  className="relative bg-white border rounded-xl shadow p-3"
+                >
                   <img
                     src={img.preview}
                     alt="preview"
