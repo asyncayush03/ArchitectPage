@@ -20,6 +20,7 @@ import Home from "./pages/home.jsx";
 import ProjectDetails from "./pages/ProjectDetails.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import EditProject from "./pages/admin/EditProject.jsx";
+import PublicRoute from "./components/PublicRoute.jsx";
 
 function App() {
   return (
@@ -33,13 +34,13 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path = "/register" element ={<Register/>}/>
           <Route path="/projects/:id" element={<ProjectDetails />} />
           
 
           {/* Admin Routes */}
+          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute> } />
           <Route path="/admin/blogs" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
           <Route path="/admin/blogs/new" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />
 
