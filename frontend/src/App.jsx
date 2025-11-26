@@ -37,8 +37,7 @@ function App() {
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path = "/register" element ={<Register/>}/>
           <Route path="/projects/:id" element={<ProjectDetails />} />
-          
-
+        
           {/* Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute> } />
           <Route path="/admin/blogs" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
