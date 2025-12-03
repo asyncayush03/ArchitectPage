@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ContactPage from "./pages/ContactPage";
 import ManageBlogs from "./pages/admin/ManageBlogs.jsx";
 import BlogPage from "./pages/BlogPage";
-import Studio from "./pages/studio";
+import Aboutus from "./pages/Aboutus.jsx";
 import Login from "./pages/login";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
 import AddBlog from "./pages/admin/AddBlog.jsx";
@@ -30,7 +30,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home/>} />
-          <Route path="/studio" element={<Studio />} />
+          <Route path="/aboutus" element={<Aboutus />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogPage />} />

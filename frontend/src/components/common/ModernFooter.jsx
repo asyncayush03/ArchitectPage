@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import CentanniLogo from "../../assets/centanni-logo.png"; // <-- update path if needed
 
 const ModernFooter = () => {
   const [hoveredSocial, setHoveredSocial] = useState(null);
@@ -119,24 +120,16 @@ const ModernFooter = () => {
           {/* Company Info */}
           <div className="footer-item">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-700 rounded-lg flex items-center justify-center shadow-lg shadow-red-500/30 float-animation">
-                  <span className="text-white font-bold text-xl">J</span>
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-red-600 rounded-full shadow-md" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-900 font-semibold text-xl tracking-tight">
-                  J.B.K.
-                </span>
-                <span className="text-gray-500 text-[10px] tracking-[0.2em] uppercase font-medium">
-                  Architecture
-                </span>
-              </div>
+              <img
+                src={CentanniLogo}
+                alt="CENT'ANNI logo"
+                className="h-10 md:h-12 w-auto float-animation"
+              />
             </div>
+
             <p className="text-gray-600 text-sm leading-relaxed mb-6">
-              Creating exceptional digital experiences that inspire and engage.
-              Your trusted partner in creative excellence.
+              Creating exceptional experiences that inspire and endure. CENT&apos;ANNI
+              combines contemporary design with timeless craftsmanship.
             </p>
 
             {/* Contact Info */}
@@ -160,7 +153,7 @@ const ModernFooter = () => {
               <div className="flex items-center gap-3 group cursor-pointer">
                 <Mail className="w-5 h-5 text-red-600 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <p className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
-                  hello@creative.com
+                  hello@centanni.com
                 </p>
               </div>
             </div>
@@ -210,7 +203,7 @@ const ModernFooter = () => {
             </ul>
           </div>
 
-          {/* Business Hours */}
+          {/* Business Hours + Social */}
           <div className="footer-item">
             <h5 className="text-gray-900 font-semibold text-sm tracking-wide mb-6 uppercase">
               Business Hours
@@ -252,7 +245,7 @@ const ModernFooter = () => {
                       }`}
                       style={{
                         background: isHovered
-                          ? `linear-gradient(135deg, #ef4444, #dc2626)`
+                          ? "linear-gradient(135deg, #ef4444, #dc2626)"
                           : "white",
                       }}
                     >
@@ -267,8 +260,8 @@ const ModernFooter = () => {
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
-          <div className="flex items-center gap-6">
-            <p>© 2024 Creative Studio. All Rights Reserved.</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <p>© 2024 CENT&apos;ANNI. All Rights Reserved.</p>
             <a
               href="/privacy"
               className="hover:text-red-600 transition-colors duration-300"
@@ -286,7 +279,7 @@ const ModernFooter = () => {
           <div className="flex items-center gap-2">
             <span className="text-gray-500">Made with</span>
             <span className="text-red-600 animate-pulse">❤</span>
-            <span className="text-gray-500">by Creative Team</span>
+            <span className="text-gray-500">by CENT&apos;ANNI Studio</span>
           </div>
         </div>
       </div>

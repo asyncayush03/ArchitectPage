@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import CentanniLogo from "../../assets/centanni-logo.png"; // <-- update path if needed
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -16,7 +17,7 @@ const Navbar = () => {
 
   const navItems = [
     { label: "Projects", path: "/projects" },
-    { label: "Studio", path: "/studio" },
+    { label: "About Us", path: "/aboutus" },
     { label: "Blog", path: "/blog" },
     { label: "Media", path: "/media" },
     { label: "Contact", path: "/contact" },
@@ -30,10 +31,6 @@ const Navbar = () => {
         @keyframes slideDown {
           from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
         }
         .mobile-menu-enter {
           animation: slideDown 0.25s ease-out;
@@ -51,27 +48,18 @@ const Navbar = () => {
             : "bg-white/90 border-b border-gray-100 backdrop-blur-lg"
         }`}
       >
-        {/* Subtle glow line under navbar */}
+        {/* glow line */}
         <div className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             {/* Logo */}
             <a href="/" className="group flex items-center space-x-3">
-              <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-700 rounded-lg flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg shadow-red-500/30">
-                  <span className="text-white font-bold text-lg">J</span>
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-red-600 rounded-full transform group-hover:scale-125 transition-transform duration-300 shadow-md" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-900 font-semibold text-xl tracking-tight leading-tight">
-                  J.B.K.
-                </span>
-                <span className="text-gray-500 text-[10px] tracking-[0.2em] uppercase font-medium">
-                  Architecture
-                </span>
-              </div>
+              <img
+                src={CentanniLogo}
+                alt="CENT'ANNI logo"
+                className="h-8 md:h-10 w-auto transform group-hover:scale-110 group-hover:translate-y-0.5 transition-transform duration-300"
+              />
             </a>
 
             {/* Desktop Navigation */}
@@ -85,11 +73,11 @@ const Navbar = () => {
                     }
                     onMouseLeave={() => setActiveDropdown(null)}
                     className={`relative px-5 py-2 text-sm tracking-wide transition-all duration-300 group flex items-center gap-1
-    ${
-      isActive(item.path)
-        ? "text-red-600 font-medium"
-        : "text-gray-700 hover:text-red-600 font-light"
-    }`}
+                      ${
+                        isActive(item.path)
+                          ? "text-red-600 font-medium"
+                          : "text-gray-700 hover:text-red-600 font-light"
+                      }`}
                   >
                     <span>{item.label}</span>
                     {item.hasDropdown && (
@@ -102,15 +90,15 @@ const Navbar = () => {
 
                     <span
                       className={`absolute bottom-1 left-1/2 -translate-x-1/2 h-[2px] bg-gradient-to-r from-red-500 to-red-600 rounded-full transition-all duration-300
-    ${
-      isActive(item.path)
-        ? "w-3/4 opacity-100"
-        : "w-0 group-hover:w-3/4 opacity-0 group-hover:opacity-100"
-    }`}
+                        ${
+                          isActive(item.path)
+                            ? "w-3/4 opacity-100"
+                            : "w-0 group-hover:w-3/4 opacity-0 group-hover:opacity-100"
+                        }`}
                     />
                   </a>
 
-                  {/* Dropdown Menu */}
+                  {/* Dropdown Menu (if used later) */}
                   {item.hasDropdown && activeDropdown === index && (
                     <div
                       onMouseEnter={() => setActiveDropdown(index)}
@@ -155,11 +143,7 @@ const Navbar = () => {
               className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-300"
               aria-label="Toggle menu"
             >
-              {menuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
@@ -196,7 +180,7 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* Spacer so page content is not hidden behind fixed navbar */}
+      {/* Spacer so content not hidden behind navbar */}
       <div aria-hidden="true" className="h-20" />
     </>
   );

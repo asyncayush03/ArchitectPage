@@ -1,0 +1,176 @@
+import React from "react";
+import { Building2, Users, Award, Sparkles, ChevronDown } from "lucide-react";
+
+export default function Aboutus() {
+
+  const projectImages = [
+    { title: "Modern Villa", category: "Residential", image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" },
+    { title: "Corporate Hub", category: "Commercial", image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop" },
+    { title: "Urban Oasis", category: "Mixed Use", image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop" },
+    { title: "Skyline Tower", category: "High Rise", image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&h=600&fit=crop" },
+    { title: "Heritage Restoration", category: "Restoration", image: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800&h=600&fit=crop" },
+    { title: "Innovation Center", category: "Corporate", image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop" },
+    { title: "Coastal Retreat", category: "Residential", image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop" },
+    { title: "Plaza Design", category: "Public Space", image: "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&h=600&fit=crop" },
+    { title: "Boutique Hotel", category: "Hospitality", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop" },
+  ];
+
+  const strengths = [
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: "Hands-on approach",
+      desc: "Our team oversees projects to maintain the highest standards.",
+    },
+    {
+      icon: <Sparkles className="w-6 h-6" />,
+      title: "Contemporary style",
+      desc: "We draw inspiration from local environment and heritage.",
+    },
+    {
+      icon: <Building2 className="w-6 h-6" />,
+      title: "Comprehensive approach",
+      desc: "We provide master planning and landscape design services.",
+    },
+    {
+      icon: <Award className="w-6 h-6" />,
+      title: "Industry recognition",
+      desc: "Featured in international architecture publications.",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+      <style>{`
+        * {-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
+        body {overflow-x: hidden;}
+      `}</style>
+
+      {/* HERO */}
+      <header className="relative text-center py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-red-50/30 to-transparent"></div>
+        <div className="relative z-10">
+          <div className="inline-block mb-4 px-8 py-2 bg-red-500/5 rounded-full border border-red-200/30">
+            <h1 className="text-gray-800 text-sm tracking-[0.4em] font-light">
+              ABOUT US
+            </h1>
+          </div>
+          <div className="w-24 h-px bg-gradient-to-r from-transparent via-red-400 to-transparent mx-auto mt-6"></div>
+        </div>
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
+          <ChevronDown className="w-6 h-6 text-gray-400" />
+        </div>
+      </header>
+
+      {/* FOUNDERS */}
+      <section className="w-full px-4 sm:px-6 lg:px-8 mb-24">
+        <div className="relative group overflow-hidden rounded-lg shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+
+          <img
+            src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&h=900&fit=crop"
+            alt="Founders"
+            className="w-full h-auto transform-gpu transition-transform duration-500 group-hover:scale-105"
+          />
+
+          <div className="absolute top-6 right-6 z-20 animate-float">
+            <div className="bg-gradient-to-br from-red-500 to-red-600 text-white px-6 py-3 text-xs font-bold shadow-lg">
+              <div className="flex items-center gap-2">
+                <Award className="w-4 h-4" />
+                <div>
+                  <div>ARCHITECTURE</div>
+                  <div className="text-[10px]">TOP FIFTY</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 z-20 p-12 text-white">
+            <h2 className="text-3xl font-light mb-4 tracking-wide">
+              Visionary Leadership
+            </h2>
+            <p className="text-sm text-gray-200 max-w-3xl leading-relaxed">
+              Founded by pioneers in contemporary architecture and sustainable design.
+            </p>
+          </div>
+        </div>
+
+        {/* Company Info */}
+        <div className="mt-16 text-gray-600 text-sm leading-relaxed text-center max-w-5xl mx-auto px-4">
+          <p className="mb-6">
+            <span className="text-2xl font-light text-gray-800 block mb-4">
+              J.B.K. Architecture
+            </span>
+            Established in 2002 — specializing in contemporary and sustainable architecture across India.
+          </p>
+        </div>
+
+        {/* Project Showcase */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-20 px-4">
+          {projectImages.map((img, idx) => (
+            <div
+              key={idx}
+              className="group relative overflow-hidden rounded-lg shadow-lg cursor-pointer"
+            >
+              <img
+                src={img.image}
+                alt={img.title}
+                className="w-full h-full object-cover transform-gpu transition-transform duration-300 group-hover:scale-105 aspect-video"
+              />
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent
+                opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6"
+              >
+                <div>
+                  <p className="text-white font-semibold text-sm mb-1">
+                    {img.title}
+                  </p>
+                  <p className="text-red-400 text-xs tracking-wider">
+                    {img.category}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Strengths Section */}
+      <section className="w-full px-4 sm:px-6 lg:px-8 mb-32">
+        <div className="text-center mb-16">
+          <div className="inline-block mb-4 px-8 py-2 bg-gradient-to-r from-red-500/10 via-red-500/10 to-red-500/10 rounded-full">
+            <h2 className="text-red-400 text-lg tracking-[0.3em] font-light">
+              STRENGTHS
+            </h2>
+          </div>
+          <div className="w-24 h-px bg-gradient-to-r from-transparent via-red-400 to-transparent mx-auto"></div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+          {strengths.map((strength, idx) => (
+            <div
+              key={idx}
+              className="p-8 rounded-lg bg-white shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-red-200"
+            >
+              <div className="flex items-start gap-4">
+                <div className="text-red-500">{strength.icon}</div>
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-3 text-base">
+                    {strength.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    {strength.desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="text-center py-16 text-gray-500 text-sm border-t border-gray-200 mt-24">
+        © 2025 J.B.K. Architecture — All Rights Reserved
+      </footer>
+    </div>
+  );
+}
