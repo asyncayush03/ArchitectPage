@@ -1,26 +1,27 @@
-import React, { useState } from "react";
 import {
   Instagram,
   Twitter,
   Linkedin,
   Facebook,
+  Youtube,
   Mail,
   Phone,
   MapPin,
   ArrowRight,
   Send,
 } from "lucide-react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const ModernFooter = () => {
   const [hoveredSocial, setHoveredSocial] = useState(null);
   const [email, setEmail] = useState("");
 
   const quickLinks = [
-    { label: "About Us", url: "/about" },
-    { label: "Services", url: "/services" },
-    { label: "Portfolio", url: "/portfolio" },
+    { label: "Projects", url: "/projects" },
+    { label: "Studio", url: "/studio" },
     { label: "Blog", url: "/blog" },
-    { label: "Careers", url: "/careers" },
+    { label: "Media", url: "/media" },
     { label: "Contact", url: "/contact" },
   ];
 
@@ -32,10 +33,10 @@ const ModernFooter = () => {
   ];
 
   const socialLinks = [
-    { icon: Instagram, label: "Instagram", url: "#", color: "from-pink-500 to-purple-600" },
-    { icon: Twitter, label: "Twitter", url: "#", color: "from-blue-400 to-blue-600" },
-    { icon: Linkedin, label: "LinkedIn", url: "#", color: "from-blue-600 to-blue-800" },
-    { icon: Facebook, label: "Facebook", url: "#", color: "from-blue-500 to-blue-700" },
+    { icon: Instagram, label: "Instagram", url: "#" },
+    { icon: Youtube, label: "YouTube", url: "#" },
+    { icon: Facebook, label: "Facebook", url: "#" },
+    { icon: Mail, label: "Email", url: "#" },
   ];
 
   const handleNewsletterSubmit = () => {
@@ -73,22 +74,22 @@ const ModernFooter = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-
         {/* CTA Section */}
         <div className="mb-16 text-center">
           <div className="relative mb-8 flex justify-center">
             <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
             <h2 className="relative text-center text-red-600 text-xs tracking-[0.3em] font-semibold bg-gradient-to-br from-gray-50 to-white px-6 uppercase">
-              Stay Connected
+              Get in touch
             </h2>
           </div>
 
           <h3 className="text-gray-900 text-4xl md:text-5xl font-light mb-6 tracking-tight">
-            Let&apos;s Build Something Amazing
+            Let&apos;s Create Something Beautiful
           </h3>
 
           <p className="text-gray-600 text-center max-w-2xl mx-auto leading-relaxed mb-8">
-            Join our community and get the latest updates on projects, insights, and industry trends delivered to your inbox.
+            We are ready to lead you into the exciting world of contemporary
+            architecture and sustainable design.
           </p>
 
           {/* Newsletter */}
@@ -115,35 +116,36 @@ const ModernFooter = () => {
 
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 pb-12 border-b border-gray-200">
-
           {/* Company Info */}
           <div className="footer-item">
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative">
                 <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-700 rounded-lg flex items-center justify-center shadow-lg shadow-red-500/30 float-animation">
-                  <span className="text-white font-bold text-xl">L</span>
+                  <span className="text-white font-bold text-xl">J</span>
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-red-600 rounded-full shadow-md" />
               </div>
               <div className="flex flex-col">
                 <span className="text-gray-900 font-semibold text-xl tracking-tight">
-                  LOGO
+                  J.B.K.
                 </span>
                 <span className="text-gray-500 text-[10px] tracking-[0.2em] uppercase font-medium">
-                  Creative Studio
+                  Architecture
                 </span>
               </div>
             </div>
             <p className="text-gray-600 text-sm leading-relaxed mb-6">
-              Creating exceptional digital experiences that inspire and engage. Your trusted partner in creative excellence.
+              Creating exceptional digital experiences that inspire and engage.
+              Your trusted partner in creative excellence.
             </p>
-            
+
             {/* Contact Info */}
             <div className="space-y-3 text-sm">
               <div className="flex items-start gap-3 group cursor-pointer">
                 <MapPin className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform duration-300" />
                 <p className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
-                  123 Creative Street<br />
+                  123 Creative Street
+                  <br />
                   Design District, City 12345
                 </p>
               </div>
@@ -172,15 +174,15 @@ const ModernFooter = () => {
             <ul className="space-y-3">
               {quickLinks.map((link, index) => (
                 <li key={index}>
-                  <a
-                    href={link.url}
+                  <Link
+                    to={link.url}
                     className="group inline-flex items-center text-sm text-gray-600 hover:text-red-600 transition-all duration-300"
                   >
                     <ArrowRight className="w-0 h-4 mr-0 text-red-600 group-hover:w-4 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" />
                     <span className="group-hover:translate-x-1 transform transition-transform duration-300">
                       {link.label}
                     </span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -229,7 +231,9 @@ const ModernFooter = () => {
             </div>
 
             <div className="mt-6 pt-6 border-t border-gray-200">
-              <p className="text-xs text-gray-500 mb-3 uppercase tracking-wide">Follow Us</p>
+              <p className="text-xs text-gray-500 mb-3 uppercase tracking-wide">
+                Follow Us
+              </p>
               <div className="flex gap-3">
                 {socialLinks.map((social, index) => {
                   const IconComponent = social.icon;
@@ -265,10 +269,16 @@ const ModernFooter = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
           <div className="flex items-center gap-6">
             <p>© 2024 Creative Studio. All Rights Reserved.</p>
-            <a href="/privacy" className="hover:text-red-600 transition-colors duration-300">
+            <a
+              href="/privacy"
+              className="hover:text-red-600 transition-colors duration-300"
+            >
               Privacy Policy
             </a>
-            <a href="/terms" className="hover:text-red-600 transition-colors duration-300">
+            <a
+              href="/terms"
+              className="hover:text-red-600 transition-colors duration-300"
+            >
               Terms of Service
             </a>
           </div>
