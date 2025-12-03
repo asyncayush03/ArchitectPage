@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDown, ArrowRight, MapPin, Calendar, Maximize2 } from "lucide-react";
+import { ChevronDown, ArrowRight, MapPin, Calendar, Maximize2, Sparkles } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -10,220 +10,349 @@ const Projects = () => {
   const [hoveredProject, setHoveredProject] = useState(null);
   const [projects, setProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const PROJECTS_PER_PAGE = 15;
- // ----------------------------
-// FETCH PROJECTS FROM BACKEND
-// ----------------------------
-useEffect(() => {
-  const loadProjects = async () => {
-    try {
-      const res = await axios.get("/api/v1/admin/project");  // ✅ FIXED PATH
-      console.log("Fetched Projects:", res.data);
 
-      setProjects(res.data.projects || []);
-    } catch (error) {
-      console.log("Error loading projects", error);
-    }
-  };
+  // ----------------------------
+  // FETCH PROJECTS FROM BACKEND
+  // ----------------------------
+  useEffect(() => {
+    const loadProjects = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get("/api/v1/admin/project");
+        console.log("Fetched Projects:", res.data);
+        setProjects(res.data.projects || []);
+      } catch (error) {
+        console.log("Error loading projects", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  loadProjects();
-}, []);
+    loadProjects();
+  }, []);
 
-useEffect(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [activeFilter]);
 
   // ----------------------------
-  // FILTERS
+  // UPDATED FILTERS
   // ----------------------------
   const categories = [
     { id: "all", label: "All Projects" },
-    { id: "interiors", label: "Interiors" },
     { id: "architecture", label: "Architecture" },
-    { id: "commercial", label: "Commercial" },
-    { id: "product", label: "Product Design" },
+    { id: "interiors", label: "Interiors" },
+    { id: "landscapes", label: "Landscapes" },
+    { id: "urban planning", label: "Urban Planning" },
+    { id: "exhibitions", label: "Exhibitions" },
+    { id: "competitions", label: "Competitions" },
+    { id: "sketches", label: "Sketches" },
   ];
 
-   const filteredProjects =
-  activeFilter === "all"
-    ? projects
-    : projects.filter((p) => p.type?.toLowerCase() === activeFilter);
-
+  const filteredProjects =
+    activeFilter === "all"
+      ? projects
+      : projects.filter((p) => p.type?.toLowerCase() === activeFilter);
 
   const indexOfLast = currentPage * PROJECTS_PER_PAGE;
   const indexOfFirst = indexOfLast - PROJECTS_PER_PAGE;
   const currentProjects = filteredProjects.slice(indexOfFirst, indexOfLast);
 
   const totalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+    <>
       <style>{`
-        * {-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
-        body {overflow-x: hidden;}
-        @keyframes fade-in {from {opacity: 0;transform: translateY(20px);}to {opacity: 1;transform: translateY(0);}}
-        .animate-fade-in {animation: fade-in 0.8s ease-out;will-change: opacity, transform;}
-        .scroll-indicator {animation: bounce 2s infinite;}
-        @keyframes bounce {0%, 100% { transform: translateY(0); }50% { transform: translateY(10px); }}
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
+        @keyframes fadeInUp { 
+          from { opacity: 0; transform: translateY(30px); } 
+          to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes slideInLeft { 
+          from { opacity: 0; transform: translateX(-30px); } 
+          to { opacity: 1; transform: translateX(0); } 
+        }
+        @keyframes bounceSlow { 
+          0%, 100% { transform: translateY(0); } 
+          50% { transform: translateY(-10px); } 
+        }
+        @keyframes shimmer {
+          0% { background-position: -1000px 0; }
+          100% { background-position: 1000px 0; }
+        }
+        
+        .animate-fade-in-up { 
+          animation: fadeInUp 0.8s ease-out forwards; 
+        }
+        .animate-slide-in-left { 
+          animation: slideInLeft 0.8s ease-out forwards; 
+        }
+        .animate-bounce-slow { 
+          animation: bounceSlow 2s ease-in-out infinite; 
+        }
+        
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        
+        .shimmer-effect {
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite;
+        }
       `}</style>
 
-      {/* Hero Header */}
-      <header className="relative text-center py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-100/50 to-transparent"></div>
-        <div className="relative z-10">
-          <div className="inline-block mb-4 px-8 py-2 bg-gradient-to-r from-amber-500/10 via-red-500/10 to-amber-500/10 rounded-full">
-            <h1 className="text-gray-800 text-sm tracking-[0.4em] font-light">
-              PROJECTS
-            </h1>
+      <div className="bg-white text-gray-800 min-h-screen">
+        
+        {/* Hero Section */}
+        <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent" />
+          
+          {/* Animated background elements */}
+          <div className="absolute top-20 right-20 w-72 h-72 bg-red-500/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-red-600/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          
+          <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+            <div className="mb-6 overflow-hidden">
+              <p className="text-sm tracking-[0.3em] text-red-600 font-medium uppercase animate-fade-in-up">
+                OUR PORTFOLIO
+              </p>
+            </div>
+            
+            <div className="overflow-hidden">
+              <h1 className="text-5xl md:text-7xl font-light mb-6 tracking-tight text-gray-900 animate-fade-in-up delay-100">
+                Featured Projects
+              </h1>
+            </div>
+            
+            <div className="overflow-hidden">
+              <p className="text-xl text-gray-600 mb-12 font-light max-w-2xl mx-auto animate-fade-in-up delay-200">
+                Explore our collection of contemporary architecture, interior design, and innovative spatial solutions
+              </p>
+            </div>
           </div>
-          <div className="w-24 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mt-6 mb-8"></div>
-          <p className="text-gray-600 text-sm max-w-2xl mx-auto px-4 leading-relaxed">
-            Explore our portfolio of contemporary architecture, interior design, commercial spaces, and bespoke product collections
-          </p>
-        </div>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
-          <ChevronDown className="w-6 h-6 text-gray-400" />
-        </div>
-      </header>
+          
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce-slow">
+            <ChevronDown className="w-6 h-6 text-gray-400" />
+          </div>
+        </section>
 
-      {/* Filter Navigation */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div className="flex flex-wrap justify-center gap-3">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setActiveFilter(category.id)}
-              className={`px-6 py-2 text-xs tracking-wider font-light rounded-full transition-all duration-300 ${
-                activeFilter === category.id
-                  ? "bg-gradient-to-r from-red-400 to-amber-400 text-white shadow-lg"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-amber-300 hover:text-gray-800"
-              }`}
-            >
-              {category.label}
-            </button>
-          ))}
-        </div>
-      </section>
+        {/* Filter Navigation */}
+        <section className="py-16 bg-white border-y border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8">
+              <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-2">FILTER BY CATEGORY</p>
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto" />
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-3">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setActiveFilter(category.id)}
+                  className={`px-6 py-3 text-sm tracking-wide transition-all duration-300 ${
+                    activeFilter === category.id
+                      ? "bg-red-600 text-white shadow-lg shadow-red-600/30 scale-105"
+                      : "bg-white text-gray-700 border-2 border-gray-200 hover:border-red-600 hover:text-red-600 hover:shadow-md"
+                  }`}
+                >
+                  {category.label}
+                </button>
+              ))}
+            </div>
+            
+            <div className="text-center mt-6">
+              <p className="text-sm text-gray-500">
+                Showing <span className="font-semibold text-gray-900">{filteredProjects.length}</span> {activeFilter === "all" ? "projects" : `${activeFilter} projects`}
+              </p>
+            </div>
+          </div>
+        </section>
 
-      {/* Projects Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-32">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-         {currentProjects.map((project, index) => {
-            const firstImage = project.images?.[0]?.url
-              ? `http://localhost:8080${project.images[0].url}`
-              : "https://via.placeholder.com/800x600?text=No+Image";
-
-            return (
-              <div
-                key={project._id}
-                className={`group relative overflow-hidden rounded-lg shadow-lg cursor-pointer transform hover:shadow-2xl transition-all duration-500 animate-fade-in stagger-${
-                  (index % 3) + 1
-                }`}
-                onMouseEnter={() => setHoveredProject(project._id)}
-                onMouseLeave={() => setHoveredProject(null)}
-                onClick={() => navigate(`/projects/${project._id}`)}
-              >
-                <div className="relative h-80 overflow-hidden">
-                  <img
-                    src={firstImage}
-                    alt={project.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-
-                  {/* Category */}
-                  <div className="absolute top-4 right-4 z-20">
-                    <div className="bg-white/90 backdrop-blur-sm px-4 py-1 text-xs font-semibold text-gray-800 tracking-wide uppercase">
-                      {project.type || "Project"}
-                    </div>
-                  </div>
-
-                  {/* Zoom icon */}
-                  <div className="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300">
-                    <Maximize2 className="w-5 h-5 text-gray-800" />
-                  </div>
-
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-80 group-hover:opacity-100 transition-all duration-500 z-10"></div>
-
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-20">
-                    <h3 className="text-xl font-light mb-2 tracking-wide group-hover:text-amber-400 transition-colors duration-300">
-                      {project.name}
-                    </h3>
-
-                    <div className="flex items-center gap-4 mb-3 text-xs text-gray-300">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        <span>{project.location || "N/A"}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        <span>
-                          {project.startDate
-                            ? new Date(project.startDate).getFullYear()
-                            : "----"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <p className="text-sm text-gray-200 leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                      {project.description?.slice(0, 100)}...
-                    </p>
-
-                    <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold tracking-wide opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                      <span>VIEW PROJECT</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </div>
+        {/* Projects Grid */}
+        <section className="py-24 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4" />
+                <p className="text-gray-600">Loading projects...</p>
               </div>
-            );
-          })}
-        </div>
+            ) : filteredProjects.length === 0 ? (
+              <div className="text-center py-20">
+                <Sparkles className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg">No projects found in this category</p>
+                <button 
+                  onClick={() => setActiveFilter("all")}
+                  className="mt-4 px-6 py-2 bg-red-600 text-white hover:bg-red-700 transition-colors duration-300"
+                >
+                  View All Projects
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {currentProjects.map((project, index) => {
+                  const firstImage = project.images?.[0]?.url
+                    ? `http://localhost:8080${project.images[0].url}`
+                    : "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop";
 
-        {filteredProjects.length === 0 && (
-          <p className="text-center text-gray-500 mt-10">
-            No projects found in this category.
-          </p>
-        )}
+                  return (
+                    <div
+                      key={project._id}
+                      className="group cursor-pointer bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in-up"
+                      style={{ animationDelay: `${(index % 3) * 0.1}s`, opacity: 0 }}
+                      onMouseEnter={() => setHoveredProject(project._id)}
+                      onMouseLeave={() => setHoveredProject(null)}
+                      onClick={() => navigate(`/projects/${project._id}`)}
+                    >
+                      <div className="relative overflow-hidden h-64">
+                        <img
+                          src={firstImage}
+                          alt={project.name}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                        
+                        {/* Category Badge */}
+                        <div className="absolute top-4 left-4">
+                          <span className="px-3 py-1 bg-red-600 text-white text-xs font-medium uppercase tracking-wider">
+                            {project.type || "Project"}
+                          </span>
+                        </div>
+                        
+                        {/* Zoom Icon */}
+                        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+                          hoveredProject === project._id ? "opacity-100" : "opacity-0"
+                        }`}>
+                          <Maximize2 className="w-12 h-12 text-white" />
+                        </div>
+                      </div>
+                      
+                      <div className="p-6">
+                        <h3 className="text-xl font-medium mb-2 text-gray-900 group-hover:text-red-600 transition-colors duration-300">
+                          {project.name}
+                        </h3>
+                        
+                        <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            {project.location || "N/A"}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {project.startDate ? new Date(project.startDate).getFullYear() : "----"}
+                          </span>
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2">
+                          {project.description || "Explore this exceptional project showcasing our commitment to design excellence."}
+                        </p>
+                        
+                        <button className="text-red-600 font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 hover:text-red-700">
+                          VIEW PROJECT
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
-        {/* PAGINATION BUTTONS */}
-{totalPages > 1 && (
-  <div className="flex justify-center items-center gap-4 mt-16">
-    <button
-      disabled={currentPage === 1}
-      onClick={() => setCurrentPage((p) => p - 1)}
-      className={`px-5 py-2 text-sm rounded-lg border ${
-        currentPage === 1
-          ? "bg-gray-200 cursor-not-allowed"
-          : "bg-white hover:bg-gray-100"
-      }`}
-    >
-      Previous
-    </button>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-16">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className={`px-6 py-3 text-sm font-medium transition-all duration-300 ${
+                    currentPage === 1
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 border-2 border-gray-200 hover:border-red-600 hover:text-red-600 hover:shadow-md"
+                  }`}
+                >
+                  Previous
+                </button>
 
-    <span className="text-gray-700 text-sm">
-      Page {currentPage} of {totalPages}
-    </span>
+                <div className="flex items-center gap-2">
+                  {[...Array(Math.min(totalPages, 5))].map((_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-10 h-10 rounded-full text-sm font-medium transition-all duration-300 ${
+                          currentPage === pageNum
+                            ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
+                            : "bg-white text-gray-700 border-2 border-gray-200 hover:border-red-600 hover:text-red-600"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
 
-    <button
-      disabled={currentPage === totalPages}
-      onClick={() => setCurrentPage((p) => p + 1)}
-      className={`px-5 py-2 text-sm rounded-lg border ${
-        currentPage === totalPages
-          ? "bg-gray-200 cursor-not-allowed"
-          : "bg-white hover:bg-gray-100"
-      }`}
-    >
-      Next
-    </button>
-  </div>
-)}
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className={`px-6 py-3 text-sm font-medium transition-all duration-300 ${
+                    currentPage === totalPages
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 border-2 border-gray-200 hover:border-red-600 hover:text-red-600 hover:shadow-md"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
 
-      </section>
-    </div>
+        {/* CTA Section */}
+        <section className="py-24 bg-gradient-to-br from-red-600 to-red-700 text-white relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+          </div>
+          
+          <div className="max-w-4xl mx-auto text-center px-4 relative z-10">
+            <h2 className="text-4xl md:text-5xl font-light mb-6">Have a Project in Mind?</h2>
+            <p className="text-xl text-white/90 mb-12 max-w-2xl mx-auto">
+              Let's collaborate to bring your architectural vision to life. Our team is ready to create something exceptional.
+            </p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <button 
+                onClick={() => navigate("/contact")}
+                className="px-8 py-4 bg-white text-red-600 font-medium hover:bg-gray-100 transition-all duration-300 flex items-center gap-2 hover:scale-105 hover:shadow-2xl active:scale-95"
+              >
+                START A PROJECT
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <button 
+                onClick={() => navigate("/studio")}
+                className="px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-red-600 transition-all duration-300 hover:scale-105 active:scale-95"
+              >
+                LEARN MORE
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </>
   );
 };
 
