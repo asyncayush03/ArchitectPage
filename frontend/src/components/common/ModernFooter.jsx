@@ -11,7 +11,7 @@ import {
   Send,
 } from "lucide-react";
 
-const Footer = () => {
+const ModernFooter = () => {
   const [hoveredSocial, setHoveredSocial] = useState(null);
   const [email, setEmail] = useState("");
 
@@ -284,4 +284,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default ModernFooter;
