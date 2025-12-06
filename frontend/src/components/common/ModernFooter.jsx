@@ -26,13 +26,12 @@ const ModernFooter = () => {
   ];
 
   const services = [
-  { label: "Architecture", url: "/services/architecture" },
-  { label: "Interior Design", url: "/services/interior" },
-  { label: "Landscape Architecture", url: "/services/landscape" },
-  { label: "Urban Planning", url: "/services/urban-planning" },
-  { label: "Exhibitions", url: "/services/exhibitions" },
-];
-
+    { label: "Architecture", url: "/services/architecture" },
+    { label: "Interior Design", url: "/services/interior" },
+    { label: "Landscape Architecture", url: "/services/landscape" },
+    { label: "Urban Planning", url: "/services/urban-planning" },
+    { label: "Exhibitions", url: "/services/exhibitions" },
+  ];
 
   const socialLinks = [
     { icon: Instagram, label: "Instagram", url: "#" },
@@ -77,7 +76,7 @@ const ModernFooter = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* CTA Section */}
-        <div className="mb-16 text-center">
+        {/* <div className="mb-16 text-center">
           <div className="relative mb-8 flex justify-center">
             <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
             <h2 className="relative text-center text-red-600 text-xs tracking-[0.3em] font-semibold bg-gradient-to-br from-gray-50 to-white px-6 uppercase">
@@ -94,7 +93,7 @@ const ModernFooter = () => {
             architecture and sustainable design.
           </p>
 
-          {/* Newsletter */}
+
           <div className="max-w-md mx-auto flex gap-2">
             <div className="flex-1 relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -114,7 +113,7 @@ const ModernFooter = () => {
               <Send className="w-4 h-4" />
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 pb-12 border-b border-gray-200">
@@ -129,8 +128,8 @@ const ModernFooter = () => {
             </div>
 
             <p className="text-gray-600 text-sm leading-relaxed mb-6">
-              Creating exceptional experiences that inspire and endure. CENT&apos;ANNI
-              combines contemporary design with timeless craftsmanship.
+              We deliver environments that inspire, empower, and endure for
+              generations.
             </p>
 
             {/* Contact Info */}
@@ -138,18 +137,16 @@ const ModernFooter = () => {
               <div className="flex items-start gap-3 group cursor-pointer">
                 <MapPin className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform duration-300" />
                 <p className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
-  E-78, Sector-80
-  <br />
-  Noida, Uttar Pradesh
-</p>
-
+                  E-78, Sector-80
+                  <br />
+                  Noida, Uttar Pradesh
+                </p>
               </div>
 
               <div className="flex items-center gap-3 group cursor-pointer">
                 <Phone className="w-5 h-5 text-red-600 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <p className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
                   +91-7303863399
-
                 </p>
               </div>
 
@@ -284,7 +281,6 @@ const ModernFooter = () => {
             <span className="text-gray-500">Made with</span>
             <span className="text-red-600 animate-pulse">❤</span>
             <span className="text-gray-500">for Generations</span>
-
           </div>
         </div>
       </div>
