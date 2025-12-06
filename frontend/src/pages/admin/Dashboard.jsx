@@ -18,7 +18,7 @@ export default function AdminDashboard() {
       icon: FileText,
       color: "from-amber-500 to-orange-600",
       stats: "24 Articles",
-      to: "/admin/blogs",
+      to: "/admin/media",
     },
     {
       id: "employees",

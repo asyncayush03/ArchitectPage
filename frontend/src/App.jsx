@@ -33,15 +33,15 @@ function App() {
           <Route path="/aboutus" element={<Aboutus />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/media" element={<BlogPage />} />
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path = "/register" element ={<Register/>}/>
           <Route path="/projects/:id" element={<ProjectDetails />} />
         
           {/* Admin Routes */}
           <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute> } />
-          <Route path="/admin/blogs" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
-          <Route path="/admin/blogs/new" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />
+          <Route path="/admin/media" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
+          <Route path="/admin/media/new" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />
 
           <Route path="/admin/employees" element={<ProtectedRoute><AddEmployee /></ProtectedRoute>} />
 

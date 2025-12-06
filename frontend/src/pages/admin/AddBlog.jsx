@@ -66,7 +66,7 @@ export default function AddBlog() {
 
       console.log("✅ Blog added successfully:", res.data);
       alert("Blog added successfully!");
-      navigate("/admin/blogs");
+      navigate("/admin/media");
     } catch (err) {
       console.error("❌ Error adding blog:", err);
       alert("Error adding blog (see console)");
