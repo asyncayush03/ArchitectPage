@@ -21,17 +21,18 @@ const ModernFooter = () => {
   const quickLinks = [
     { label: "Projects", url: "/projects" },
     { label: "Studio", url: "/studio" },
-    { label: "Blog", url: "/blog" },
     { label: "Media", url: "/media" },
     { label: "Contact", url: "/contact" },
   ];
 
   const services = [
-    { label: "Web Design", url: "/services/web-design" },
-    { label: "Brand Identity", url: "/services/branding" },
-    { label: "Digital Marketing", url: "/services/marketing" },
-    { label: "Consulting", url: "/services/consulting" },
-  ];
+  { label: "Architecture", url: "/services/architecture" },
+  { label: "Interior Design", url: "/services/interior" },
+  { label: "Landscape Architecture", url: "/services/landscape" },
+  { label: "Urban Planning", url: "/services/urban-planning" },
+  { label: "Exhibitions", url: "/services/exhibitions" },
+];
+
 
   const socialLinks = [
     { icon: Instagram, label: "Instagram", url: "#" },
@@ -137,23 +138,25 @@ const ModernFooter = () => {
               <div className="flex items-start gap-3 group cursor-pointer">
                 <MapPin className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform duration-300" />
                 <p className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
-                  123 Creative Street
-                  <br />
-                  Design District, City 12345
-                </p>
+  E-78, Sector-80
+  <br />
+  Noida, Uttar Pradesh
+</p>
+
               </div>
 
               <div className="flex items-center gap-3 group cursor-pointer">
                 <Phone className="w-5 h-5 text-red-600 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <p className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
-                  +1 (555) 123-4567
+                  +91-7303863399
+
                 </p>
               </div>
 
               <div className="flex items-center gap-3 group cursor-pointer">
                 <Mail className="w-5 h-5 text-red-600 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <p className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
-                  hello@centanni.com
+                  design@centanni.in
                 </p>
               </div>
             </div>
@@ -261,7 +264,8 @@ const ModernFooter = () => {
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
           <div className="flex flex-wrap items-center gap-4">
-            <p>© 2024 CENT&apos;ANNI. All Rights Reserved.</p>
+            <p>© 2025 CENT’ANNI. All Rights Reserved.</p>
+
             <a
               href="/privacy"
               className="hover:text-red-600 transition-colors duration-300"
@@ -279,7 +283,8 @@ const ModernFooter = () => {
           <div className="flex items-center gap-2">
             <span className="text-gray-500">Made with</span>
             <span className="text-red-600 animate-pulse">❤</span>
-            <span className="text-gray-500">by CENT&apos;ANNI Studio</span>
+            <span className="text-gray-500">for Generations</span>
+
           </div>
         </div>
       </div>
