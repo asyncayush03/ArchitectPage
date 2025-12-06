@@ -94,15 +94,117 @@ export default function Aboutus() {
           </div>
         </div>
 
-        {/* Company Info */}
-        <div className="mt-16 text-gray-600 text-sm leading-relaxed text-center max-w-5xl mx-auto px-4">
-          <p className="mb-6">
-            <span className="text-2xl font-light text-gray-800 block mb-4">
-              J.B.K. Architecture
-            </span>
-            Established in 2002 — specializing in contemporary and sustainable architecture across India.
-          </p>
-        </div>
+        {/* Philosophy + Vision & Mission Section */}
+<section className="mt-20 max-w-6xl mx-auto px-4">
+
+  {/* Section Title */}
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-light text-gray-800 tracking-wide">
+      Who We Are
+    </h2>
+    <div className="w-24 h-px bg-gradient-to-r from-transparent via-red-400 to-transparent mx-auto mt-4"></div>
+  </div>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+    {/* Philosophy Column */}
+    <div
+      className="group p-8 rounded-xl bg-white border border-gray-200 shadow-lg 
+      hover:shadow-2xl hover:border-red-300 transition-all duration-500
+      transform hover:-translate-y-2 opacity-0 translate-y-6 philosophy-card"
+    >
+      {/* Underline Animated Title */}
+      <div className="relative inline-block mb-4">
+        <h3 className="text-red-500 text-base tracking-[0.25em] font-light">
+          OUR PHILOSOPHY
+        </h3>
+        <span className="absolute left-1/2 -bottom-1 w-0 h-[2px] bg-red-500 group-hover:w-full transition-all duration-500 -translate-x-1/2"></span>
+      </div>
+
+      <p className="text-gray-600 text-sm leading-relaxed mb-4">
+        CENT’ANNI is founded on the belief that architecture has the power to 
+        transform lives and communities. The quality of our surroundings directly 
+        influences our sense of wellbeing and belonging.
+      </p>
+
+      <p className="text-gray-600 text-sm leading-relaxed mb-4">
+        Our philosophy focuses on balancing functionality, user experience, 
+        sustainability, and emotional value. We evolve each space through a 
+        meaningful inside-out design approach.
+      </p>
+
+      <p className="text-gray-600 text-sm leading-relaxed mb-4">
+        At the intersection of simplicity, technology, and creativity, 
+        CENT’ANNI creates designs enriched with environmental sensitivity and 
+        cultural context.
+      </p>
+
+      <p className="text-gray-600 text-sm leading-relaxed">
+        Collaboration is central to our process. Guided by our clients’ visions 
+        and shaped by our experience, every project becomes a thoughtful and 
+        impactful architectural journey.
+      </p>
+    </div>
+
+    {/* Vision & Mission Column */}
+    <div
+      className="group p-8 rounded-xl bg-white border border-gray-200 shadow-lg 
+      hover:shadow-2xl hover:border-red-300 transition-all duration-500
+      transform hover:-translate-y-2 opacity-0 translate-y-6 mission-card"
+    >
+      {/* Underline Animated Title */}
+      <div className="relative inline-block mb-4">
+        <h3 className="text-red-500 text-base tracking-[0.25em] font-light">
+          OUR VISION & MISSION
+        </h3>
+        <span className="absolute left-1/2 -bottom-1 w-0 h-[2px] bg-red-500 group-hover:w-full transition-all duration-500 -translate-x-1/2"></span>
+      </div>
+
+      <p className="text-gray-600 text-sm leading-relaxed mb-4">
+        CENT’ANNI envisions becoming a leading architectural practice in the 
+        region and a globally recognized studio driven by design innovation 
+        and timeless quality.
+      </p>
+
+      <p className="text-gray-600 text-sm leading-relaxed mb-4">
+        We devote focused effort to delivering high-precision built environments 
+        through collaboration with structural, MEP, and civil consultants, ensuring 
+        clarity and excellence at every stage.
+      </p>
+
+      <p className="text-gray-600 text-sm leading-relaxed mb-4">
+        Our mission is to create architecture that is aesthetically meaningful, 
+        economically efficient, and environmentally conscious — enriching 
+        communities and uplifting human experience.
+      </p>
+
+      <p className="text-gray-600 text-sm leading-relaxed">
+        CENT’ANNI aims to be a practice shaped by people and for people — working 
+        toward a world that feels more alive, connected, and beautifully livable.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+{/* Animation Styles */}
+<style>{`
+  @keyframes fadeUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .philosophy-card {
+    animation: fadeUp 0.8s ease forwards;
+    animation-delay: 0.1s;
+  }
+
+  .mission-card {
+    animation: fadeUp 0.8s ease forwards;
+    animation-delay: 0.3s;
+  }
+`}</style>
+
 
         {/* Project Showcase */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-20 px-4">
