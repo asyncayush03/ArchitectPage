@@ -125,44 +125,60 @@ const adminLogin = async (req, res) => {
 // ===================================
 // CREATE BLOG
 // ===================================
-const createBlog = (req, res) => {
-  upload(req, res, async (err) => {
-    try {
-      if (err) return res.status(400).send({ success: false, message: err.message });
+const createMediaEvent = async (req, res) => {
+  try {
+    const { title, eventDate } = req.body;
 
-      const { title, content, category } = req.body;
-
-      if (!title) {
-        return res.status(400).send({ success: false, message: "Title is required" });
-      }
-
-      const image = req.file ? `/uploads/${req.file.filename}` : "";
-
-      const blog = await Blog.create({ title, content, category, image });
-
-      return res.status(201).send({
-        success: true,
-        message: "Blog created",
-        blog,
-      });
-
-    } catch (error) {
-      console.log("Create Blog Error:", error);
-      res.status(500).send({ success: false, message: "Server error" });
+    if (!title) {
+      return res.status(400).json({ success: false, message: "Event title is required" });
     }
-  });
+
+    if (!eventDate) {
+      return res.status(400).json({ success: false, message: "Event date is required" });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: "At least one image is required" });
+    }
+
+    // Store uploaded image paths
+    const images = req.files.map((file) => `/uploads/${file.filename}`);
+
+    const newEvent = await Blog.create({
+      title,
+      eventDate,
+      images,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Media event created successfully",
+      event: newEvent,
+    });
+
+  } catch (error) {
+    console.log("Create Media Event Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 };
+
+
 
 
 // ===================================
 // GET ALL BLOGS
 // ===================================
-const getBlogs = async (req, res) => {
+const getMediaEvents = async (req, res) => {
   try {
-    const blogs = await Blog.find().sort({ createdAt: -1 });
-    return res.send({ success: true, blogs });
+    const events = await Blog.find().sort({ createdAt: -1 });
+
+    return res.send({
+      success: true,
+      events,
+    });
+
   } catch (error) {
-    console.log("Fetch Blogs Error:", error);
+    console.log("Fetch Media Events Error:", error);
     res.status(500).send({ success: false, message: "Server error" });
   }
 };
@@ -171,28 +187,35 @@ const getBlogs = async (req, res) => {
 // ===================================
 // DELETE BLOG
 // ===================================
-const deleteBlog = async (req, res) => {
+const deleteMediaEvent = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id);
+    const event = await Blog.findById(req.params.id);
 
-    if (!blog) {
-      return res.status(404).send({ success: false, message: "Blog not found" });
+    if (!event) {
+      return res.status(404).send({ success: false, message: "Event not found" });
     }
 
-    if (blog.image) {
-      const filePath = path.join(process.cwd(), blog.image.replace(/^\//, ""));
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    // Delete images from server
+    if (event.images && event.images.length > 0) {
+      event.images.forEach((imgPath) => {
+        const filePath = path.join(process.cwd(), imgPath.replace(/^\//, ""));
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      });
     }
 
     await Blog.findByIdAndDelete(req.params.id);
 
-    return res.send({ success: true, message: "Blog deleted" });
+    return res.send({
+      success: true,
+      message: "Media event deleted successfully",
+    });
 
   } catch (error) {
-    console.log("Delete Blog Error:", error);
+    console.log("Delete Media Event Error:", error);
     res.status(500).send({ success: false, message: "Server error" });
   }
 };
+
 
 
 
@@ -349,9 +372,9 @@ const updateProject = async (req, res) => {
 module.exports = {
   adminLogin,
   adminRegister,
-  createBlog,
-  getBlogs,
-  deleteBlog,
+  createMediaEvent,
+  getMediaEvents,
+  deleteMediaEvent,
   createProject,
   getProjects,
   deleteProject,

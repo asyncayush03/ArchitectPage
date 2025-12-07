@@ -269,10 +269,7 @@ export default function Aboutus() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="text-center py-16 text-gray-500 text-sm border-t border-gray-200 mt-24">
-        © 2025 J.B.K. Architecture — All Rights Reserved
-      </footer>
+
     </div>
   );
 }

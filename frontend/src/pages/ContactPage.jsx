@@ -343,10 +343,7 @@ const ContactPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="text-center py-16 text-gray-500 text-sm border-t border-gray-200">
-        © 2025 J.B.K. Architecture — All Rights Reserved
-      </footer>
+
     </div>
   );
 };
