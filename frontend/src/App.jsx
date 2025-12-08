@@ -22,6 +22,7 @@ import ScrollToTop from "./components/ScrollToTop.jsx";
 import EditProject from "./pages/admin/EditProject.jsx";
 import PublicRoute from "./components/PublicRoute.jsx";
 
+
 function App() {
   return (
     <>

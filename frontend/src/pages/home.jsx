@@ -29,37 +29,94 @@ const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [hoveredProject, setHoveredProject] = useState(null);
 
-  const heroSlides = [
+  // 👇 images for About section from Cloudinary
+  const [aboutImages, setAboutImages] = useState([]);
+
+  // 👇 HERO SLIDES – ONLY 3 FIXED CLOUDINARY IMAGES
+  //    👉 Put your 3 Cloudinary URLs here
+  const [heroSlides] = useState([
     {
-      image:
-        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&h=1080&fit=crop",
+      image: "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765191080/hotels/Hotel_Paharganj/Architecture/3.jpg", // e.g. "https://res.cloudinary.com/.../hero1.jpg"
       title: "Contemporary Architecture",
       subtitle: "Crafting Spaces That Inspire",
       cta: "Explore Projects",
     },
     {
-      image:
-        "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=1920&h=1080&fit=crop",
+      image: "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765190986/hotels/Hotel_Kanpur/Architecure/3.jpg",
       title: "Interior Excellence",
       subtitle: "Where Design Meets Sophistication",
       cta: "View Interiors",
     },
     {
-      image:
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&h=1080&fit=crop",
+      image: "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765189409/hotels/Allenger/View_2.jpg",
       title: "Commercial Innovation",
       subtitle: "Building Tomorrow's Workspaces",
       cta: "Discover More",
     },
-  ];
+  ]);
 
+  // 🔹 Fetch Cloudinary images once:
+  //    - set aboutImages (specific publicIds)
+  //    (no longer touches heroSlides)
   useEffect(() => {
-    const timer = setInterval(
-      () => setCurrentSlide((prev) => (prev + 1) % heroSlides.length),
-      5000
-    );
-    return () => clearInterval(timer);
+    const url = "http://localhost:8080/api/images";
+
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("🔍 RAW /api/images response:", data);
+
+        let imagesArray = [];
+
+        if (Array.isArray(data)) {
+          imagesArray = data;
+        } else if (Array.isArray(data.images)) {
+          imagesArray = data.images;
+        } else if (Array.isArray(data.resources)) {
+          imagesArray = data.resources;
+        } else {
+          console.log("❌ No images array found in response");
+          return;
+        }
+
+        const normalized = imagesArray
+          .map((img) => ({
+            publicId: img.publicId || img.public_id || img.id,
+            url: img.url || img.secure_url,
+          }))
+          .filter((img) => img.url);
+
+        console.log("✅ Normalized images:", normalized);
+
+        // ====== ABOUT IMAGES ONLY ======
+        const getId = (img) => (img.publicId || "").toLowerCase();
+
+        const himachal = normalized.find((img) =>
+          getId(img).includes("hotel_himachal")
+        );
+        const paharganj = normalized.find((img) =>
+          getId(img).includes("hotel_paharganj")
+        );
+
+        const pickedAbout = [himachal, paharganj].filter(Boolean);
+        console.log("✅ About images picked:", pickedAbout);
+        setAboutImages(pickedAbout);
+      })
+      .catch((err) => {
+        console.error("Error fetching /api/images:", err);
+      });
   }, []);
+
+  // hero slider auto-change
+  useEffect(() => {
+    if (!heroSlides.length) return;
+
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [heroSlides.length]);
 
   const featuredProjects = [
     {
@@ -185,13 +242,16 @@ const Home = () => {
               }`}
             >
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60 z-10" />
-              <img
-                src={slide.image}
-                alt={slide.title}
-                className="w-full h-full object-cover transform scale-105 animate-slow-zoom"
-              />
+              {slide && (
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover transform scale-105 animate-slow-zoom"
+                />
+              )}
             </div>
           ))}
+
           <div className="relative z-20 h-full flex flex-col items-center justify-center text-center px-4">
             <div className="mb-4 overflow-hidden">
               <p className="text-sm tracking-[0.3em] text-red-500 font-light uppercase animate-fade-in-up">
@@ -200,17 +260,17 @@ const Home = () => {
             </div>
             <div className="overflow-hidden">
               <h1 className="text-5xl md:text-7xl font-light mb-6 tracking-tight text-white animate-fade-in-up animation-delay-200">
-                {heroSlides[currentSlide].title}
+                {heroSlides[currentSlide]?.title}
               </h1>
             </div>
             <div className="overflow-hidden">
               <p className="text-xl md:text-2xl text-gray-200 mb-12 font-light max-w-2xl animate-fade-in-up animation-delay-400">
-                {heroSlides[currentSlide].subtitle}
+                {heroSlides[currentSlide]?.subtitle}
               </p>
             </div>
             <div className="flex gap-4 animate-fade-in-up animation-delay-600">
               <button className="px-8 py-4 bg-red-600 text-white font-medium hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/50 active:scale-95">
-                {heroSlides[currentSlide].cta}
+                {heroSlides[currentSlide]?.cta}
               </button>
               <button className="px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-105 active:scale-95">
                 GET IN TOUCH
@@ -295,18 +355,25 @@ const Home = () => {
                 </span>
               </button>
             </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="overflow-hidden rounded-lg group">
                 <img
-                  src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop"
-                  alt="Interior 1"
+                  src={
+                    aboutImages[0]?.url ||
+                    "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765190972/hotels/Hotel_Kanpur/Architecure/2.jpg"
+                  }
+                  alt={aboutImages[0]?.publicId || "Interior 1"}
                   className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
               <div className="overflow-hidden rounded-lg mt-8 group">
                 <img
-                  src="https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=400&h=300&fit=crop"
-                  alt="Interior 2"
+                  src={
+                    aboutImages[1]?.url ||
+                    "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765189409/hotels/Allenger/View_2.jpg"
+                  }
+                  alt={aboutImages[1]?.publicId || "Interior 2"}
                   className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>

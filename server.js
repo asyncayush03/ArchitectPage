@@ -1,28 +1,38 @@
-// backend/server.js
-const express = require('express');
-const dotenv = require('dotenv');
-const morgan = require('morgan');
-const colors = require('colors');
-const connectDB = require('./config/db'); 
-const path = require('path');
+const express = require("express");
+const dotenv = require("dotenv");
+const morgan = require("morgan");
+const colors = require("colors");
+const path = require("path");
+const cors = require("cors");               // 👈 add this
+const connectDB = require("./config/db");
+const imageRoutes = require("./routes/imageRoutes");
 
 dotenv.config();
 connectDB();
 
 const app = express();
+
 app.use(express.json());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
-// serve uploaded images
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+// 🔓 allow frontend (5173) to call backend (8080)
+app.use(
+  cors({
+    origin: "http://localhost:5173",        // your Vite dev URL
+  })
+);
 
-// admin routes
-app.use('/api/v1/admin', require('./routes/adminRoute'));
+// routes
+app.use("/api", imageRoutes);
+app.use("/api/v1/admin", require("./routes/adminRoute"));
 
-// optionally health
-// app.get('/api/health', (req, res) => res.json({ ok: true }));
+// static uploads (if any)
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  console.log(`Server Running in ${process.env.NODE_ENV} Mode on port ${port}`.bgCyan.yellow.bold);
+  console.log(
+    `Server Running in ${process.env.NODE_ENV} Mode on port ${port}`.bgCyan
+      .yellow.bold
+  );
 });
