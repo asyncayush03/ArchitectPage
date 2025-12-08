@@ -21,11 +21,21 @@ export default function ProjectDetails() {
   const [slide, setSlide] = useState(0);
   const [scrolled, setScrolled] = useState(false);
 
+  // Helper: get proper image URL (Cloudinary or local uploads)
+  const getImageUrl = (img) => {
+    if (!img || !img.url) return null;
+    return img.url.startsWith("http")
+      ? img.url
+      : `http://localhost:8080${img.url}`;
+  };
+
   // SLIDE AUTO ROTATION
   useEffect(() => {
+    if (!project?.images || project.images.length === 0) return;
+
     const timer = setInterval(() => {
       setSlide((prev) =>
-        project?.images ? (prev + 1) % project.images.length : 0
+        project.images ? (prev + 1) % project.images.length : 0
       );
     }, 5000);
 
@@ -37,20 +47,19 @@ export default function ProjectDetails() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 100);
 
-      // Animate elements on scroll
-      const sections = document.querySelectorAll('.animate-on-scroll');
+      const sections = document.querySelectorAll(".animate-on-scroll");
       sections.forEach((section) => {
         const rect = section.getBoundingClientRect();
         const isVisible = rect.top < window.innerHeight * 0.8;
-        if (isVisible && !section.classList.contains('visible')) {
-          section.classList.add('visible');
+        if (isVisible && !section.classList.contains("visible")) {
+          section.classList.add("visible");
         }
       });
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     handleScroll(); // Initial check
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // FETCH DATA
@@ -76,9 +85,12 @@ export default function ProjectDetails() {
 
   const images = project.images || [];
 
-  // FORMAT DESCRIPTION INTO 3 COLUMNS
+  // FORMAT DESCRIPTION INTO 3 COLUMNS (safe)
   const descriptionColumns = (() => {
-    const words = project.description.split(" ");
+    const descriptionText = project.description || "";
+    const words = descriptionText.trim().split(/\s+/);
+    if (!words.length) return ["", "", ""];
+
     const perColumn = Math.ceil(words.length / 3);
 
     return [
@@ -115,16 +127,27 @@ export default function ProjectDetails() {
 
       {/* FULLSCREEN SLIDESHOW */}
       <div className="relative h-screen w-full overflow-hidden">
-        {images.map((img, i) => (
-          <img
-            key={i}
-            src={`http://localhost:8080${img.url}`}
-            alt={img.caption || project.name}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-              slide === i ? "opacity-100" : "opacity-0"
-            }`}
-          />
-        ))}
+        {images.length > 0 ? (
+          images.map((img, i) => {
+            const url = getImageUrl(img);
+            if (!url) return null;
+            return (
+              <img
+                key={i}
+                src={url}
+                alt={img.caption || project.name}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                  slide === i ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            );
+          })
+        ) : (
+          // Fallback if no images
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center">
+            <p className="text-white text-xl">No images available</p>
+          </div>
+        )}
 
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
@@ -133,8 +156,8 @@ export default function ProjectDetails() {
         <button
           onClick={() => navigate(-1)}
           className={`fixed top-6 left-6 z-50 p-3 rounded-full backdrop-blur-md transition-all duration-300 ${
-            scrolled 
-              ? "bg-white/90 text-gray-800 shadow-lg" 
+            scrolled
+              ? "bg-white/90 text-gray-800 shadow-lg"
               : "bg-white/20 text-white hover:bg-white/40"
           }`}
         >
@@ -164,11 +187,19 @@ export default function ProjectDetails() {
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                <span>{new Date(project.startDate).getFullYear()}</span>
+                <span>
+                  {project.startDate
+                    ? new Date(project.startDate).getFullYear()
+                    : "Year"}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Maximize2 className="w-4 h-4" />
-                <span>{project.area || "Area"}</span>
+                <span>
+                  {project.budget
+                    ? `${project.budget} Sq.ft`
+                    : "Area (Sq.ft)"}
+                </span>
               </div>
             </div>
           </div>
@@ -211,57 +242,88 @@ export default function ProjectDetails() {
       </div>
 
       {/* PROJECT INFO SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         {/* Section Header */}
-        <div className="relative mb-16 animate-on-scroll">
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-16 h-px bg-gradient-to-r from-red-400 to-transparent"></div>
-          <h2 className="text-red-400 text-sm tracking-[0.3em] font-light pl-20">
+        <div className="relative mb-20 animate-on-scroll">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-20 h-px bg-gradient-to-r from-red-500 via-amber-500 to-transparent"></div>
+          <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-500 text-sm tracking-[0.4em] font-semibold pl-24">
             PROJECT OVERVIEW
           </h2>
         </div>
 
         {/* Info Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
-          <div className="animate-on-scroll stagger-1">
-            <div className="flex items-center gap-3 mb-3">
-              <User className="w-5 h-5 text-amber-500" />
-              <h3 className="text-gray-500 text-xs uppercase tracking-widest font-semibold">
-                Client
-              </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+          <div className="animate-on-scroll stagger-1 group">
+            <div className="relative p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 hover:border-amber-300 transition-all duration-500 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-400/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="relative">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <User className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-3">
+                  Client
+                </h3>
+                <p className="text-gray-900 text-xl font-light">
+                  {project.client || "N/A"}
+                </p>
+              </div>
             </div>
-            <p className="text-gray-800 text-lg font-light">{project.client}</p>
           </div>
 
-          <div className="animate-on-scroll stagger-2">
-            <div className="flex items-center gap-3 mb-3">
-              <Tag className="w-5 h-5 text-amber-500" />
-              <h3 className="text-gray-500 text-xs uppercase tracking-widest font-semibold">
-                Category
-              </h3>
+          <div className="animate-on-scroll stagger-2 group">
+            <div className="relative p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 hover:border-red-300 transition-all duration-500 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-400/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="relative">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Tag className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-3">
+                  Category
+                </h3>
+                <p className="text-gray-900 text-xl font-light capitalize">
+                  {project.type || "N/A"}
+                </p>
+              </div>
             </div>
-            <p className="text-gray-800 text-lg font-light capitalize">{project.type}</p>
           </div>
 
-          <div className="animate-on-scroll stagger-3">
-            <div className="flex items-center gap-3 mb-3">
-              <DollarSign className="w-5 h-5 text-amber-500" />
-              <h3 className="text-gray-500 text-xs uppercase tracking-widest font-semibold">
-                Budget
-              </h3>
+          <div className="animate-on-scroll stagger-3 group">
+            <div className="relative p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 hover:border-amber-300 transition-all duration-500 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-400/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="relative">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Maximize2 className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-3">
+                  Area
+                </h3>
+                <p className="text-gray-900 text-xl font-light">
+                  {project.budget ? `${project.budget} Sq.ft` : "N/A"}
+                </p>
+              </div>
             </div>
-            <p className="text-gray-800 text-lg font-light">{project.budget}</p>
           </div>
 
-          <div className="animate-on-scroll stagger-4">
-            <div className="flex items-center gap-3 mb-3">
-              <Calendar className="w-5 h-5 text-amber-500" />
-              <h3 className="text-gray-500 text-xs uppercase tracking-widest font-semibold">
-                Completed
-              </h3>
+          <div className="animate-on-scroll stagger-4 group">
+            <div className="relative p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 hover:border-red-300 transition-all duration-500 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-400/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="relative">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Calendar className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-3">
+                  Started
+                </h3>
+                <p className="text-gray-900 text-xl font-light">
+                  {project.startDate
+                    ? new Date(project.startDate).toLocaleDateString("en-US", {
+                        month: "long",
+                        year: "numeric",
+                      })
+                    : "N/A"}
+                </p>
+              </div>
             </div>
-            <p className="text-gray-800 text-lg font-light">
-              {new Date(project.startDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-            </p>
           </div>
         </div>
 
@@ -293,71 +355,38 @@ export default function ProjectDetails() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {images.map((img, i) => (
-            <div
-              key={i}
-              className={`group overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 animate-on-scroll stagger-${(i % 6) + 1}`}
-            >
-              <div className="relative overflow-hidden">
-                <img
-                  src={`http://localhost:8080${img.url}`}
-                  alt={img.caption || `Gallery image ${i + 1}`}
-                  className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                {img.caption && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <p className="text-white text-sm font-light">{img.caption}</p>
+          {images.map((img, i) => {
+            const url = getImageUrl(img);
+            if (!url) return null;
+
+            return (
+              <div
+                key={i}
+                className={`group overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 animate-on-scroll stagger-${
+                  (i % 6) + 1
+                }`}
+              >
+                <div className="relative overflow-hidden">
+                  <img
+                    src={url}
+                    alt={img.caption || `Gallery image ${i + 1}`}
+                    className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  {img.caption && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <p className="text-white text-sm font-light">
+                          {img.caption}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
-
-      {/* CTA Section */}
-      {/* <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-32 animate-on-scroll">
-        <div className="relative p-12 sm:p-16 rounded-lg bg-gradient-to-br from-gray-100 to-white border border-gray-200 shadow-xl overflow-hidden text-center">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-200/30 to-red-200/30 rounded-full blur-3xl"></div>
-          <div className="relative z-10">
-            <h3 className="text-2xl sm:text-3xl font-light text-gray-800 mb-4 tracking-wide">
-              Interested in Similar Projects?
-            </h3>
-            <p className="text-gray-600 text-sm mb-8 max-w-xl mx-auto leading-relaxed">
-              Explore more of our portfolio or get in touch to discuss your vision
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <button
-                onClick={() => navigate('/')}
-                className="inline-flex items-center gap-2 px-8 py-3 bg-white border border-gray-300 text-gray-800 text-xs font-semibold tracking-wider rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                VIEW ALL PROJECTS
-              </button>
-              <button
-                onClick={() => navigate('/contact')}
-                className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-red-400 to-amber-400 text-white text-xs font-semibold tracking-wider rounded-full hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-              >
-                START YOUR PROJECT
-              </button>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-      {/* Footer */}
-      {/* <footer className="text-center py-16 text-gray-500 text-sm border-t border-gray-200 animate-on-scroll">
-        <h3 className="text-lg font-light text-gray-800 mb-2 tracking-wide">
-          J.B.K. Architecture
-        </h3>
-        <p className="text-xs tracking-wider">
-          Creating timeless spaces
-        </p>
-        <p className="mt-4 text-xs">
-          © 2025 J.B.K. Architecture — All Rights Reserved
-        </p>
-      </footer> */}
     </div>
   );
 }

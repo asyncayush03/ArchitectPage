@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { ChevronDown, Calendar, ArrowRight, X, Image as ImageIcon, Sparkles } from "lucide-react";
+import {
+  ChevronDown,
+  Calendar,
+  ArrowRight,
+  X,
+  Image as ImageIcon,
+  Sparkles,
+} from "lucide-react";
 
 const MediaGalleryPage = () => {
   const [events, setEvents] = useState([]);
@@ -22,7 +29,7 @@ const MediaGalleryPage = () => {
         const sortedList = list.sort((a, b) => {
           const dateA = new Date(a.eventDate || a.createdAt);
           const dateB = new Date(b.eventDate || b.createdAt);
-          return dateB - dateA; // Descending order (newest first)
+          return dateB - dateA; // Descending (newest first)
         });
 
         setEvents(sortedList);
@@ -38,6 +45,21 @@ const MediaGalleryPage = () => {
 
   const toggleExpand = (eventId) => {
     setExpandedEvent(expandedEvent === eventId ? null : eventId);
+  };
+
+  // Helper to get correct image URL (Cloudinary OR local uploads)
+  const getImageUrl = (img) => {
+    let imageUrl = img?.url || img; // support {url: "..."} or plain string
+
+    if (!imageUrl) return "";
+
+    // If it's already an absolute URL (Cloudinary, etc.), use as is
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      return imageUrl;
+    }
+
+    // Otherwise treat as local uploads path
+    return `http://localhost:8080${imageUrl}`;
   };
 
   return (
@@ -72,35 +94,38 @@ const MediaGalleryPage = () => {
       `}</style>
 
       <div className="bg-white text-gray-800 min-h-screen">
-        
         {/* Hero Section */}
         <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50">
           <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent" />
-          
+
           {/* Animated background elements */}
           <div className="absolute top-20 right-20 w-72 h-72 bg-red-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-red-600/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          
+          <div
+            className="absolute bottom-20 left-20 w-96 h-96 bg-red-600/5 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          />
+
           <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
             <div className="mb-6 overflow-hidden">
               <p className="text-sm tracking-[0.3em] text-red-600 font-medium uppercase animate-fade-in-up">
                 MEDIA & EVENTS
               </p>
             </div>
-            
+
             <div className="overflow-hidden">
               <h1 className="text-5xl md:text-7xl font-light mb-6 tracking-tight text-gray-900 animate-fade-in-up delay-100">
                 Our Stories
               </h1>
             </div>
-            
+
             <div className="overflow-hidden">
               <p className="text-xl text-gray-600 mb-12 font-light max-w-2xl mx-auto animate-fade-in-up delay-200">
-                Explore our collection of memorable events and moments captured through time
+                Explore our collection of memorable events and moments captured
+                through time
               </p>
             </div>
           </div>
-          
+
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce-slow">
             <ChevronDown className="w-6 h-6 text-gray-400" />
           </div>
@@ -110,10 +135,16 @@ const MediaGalleryPage = () => {
         <section className="py-12 bg-white border-y border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-2">TIMELINE</p>
+              <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-2">
+                TIMELINE
+              </p>
               <div className="w-16 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto mb-4" />
               <p className="text-gray-600">
-                Showing <span className="font-semibold text-gray-900">{events.length}</span> events sorted by most recent
+                Showing{" "}
+                <span className="font-semibold text-gray-900">
+                  {events.length}
+                </span>{" "}
+                events sorted by most recent
               </p>
             </div>
           </div>
@@ -122,7 +153,6 @@ const MediaGalleryPage = () => {
         {/* Events Gallery */}
         <section className="py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20">
                 <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mb-4" />
@@ -132,25 +162,31 @@ const MediaGalleryPage = () => {
               <div className="text-center py-20">
                 <Sparkles className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500 text-lg">No events found</p>
-                <p className="text-gray-400 text-sm mt-2">Check back soon for updates</p>
+                <p className="text-gray-400 text-sm mt-2">
+                  Check back soon for updates
+                </p>
               </div>
             ) : (
               <div className="space-y-16">
                 {events.map((event, eventIndex) => {
-                  // Handle multiple images
-                  const images = event.images || (event.image ? [{ url: event.image }] : []);
+                  const images =
+                    event.images || (event.image ? [{ url: event.image }] : []);
                   const isExpanded = expandedEvent === event._id;
-                  const displayImages = isExpanded ? images : images.slice(0, 5);
+                  const displayImages = isExpanded
+                    ? images
+                    : images.slice(0, 5);
                   const hasMoreImages = images.length > 5;
-                  
-                  // Get event date
+
                   const eventDate = event.eventDate || event.createdAt;
 
                   return (
                     <div
                       key={event._id}
                       className="bg-white rounded-lg shadow-lg overflow-hidden animate-fade-in-up"
-                      style={{ animationDelay: `${eventIndex * 0.1}s`, opacity: 0 }}
+                      style={{
+                        animationDelay: `${eventIndex * 0.1}s`,
+                        opacity: 0,
+                      }}
                     >
                       {/* Event Header */}
                       <div className="p-8 border-b border-gray-100">
@@ -159,28 +195,33 @@ const MediaGalleryPage = () => {
                             <div className="flex items-center gap-2 mb-4">
                               <Calendar className="w-5 h-5 text-red-600" />
                               <span className="text-red-600 font-medium">
-                                {new Date(eventDate).toLocaleDateString('en-US', { 
-                                  year: 'numeric', 
-                                  month: 'long', 
-                                  day: 'numeric' 
-                                })}
+                                {new Date(eventDate).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                  }
+                                )}
                               </span>
                             </div>
-                            
+
                             <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4 tracking-tight">
                               {event.title}
                             </h2>
-                            
+
                             {event.content && (
                               <p className="text-gray-600 leading-relaxed max-w-3xl">
                                 {event.content}
                               </p>
                             )}
                           </div>
-                          
+
                           <div className="flex items-center gap-2 px-4 py-2 bg-red-50 rounded-full">
                             <ImageIcon className="w-4 h-4 text-red-600" />
-                            <span className="text-sm font-semibold text-red-600">{images.length}</span>
+                            <span className="text-sm font-semibold text-red-600">
+                              {images.length}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -191,9 +232,7 @@ const MediaGalleryPage = () => {
                           <>
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                               {displayImages.map((img, imgIndex) => {
-                                const imageUrl = img.url 
-                                  ? `http://localhost:8080${img.url}` 
-                                  : `http://localhost:8080${img}`;
+                                const imageUrl = getImageUrl(img);
 
                                 return (
                                   <div
@@ -203,10 +242,12 @@ const MediaGalleryPage = () => {
                                   >
                                     <img
                                       src={imageUrl}
-                                      alt={`${event.title} - ${imgIndex + 1}`}
+                                      alt={`${event.title} - ${
+                                        imgIndex + 1
+                                      }`}
                                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                     />
-                                    
+
                                     {/* Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                       <div className="absolute bottom-2 left-2 right-2">
@@ -234,7 +275,9 @@ const MediaGalleryPage = () => {
                                   onClick={() => toggleExpand(event._id)}
                                   className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-medium hover:shadow-lg hover:shadow-red-500/40 transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-2"
                                 >
-                                  <span>See All {images.length} Images</span>
+                                  <span>
+                                    See All {images.length} Images
+                                  </span>
                                   <ArrowRight className="w-4 h-4" />
                                 </button>
                               </div>
@@ -256,7 +299,9 @@ const MediaGalleryPage = () => {
                         ) : (
                           <div className="text-center py-12 bg-gray-50 rounded-lg">
                             <ImageIcon className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                            <p className="text-gray-500 text-sm">No images available for this event</p>
+                            <p className="text-gray-500 text-sm">
+                              No images available for this event
+                            </p>
                           </div>
                         )}
                       </div>
@@ -280,7 +325,7 @@ const MediaGalleryPage = () => {
             >
               <X className="w-6 h-6 text-white" />
             </button>
-            
+
             <div className="max-w-6xl max-h-[90vh] overflow-auto">
               <img
                 src={selectedImage}
@@ -291,8 +336,6 @@ const MediaGalleryPage = () => {
             </div>
           </div>
         )}
-
-
       </div>
     </>
   );

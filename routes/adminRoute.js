@@ -1,13 +1,12 @@
 // routes/adminRoute.js
 const express = require("express");
 const router = express.Router();
-const upload = require("../middlewares/upload");
 
 const {
   adminLogin,
   adminRegister,
 
-  // Media Event Controller
+  // Media Event Controllers
   createMediaEvent,
   getMediaEvents,
   deleteMediaEvent,
@@ -19,10 +18,8 @@ const {
   getProjectById,
   updateProject,
 
-  // Old blog functions (REMOVE SOON)
-  // createBlog,
-  // getBlogs,
-  // deleteBlog
+  // Multer (memory) for images
+  eventUpload,
 } = require("../controllers/adminController");
 
 // ==================================
@@ -32,25 +29,19 @@ router.post("/login", adminLogin);
 router.post("/register", adminRegister);
 
 // ==================================
-// MEDIA EVENTS (Corrected)
+// MEDIA EVENTS (Cloudinary + memory)
 // ==================================
-
-// CREATE EVENT — multiple image upload
-router.post("/blog", upload.array("images", 20), createMediaEvent);
-
-// GET ALL EVENTS
+router.post("/blog", eventUpload, createMediaEvent);
 router.get("/blog", getMediaEvents);
-
-// DELETE EVENT
 router.delete("/blog/:id", deleteMediaEvent);
 
 // ==================================
-// PROJECT ROUTES
+// PROJECT ROUTES (Cloudinary + memory)
 // ==================================
-router.post("/project", createProject);
+router.post("/project", eventUpload, createProject);
 router.get("/project", getProjects);
 router.delete("/project/:id", deleteProject);
 router.get("/project/:id", getProjectById);
-router.put("/project/:id", updateProject);
+router.put("/project/:id", eventUpload, updateProject);
 
 module.exports = router;

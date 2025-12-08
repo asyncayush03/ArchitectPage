@@ -1,4 +1,4 @@
-// backend/models/Blog.js
+// backend/models/blogModel.js
 const mongoose = require("mongoose");
 
 const blogSchema = new mongoose.Schema(
@@ -16,13 +16,19 @@ const blogSchema = new mongoose.Schema(
 
     images: [
       {
-        type: String, // store Cloudinary or server image URLs
+        type: String, // Cloudinary URL (or legacy /uploads URL)
         required: true,
+      },
+    ],
+
+    imagePublicIds: [
+      {
+        type: String, // Cloudinary public_id (for deletion)
       },
     ],
   },
   {
-    timestamps: true, // adds createdAt & updatedAt automatically
+    timestamps: true,
   }
 );
 

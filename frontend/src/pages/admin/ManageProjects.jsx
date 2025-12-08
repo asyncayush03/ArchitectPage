@@ -51,7 +51,11 @@ export default function ManageProjects() {
   // DELETE PROJECT
   // ---------------------------------------------------
   const deleteProject = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this project? This action cannot be undone."))
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this project? This action cannot be undone."
+      )
+    )
       return;
 
     try {
@@ -68,13 +72,13 @@ export default function ManageProjects() {
   // ---------------------------------------------------
   const filteredProjects = projects.filter((proj) => {
     const q = searchQuery.toLowerCase();
-    const matchesSearch = 
+    const matchesSearch =
       proj.name?.toLowerCase().includes(q) ||
       proj.client?.toLowerCase().includes(q) ||
       proj.type?.toLowerCase().includes(q);
-    
+
     const matchesStatus = filterStatus === "all" || proj.status === filterStatus;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -119,7 +123,6 @@ export default function ManageProjects() {
       `}</style>
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-        
         {/* Header Section */}
         <div className="relative overflow-hidden bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white py-16 px-4 sm:px-6 lg:px-8 mb-8">
           {/* Background Pattern */}
@@ -162,11 +165,9 @@ export default function ManageProjects() {
 
         {/* Main Container */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-          
           {/* Search & Filter Toolbar */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-100 animate-fade-in-up delay-100">
             <div className="flex flex-col lg:flex-row gap-4">
-              
               {/* Search Bar */}
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -207,7 +208,15 @@ export default function ManageProjects() {
             {/* Results Count */}
             <div className="mt-4 pt-4 border-t border-gray-100">
               <p className="text-sm text-gray-600">
-                Showing <span className="font-semibold text-gray-900">{filteredProjects.length}</span> of <span className="font-semibold text-gray-900">{projects.length}</span> projects
+                Showing{" "}
+                <span className="font-semibold text-gray-900">
+                  {filteredProjects.length}
+                </span>{" "}
+                of{" "}
+                <span className="font-semibold text-gray-900">
+                  {projects.length}
+                </span>{" "}
+                projects
               </p>
             </div>
           </div>
@@ -257,7 +266,10 @@ export default function ManageProjects() {
               </p>
             </div>
 
-            <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 border-2 border-gray-100 hover:border-amber-500 group cursor-pointer animate-fade-in-up" style={{ animationDelay: '0.5s', opacity: 0 }}>
+            <div
+              className="bg-white rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 border-2 border-gray-100 hover:border-amber-500 group cursor-pointer animate-fade-in-up"
+              style={{ animationDelay: "0.5s", opacity: 0 }}
+            >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 bg-amber-50 group-hover:bg-amber-600 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110">
                   <AlertCircle className="w-6 h-6 text-amber-600 group-hover:text-white transition-colors duration-300" />
@@ -287,13 +299,15 @@ export default function ManageProjects() {
               <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FolderOpen className="w-10 h-10 text-gray-400" />
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">No Projects Found</h3>
+              <h3 className="text-xl font-medium text-gray-900 mb-2">
+                No Projects Found
+              </h3>
               <p className="text-gray-600 mb-6">
-                {searchQuery || filterStatus !== "all" 
-                  ? "Try adjusting your search or filter criteria" 
+                {searchQuery || filterStatus !== "all"
+                  ? "Try adjusting your search or filter criteria"
                   : "Get started by creating your first project"}
               </p>
-              {(searchQuery || filterStatus !== "all") ? (
+              {searchQuery || filterStatus !== "all" ? (
                 <button
                   onClick={() => {
                     setSearchQuery("");
@@ -318,137 +332,162 @@ export default function ManageProjects() {
           {/* Projects List */}
           {!loading && filteredProjects.length > 0 && (
             <div className="grid gap-6">
-              {filteredProjects.map((project, index) => (
-                <div
-                  key={project._id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group animate-slide-in"
-                  style={{ animationDelay: `${index * 0.05}s`, opacity: 0 }}
-                >
-                  <div className="flex flex-col lg:flex-row gap-6 p-6">
-                    
-                    {/* Project Icon/Image */}
-                    <div className="w-full lg:w-56 h-48 lg:h-40 bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
-                      <FolderOpen className="w-16 h-16 text-white opacity-50 group-hover:opacity-70 transition-opacity duration-300" />
-                    </div>
+              {filteredProjects.map((project, index) => {
+                const rawUrl = project.images?.[0]?.url;
+                const firstImage = rawUrl
+                  ? rawUrl.startsWith("http")
+                    ? rawUrl
+                    : `http://localhost:8080${rawUrl}`
+                  : null;
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-                        <div className="flex-1">
-                          <h3 className="text-2xl font-medium text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-300">
-                            {project.name}
-                          </h3>
-                          
-                          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
-                            <span className="flex items-center gap-1">
-                              <Building className="w-4 h-4 text-red-600" />
-                              {project.client || "N/A"}
-                            </span>
-                            {project.location && (
+                return (
+                  <div
+                    key={project._id}
+                    className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group animate-slide-in"
+                    style={{ animationDelay: `${index * 0.05}s`, opacity: 0 }}
+                  >
+                    <div className="flex flex-col lg:flex-row gap-6 p-6">
+                      {/* Project Thumbnail */}
+                      <div className="w-full lg:w-56 h-48 lg:h-40 rounded-lg overflow-hidden flex-shrink-0">
+                        {firstImage ? (
+                          <img
+                            src={firstImage}
+                            alt={project.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-red-500 via-red-600 to-red-700 flex items-center justify-center group-hover:shadow-lg transition-shadow duration-300">
+                            <FolderOpen className="w-16 h-16 text-white opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                          <div className="flex-1">
+                            <h3 className="text-2xl font-medium text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-300">
+                              {project.name}
+                            </h3>
+
+                            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-2">
                               <span className="flex items-center gap-1">
-                                <MapPin className="w-4 h-4 text-red-600" />
-                                {project.location}
+                                <Building className="w-4 h-4 text-red-600" />
+                                {project.client || "N/A"}
                               </span>
-                            )}
+                              {project.location && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4 text-red-600" />
+                                  {project.location}
+                                </span>
+                              )}
+                            </div>
+
+                            <p className="text-gray-600 text-sm line-clamp-2">
+                              {project.description || "No description available"}
+                            </p>
                           </div>
 
-                          <p className="text-gray-600 text-sm line-clamp-2">
-                            {project.description || "No description available"}
-                          </p>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+                              project.status === "Completed"
+                                ? "bg-green-100 text-green-700"
+                                : project.status === "In Progress"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-amber-100 text-amber-700"
+                            }`}
+                          >
+                            {project.status || "Unknown"}
+                          </span>
                         </div>
 
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                            project.status === "Completed"
-                              ? "bg-green-100 text-green-700"
-                              : project.status === "In Progress"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-amber-100 text-amber-700"
-                          }`}
-                        >
-                          {project.status || "Unknown"}
-                        </span>
-                      </div>
-
-                      {/* Info Grid */}
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
-                        <div>
-                          <p className="text-xs text-gray-500 flex items-center gap-1 mb-1">
-                            <Building className="w-3 h-3" /> Type
-                          </p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {project.type || "N/A"}
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="text-xs text-gray-500 flex items-center gap-1 mb-1">
-                            <DollarSign className="w-3 h-3" /> Budget
-                          </p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {project.budget || "N/A"}
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="text-xs text-gray-500 flex items-center gap-1 mb-1">
-                            <Calendar className="w-3 h-3" /> Start Date
-                          </p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {project.startDate ? new Date(project.startDate).toLocaleDateString() : "N/A"}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Progress Bar */}
-                      {project.progress !== undefined && (
-                        <div className="mb-4">
-                          <div className="flex justify-between mb-2">
-                            <span className="text-sm text-gray-600 font-medium">Progress</span>
-                            <span className="text-sm font-semibold text-red-600">
-                              {project.progress}%
-                            </span>
+                        {/* Info Grid */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+                          <div>
+                            <p className="text-xs text-gray-500 flex items-center gap-1 mb-1">
+                              <Building className="w-3 h-3" /> Type
+                            </p>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {project.type || "N/A"}
+                            </p>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                            <div
-                              className="bg-gradient-to-r from-red-500 to-red-700 h-full rounded-full transition-all duration-1000"
-                              style={{ width: `${project.progress}%` }}
-                            />
+
+                          <div>
+                            <p className="text-xs text-gray-500 flex items-center gap-1 mb-1">
+                              <DollarSign className="w-3 h-3" /> Area (Sq.ft)
+                            </p>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {project.budget || "N/A"}
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="text-xs text-gray-500 flex items-center gap-1 mb-1">
+                              <Calendar className="w-3 h-3" /> Start Date
+                            </p>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {project.startDate
+                                ? new Date(
+                                    project.startDate
+                                  ).toLocaleDateString()
+                                : "N/A"}
+                            </p>
                           </div>
                         </div>
-                      )}
 
-                      {/* Action Buttons */}
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          onClick={() => navigate(`/projects/${project._id}`)}
-                          className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 text-sm font-medium"
-                        >
-                          <Eye className="w-4 h-4" />
-                          View Details
-                        </button>
+                        {/* Progress Bar */}
+                        {project.progress !== undefined && (
+                          <div className="mb-4">
+                            <div className="flex justify-between mb-2">
+                              <span className="text-sm text-gray-600 font-medium">
+                                Progress
+                              </span>
+                              <span className="text-sm font-semibold text-red-600">
+                                {project.progress}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                              <div
+                                className="bg-gradient-to-r from-red-500 to-red-700 h-full rounded-full transition-all duration-1000"
+                                style={{ width: `${project.progress || 0}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
 
-                        <button
-                          onClick={() => navigate(`/admin/projects/edit/${project._id}`)}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-300 text-sm font-medium"
-                        >
-                          <Edit className="w-4 h-4" />
-                          Edit
-                        </button>
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => navigate(`/projects/${project._id}`)}
+                            className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 text-sm font-medium"
+                          >
+                            <Eye className="w-4 h-4" />
+                            View Details
+                          </button>
 
-                        <button
-                          onClick={() => deleteProject(project._id)}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 text-sm font-medium group/btn"
-                        >
-                          <Trash2 className="w-4 h-4 group-hover/btn:animate-pulse" />
-                          Delete
-                        </button>
+                          <button
+                            onClick={() =>
+                              navigate(`/admin/projects/edit/${project._id}`)
+                            }
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-300 text-sm font-medium"
+                          >
+                            <Edit className="w-4 h-4" />
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() => deleteProject(project._id)}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-300 text-sm font-medium group/btn"
+                          >
+                            <Trash2 className="w-4 h-4 group-hover/btn:animate-pulse" />
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

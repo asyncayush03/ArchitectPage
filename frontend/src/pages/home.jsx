@@ -5,7 +5,7 @@ import {
   Building2,
   Users,
   Award,
-  Sparkles,
+  Sparkles, 
   Calendar,
   MapPin,
   Phone,

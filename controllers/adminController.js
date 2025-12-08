@@ -2,54 +2,44 @@
 
 const adminModel = require("../models/adminModel");
 const Blog = require("../models/blogModel");
-const Project = require("../models/projectModel"); // <-- added
+const Project = require("../models/projectModel");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const cloudinary = require("../claudinary");
+const sharp = require("sharp");
 
 // -----------------------------------
-// MULTER UPLOAD CONFIG
+// MULTER (MEMORY) FOR ALL IMAGES
 // -----------------------------------
-const uploadDir = path.join(process.cwd(), "uploads");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
-  },
-});
-
 const fileFilter = (req, file, cb) => {
   const allowed = /jpeg|jpg|png|webp/;
-  if (
-    allowed.test(file.mimetype) &&
-    allowed.test(path.extname(file.originalname).toLowerCase())
-  ) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only image files allowed (jpg, jpeg, png, webp)"));
-  }
+  const okMime = allowed.test(file.mimetype.toLowerCase());
+  const okName = allowed.test(file.originalname.toLowerCase());
+  if (okMime && okName) cb(null, true);
+  else cb(new Error("Only image files allowed (jpg, jpeg, png, webp)"));
 };
 
-const upload = multer({
-  storage,
+const eventUpload = multer({
+  storage: multer.memoryStorage(),
   fileFilter,
-  limits: { fileSize: 2 * 1024 * 1024 },
-}).single("image");
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB before compression
+}).array("images", 15); // field name = images
 
-// MULTIPLE IMAGE UPLOADER FOR PROJECTS
-const uploadMultiple = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 4 * 1024 * 1024 },
-}).array("images", 10); // maximum 10 images
-
+// Upload compressed buffer to Cloudinary
+const uploadCompressedToCloudinary = (buffer, folder) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      }
+    );
+    stream.end(buffer);
+  });
 
 // ===================================
 // ADMIN REGISTER
@@ -57,52 +47,50 @@ const uploadMultiple = multer({
 const adminRegister = async (req, res) => {
   try {
     const existingUser = await adminModel.findOne({ email: req.body.email });
-
     if (existingUser) {
-      return res.status(200).send({
-        message: "User Already Exists",
-        success: false,
-      });
+      return res
+        .status(200)
+        .send({ success: false, message: "User Already Exists" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-    const newUser = new adminModel({
+    await adminModel.create({
       name: req.body.name,
       email: req.body.email,
       password: hashedPassword,
     });
 
-    await newUser.save();
-
     return res.status(201).send({
       success: true,
       message: "Registered Successfully",
     });
-
   } catch (error) {
     console.log("Register Error:", error);
     res.status(500).send({ success: false, message: error.message });
   }
 };
 
-
 // ===================================
 // ADMIN LOGIN
 // ===================================
 const adminLogin = async (req, res) => {
   try {
-    const user = await adminModel.findOne({ email: req.body.email }).select("+password");
+    const user = await adminModel
+      .findOne({ email: req.body.email })
+      .select("+password");
 
     if (!user) {
-      return res.status(200).send({ success: false, message: "User not found" });
+      return res
+        .status(200)
+        .send({ success: false, message: "User not found" });
     }
 
     const isMatch = await bcrypt.compare(req.body.password, user.password);
-
     if (!isMatch) {
-      return res.status(200).send({ success: false, message: "Invalid Email or Password" });
+      return res
+        .status(200)
+        .send({ success: false, message: "Invalid Email or Password" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -114,40 +102,55 @@ const adminLogin = async (req, res) => {
       message: "Login Success",
       token,
     });
-
   } catch (error) {
     console.log("Login Error:", error);
     res.status(500).send({ success: false, message: error.message });
   }
 };
 
-
 // ===================================
-// CREATE BLOG
+// CREATE MEDIA EVENT – Cloudinary
 // ===================================
 const createMediaEvent = async (req, res) => {
   try {
     const { title, eventDate } = req.body;
 
-    if (!title) {
-      return res.status(400).json({ success: false, message: "Event title is required" });
+    if (!title || !eventDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Event title and date are required",
+      });
     }
 
-    if (!eventDate) {
-      return res.status(400).json({ success: false, message: "Event date is required" });
+    const files = req.files || [];
+    if (files.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "At least one image is required" });
     }
 
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ success: false, message: "At least one image is required" });
-    }
+    const uploads = await Promise.all(
+      files.map(async (file) => {
+        const compressedBuffer = await sharp(file.buffer)
+          .resize({ width: 1920, withoutEnlargement: true })
+          .jpeg({ quality: 80 })
+          .toBuffer();
 
-    // Store uploaded image paths
-    const images = req.files.map((file) => `/uploads/${file.filename}`);
+        return uploadCompressedToCloudinary(
+          compressedBuffer,
+          "architectpage/events"
+        );
+      })
+    );
+
+    const imageUrls = uploads.map((u) => u.secure_url);
+    const imagePublicIds = uploads.map((u) => u.public_id);
 
     const newEvent = await Blog.create({
       title,
       eventDate,
-      images,
+      images: imageUrls,
+      imagePublicIds,
     });
 
     return res.status(201).json({
@@ -155,18 +158,16 @@ const createMediaEvent = async (req, res) => {
       message: "Media event created successfully",
       event: newEvent,
     });
-
   } catch (error) {
     console.log("Create Media Event Error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res
+      .status(500)
+      .json({ success: false, message: error.message || "Server error" });
   }
 };
 
-
-
-
 // ===================================
-// GET ALL BLOGS
+// GET ALL MEDIA EVENTS
 // ===================================
 const getMediaEvents = async (req, res) => {
   try {
@@ -176,103 +177,125 @@ const getMediaEvents = async (req, res) => {
       success: true,
       events,
     });
-
   } catch (error) {
     console.log("Fetch Media Events Error:", error);
     res.status(500).send({ success: false, message: "Server error" });
   }
 };
 
-
 // ===================================
-// DELETE BLOG
+// DELETE MEDIA EVENT (Cloudinary)
 // ===================================
 const deleteMediaEvent = async (req, res) => {
   try {
     const event = await Blog.findById(req.params.id);
 
     if (!event) {
-      return res.status(404).send({ success: false, message: "Event not found" });
+      return res
+        .status(404)
+        .send({ success: false, message: "Event not found" });
     }
 
-    // Delete images from server
-    if (event.images && event.images.length > 0) {
-      event.images.forEach((imgPath) => {
-        const filePath = path.join(process.cwd(), imgPath.replace(/^\//, ""));
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      });
+    if (event.imagePublicIds && event.imagePublicIds.length > 0) {
+      await Promise.all(
+        event.imagePublicIds.map((publicId) =>
+          cloudinary.uploader
+            .destroy(publicId)
+            .catch((err) =>
+              console.log("Cloudinary delete error for", publicId, err.message)
+            )
+        )
+      );
     }
 
-    await Blog.findByIdAndDelete(req.params.id);
+    await event.deleteOne();
 
     return res.send({
       success: true,
       message: "Media event deleted successfully",
     });
-
   } catch (error) {
     console.log("Delete Media Event Error:", error);
     res.status(500).send({ success: false, message: "Server error" });
   }
 };
 
-
-
-
 // ===================================
-// CREATE PROJECT (MULTIPLE IMAGES + CAPTIONS)
+// CREATE PROJECT – Cloudinary
 // ===================================
-const createProject = (req, res) => {
-  uploadMultiple(req, res, async (err) => {
-    try {
-      if (err) {
-        return res.status(400).send({ success: false, message: err.message });
-      }
+const createProject = async (req, res) => {
+  try {
+    const {
+      name,
+      client,
+      type,
+      budget,
+      startDate,
+      status,
+      description,
+      location,
+      progress,
+    } = req.body;
 
-      const { name, client, status, budget, startDate, type, description } = req.body;
+    if (!name || !client || !type) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, Client & Type are required",
+      });
+    }
 
-      if (!name || !client || !type) {
-        return res.status(400).json({
-          success: false,
-          message: "Name, Client & Type are required",
+    // captions can be array or single string
+    let captions = req.body.captions || [];
+    if (!Array.isArray(captions)) captions = [captions];
+
+    const images = [];
+
+    const files = req.files || [];
+    if (files.length) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        const compressedBuffer = await sharp(file.buffer)
+          .resize({ width: 1920, withoutEnlargement: true })
+          .jpeg({ quality: 80 })
+          .toBuffer();
+
+        const uploaded = await uploadCompressedToCloudinary(
+          compressedBuffer,
+          "architectpage/projects"
+        );
+
+        images.push({
+          url: uploaded.secure_url,
+          caption: captions[i] || "",
+          publicId: uploaded.public_id,
         });
       }
-
-      // Captions: always convert to array
-      let captions = req.body.captions || [];
-      if (!Array.isArray(captions)) captions = [captions];
-
-      // Build images array
-      const images = (req.files || []).map((file, index) => ({
-        url: `/uploads/${file.filename}`,
-        caption: captions[index] || "",
-      }));
-
-      const project = await Project.create({
-        name,
-        client,
-        type,
-        budget,
-        startDate,
-        status,
-        description,
-        images,
-      });
-
-      return res.status(201).send({
-        success: true,
-        message: "Project created successfully",
-        project,
-      });
-
-    } catch (error) {
-      console.log("Create Project Error:", error);
-      res.status(500).send({ success: false, message: "Server error" });
     }
-  });
+
+    const project = await Project.create({
+      name,
+      client,
+      type,
+      budget,
+      startDate,
+      status,
+      description,
+      location,
+      progress,
+      images,
+    });
+
+    return res.status(201).send({
+      success: true,
+      message: "Project created successfully",
+      project,
+    });
+  } catch (error) {
+    console.log("Create Project Error:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
 };
-
-
 
 // ===================================
 // GET ALL PROJECTS
@@ -287,9 +310,100 @@ const getProjects = async (req, res) => {
   }
 };
 
+// ===================================
+// GET ONE PROJECT BY ID
+// ===================================
+const getProjectById = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Project not found" });
+    }
+
+    res.send({ success: true, project });
+  } catch (error) {
+    console.log("Get Project Error:", error);
+    res.status(500).send({ success: false, message: "Server error" });
+  }
+};
 
 // ===================================
-// DELETE PROJECT
+// UPDATE PROJECT – Cloudinary
+// ===================================
+const updateProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
+    }
+
+    // update primitive fields
+    const updatableFields = [
+      "name",
+      "client",
+      "type",
+      "budget",
+      "startDate",
+      "status",
+      "description",
+      "location",
+      "progress",
+    ];
+
+    updatableFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        project[field] = req.body[field];
+      }
+    });
+
+    // new captions for new images
+    let captions = req.body.captions || [];
+    if (!Array.isArray(captions)) captions = [captions];
+
+    const files = req.files || [];
+    if (files.length) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        const compressedBuffer = await sharp(file.buffer)
+          .resize({ width: 1920, withoutEnlargement: true })
+          .jpeg({ quality: 80 })
+          .toBuffer();
+
+        const uploaded = await uploadCompressedToCloudinary(
+          compressedBuffer,
+          "architectpage/projects"
+        );
+
+        project.images.push({
+          url: uploaded.secure_url,
+          caption: captions[i] || "",
+          publicId: uploaded.public_id,
+        });
+      }
+    }
+
+    await project.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Project updated successfully",
+      project,
+    });
+  } catch (error) {
+    console.error("Update Project Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// ===================================
+// DELETE PROJECT – Cloudinary cleanup
 // ===================================
 const deleteProject = async (req, res) => {
   try {
@@ -302,82 +416,48 @@ const deleteProject = async (req, res) => {
       });
     }
 
-    // Delete each image file
-    for (const img of project.images) {
-      const filePath = path.join(process.cwd(), img.url.replace(/^\//, ""));
-      if (fs.existsSync(filePath)) {
-        try {
-          fs.unlinkSync(filePath);
-        } catch (e) {
-          console.log("File delete error:", e);
-        }
-      }
-    }
+    // delete images from Cloudinary (if they have publicId)
+    await Promise.all(
+      (project.images || []).map((img) =>
+        img.publicId
+          ? cloudinary.uploader
+              .destroy(img.publicId)
+              .catch((e) =>
+                console.log("Cloudinary delete error:", img.publicId, e.message)
+              )
+          : Promise.resolve()
+      )
+    );
 
-    await Project.findByIdAndDelete(req.params.id);
+    await project.deleteOne();
 
     return res.send({
       success: true,
       message: "Project deleted successfully",
     });
-
   } catch (error) {
     console.log("Delete Project Error:", error);
     res.status(500).send({ success: false, message: "Server error" });
   }
 };
 
-// GET ONE PROJECT BY ID
-const getProjectById = async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-
-    if (!project) {
-      return res.status(404).send({ success: false, message: "Project not found" });
-    }
-
-    res.send({ success: true, project });
-
-  } catch (error) {
-    console.log("Get Project Error:", error);
-    res.status(500).send({ success: false, message: "Server error" });
-  }
-};
-const updateProject = async (req, res) => {
-  try {
-    const project = await Project.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-
-    if (!project) {
-      return res.status(404).json({ message: "Project not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Project updated successfully",
-      project,
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error", error });
-  }
-};
-
-
 // EXPORT ALL
 module.exports = {
   adminLogin,
   adminRegister,
+
+  // media events
   createMediaEvent,
   getMediaEvents,
   deleteMediaEvent,
+
+  // projects
   createProject,
   getProjects,
   deleteProject,
   getProjectById,
-  updateProject   
+  updateProject,
+
+  // multer
+  eventUpload,
 };

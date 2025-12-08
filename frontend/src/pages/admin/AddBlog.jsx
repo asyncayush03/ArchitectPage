@@ -1,3 +1,4 @@
+// frontend AddMedia / AddBlog.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -27,12 +28,10 @@ export default function AddMedia() {
 
   const API_BASE = "/api/v1/admin";
 
-  // ------------------------------
   // Handle multiple images upload
-  // ------------------------------
   const handleImagesChange = (e) => {
     const selectedFiles = Array.from(e.target.files || []);
-    
+
     const newImages = selectedFiles.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
@@ -41,23 +40,17 @@ export default function AddMedia() {
     setImages((prev) => [...prev, ...newImages]);
   };
 
-  // ------------------------------
   // Remove image
-  // ------------------------------
   const removeImage = (index) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ------------------------------
   // Handle form input change
-  // ------------------------------
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ------------------------------
   // Submit event using AXIOS
-  // ------------------------------
   const onSubmit = async (e) => {
     e.preventDefault();
     console.log("onSubmit called", { ...form, images: images.length });
@@ -78,13 +71,13 @@ export default function AddMedia() {
       const formData = new FormData();
       formData.append("title", form.title);
       formData.append("eventDate", form.eventDate);
-      
-      // Append multiple images
+
       images.forEach((img) => {
         formData.append("images", img.file);
       });
 
       console.log("📤 Sending form data to", `${API_BASE}/blog`);
+      console.log("Submitting event with", images.length, "images");
 
       const token = localStorage.getItem("token");
 
@@ -100,7 +93,10 @@ export default function AddMedia() {
       navigate("/admin/media");
     } catch (err) {
       console.error("❌ Error adding event:", err);
-      alert("Error adding event: " + (err.response?.data?.message || err.message));
+      alert(
+        "Error adding event: " +
+          (err.response?.data?.message || err.message)
+      );
     } finally {
       setLoading(false);
     }
@@ -126,10 +122,8 @@ export default function AddMedia() {
       `}</style>
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-        
         {/* Header Section */}
         <div className="relative overflow-hidden bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white py-12 px-4 sm:px-6 lg:px-8 mb-8">
-          {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
@@ -170,16 +164,14 @@ export default function AddMedia() {
         {/* Form Container */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
           <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-8 animate-fade-in-up">
-            
             <form onSubmit={onSubmit} className="space-y-6">
-              
               {/* Event Information Section */}
               <div className="border-b border-gray-200 pb-6">
                 <h2 className="text-xl font-medium text-gray-900 mb-4 flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-red-600" />
                   Event Information
                 </h2>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -216,15 +208,22 @@ export default function AddMedia() {
               <div>
                 <h2 className="text-xl font-medium text-gray-900 mb-4 flex items-center gap-2">
                   <ImageIcon className="w-5 h-5 text-red-600" />
-                  Event Gallery ({images.length} {images.length === 1 ? 'image' : 'images'})
+                  Event Gallery ({images.length}{" "}
+                  {images.length === 1 ? "image" : "images"})
                 </h2>
 
                 {/* Upload Area */}
                 <label className="block w-full py-12 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer bg-gray-50 hover:bg-gray-100 hover:border-red-500 transition-all duration-300 group mb-6">
                   <Upload className="mx-auto w-12 h-12 text-gray-400 group-hover:text-red-600 transition-colors duration-300" />
-                  <p className="text-gray-600 mt-3 font-medium">Click to upload images</p>
-                  <p className="text-gray-400 text-sm mt-1">Support: JPG, PNG, GIF (Max 10MB each)</p>
-                  <p className="text-red-600 text-xs mt-2 font-semibold">Multiple images can be selected at once</p>
+                  <p className="text-gray-600 mt-3 font-medium">
+                    Click to upload images
+                  </p>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Support: JPG, PNG, GIF (Max 10MB each)
+                  </p>
+                  <p className="text-red-600 text-xs mt-2 font-semibold">
+                    Multiple images can be selected at once
+                  </p>
                   <input
                     type="file"
                     multiple
@@ -246,15 +245,13 @@ export default function AddMedia() {
                           key={index}
                           className="relative bg-white border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 p-2 group"
                         >
-                          {/* Image Preview */}
                           <div className="relative h-40 bg-gray-100 rounded-lg overflow-hidden">
                             <img
                               src={img.preview}
                               alt={`Preview ${index + 1}`}
                               className="w-full h-full object-cover"
                             />
-                            
-                            {/* Delete Button Overlay */}
+
                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                               <button
                                 type="button"
@@ -265,15 +262,15 @@ export default function AddMedia() {
                               </button>
                             </div>
 
-                            {/* Image Number */}
                             <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs font-semibold rounded backdrop-blur-sm">
                               #{index + 1}
                             </div>
                           </div>
 
-                          {/* File Info */}
                           <div className="mt-2 px-1">
-                            <p className="text-xs text-gray-600 truncate">{img.file.name}</p>
+                            <p className="text-xs text-gray-600 truncate">
+                              {img.file.name}
+                            </p>
                             <p className="text-xs text-gray-400">
                               {(img.file.size / 1024).toFixed(1)} KB
                             </p>
@@ -288,8 +285,12 @@ export default function AddMedia() {
                 {images.length === 0 && (
                   <div className="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
                     <ImageIcon className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                    <p className="text-gray-500 text-sm">No images uploaded yet</p>
-                    <p className="text-gray-400 text-xs mt-1">Click the upload area above to add images</p>
+                    <p className="text-gray-500 text-sm">
+                      No images uploaded yet
+                    </p>
+                    <p className="text-gray-400 text-xs mt-1">
+                      Click the upload area above to add images
+                    </p>
                   </div>
                 )}
               </div>
@@ -303,7 +304,7 @@ export default function AddMedia() {
                 >
                   Cancel
                 </button>
-                
+
                 <button
                   type="submit"
                   disabled={loading || images.length === 0}
@@ -331,7 +332,10 @@ export default function AddMedia() {
               <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm text-blue-800">
-                  <strong>Tips:</strong> Give your event a descriptive name. Select the event date accurately. Upload multiple images at once by selecting them together. You can remove any image by hovering over it and clicking the X button.
+                  <strong>Tips:</strong> Give your event a descriptive name.
+                  Select the event date accurately. Upload multiple images at
+                  once by selecting them together. You can remove any image by
+                  hovering over it and clicking the X button.
                 </p>
               </div>
             </div>

@@ -7,6 +7,7 @@ const cors = require("cors");               // 👈 add this
 const connectDB = require("./config/db");
 const imageRoutes = require("./routes/imageRoutes");
 
+
 dotenv.config();
 connectDB();
 
