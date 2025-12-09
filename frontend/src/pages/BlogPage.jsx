@@ -29,7 +29,7 @@ const MediaGalleryPage = () => {
         const sortedList = list.sort((a, b) => {
           const dateA = new Date(a.eventDate || a.createdAt);
           const dateB = new Date(b.eventDate || b.createdAt);
-          return dateB - dateA; // Descending (newest first)
+          return dateB - dateA;
         });
 
         setEvents(sortedList);
@@ -50,15 +50,11 @@ const MediaGalleryPage = () => {
   // Helper to get correct image URL (Cloudinary OR local uploads)
   const getImageUrl = (img) => {
     let imageUrl = img?.url || img; // support {url: "..."} or plain string
-
     if (!imageUrl) return "";
 
-    // If it's already an absolute URL (Cloudinary, etc.), use as is
     if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
       return imageUrl;
     }
-
-    // Otherwise treat as local uploads path
     return `http://localhost:8080${imageUrl}`;
   };
 
@@ -76,6 +72,22 @@ const MediaGalleryPage = () => {
         @keyframes zoomIn {
           from { opacity: 0; transform: scale(0.9); }
           to { opacity: 1; transform: scale(1); }
+        }
+
+        /* NEW: slide-in animations for cards */
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .card-animate-left {
+          animation: slideInLeft 0.8s ease-out forwards;
+        }
+        .card-animate-right {
+          animation: slideInRight 0.8s ease-out forwards;
         }
         
         .animate-fade-in-up { 
@@ -150,7 +162,7 @@ const MediaGalleryPage = () => {
           </div>
         </section>
 
-        {/* Events Gallery */}
+        {/* Events Gallery – editorial style rows */}
         <section className="py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {loading ? (
@@ -167,144 +179,144 @@ const MediaGalleryPage = () => {
                 </p>
               </div>
             ) : (
-              <div className="space-y-16">
+              <div className="space-y-20">
                 {events.map((event, eventIndex) => {
                   const images =
                     event.images || (event.image ? [{ url: event.image }] : []);
+                  const primaryImage =
+                    images.length > 0 ? getImageUrl(images[0]) : null;
+                  const secondaryImages = images.slice(1);
                   const isExpanded = expandedEvent === event._id;
-                  const displayImages = isExpanded
-                    ? images
-                    : images.slice(0, 5);
-                  const hasMoreImages = images.length > 5;
-
                   const eventDate = event.eventDate || event.createdAt;
+
+                  const rowReverse = eventIndex % 2 === 1; // alternate layout
+                  const animateFromRight = rowReverse; // match layout direction
 
                   return (
                     <div
                       key={event._id}
-                      className="bg-white rounded-lg shadow-lg overflow-hidden animate-fade-in-up"
+                      className={`bg-white rounded-xl shadow-lg overflow-hidden ${
+                        animateFromRight
+                          ? "card-animate-right"
+                          : "card-animate-left"
+                      }`}
                       style={{
-                        animationDelay: `${eventIndex * 0.1}s`,
+                        animationDelay: `${eventIndex * 0.12}s`,
                         opacity: 0,
                       }}
                     >
-                      {/* Event Header */}
-                      <div className="p-8 border-b border-gray-100">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-4">
-                              <Calendar className="w-5 h-5 text-red-600" />
-                              <span className="text-red-600 font-medium">
-                                {new Date(eventDate).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                  }
-                                )}
-                              </span>
+                      <div
+                        className={`flex flex-col md:flex-row ${
+                          rowReverse ? "md:flex-row-reverse" : ""
+                        }`}
+                      >
+                        {/* Image side */}
+                        <div
+                          className="md:w-1/2 w-full cursor-pointer"
+                          onClick={() =>
+                            primaryImage && setSelectedImage(primaryImage)
+                          }
+                        >
+                          {primaryImage ? (
+                            <div className="h-72 md:h-[420px] overflow-hidden">
+                              <img
+                                src={primaryImage}
+                                alt={event.title}
+                                className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                              />
                             </div>
+                          ) : (
+                            <div className="h-72 md:h-[420px] flex items-center justify-center bg-gray-100">
+                              <ImageIcon className="w-12 h-12 text-gray-300" />
+                            </div>
+                          )}
+                        </div>
 
-                            <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4 tracking-tight">
-                              {event.title}
-                            </h2>
-
-                            {event.content && (
-                              <p className="text-gray-600 leading-relaxed max-w-3xl">
-                                {event.content}
-                              </p>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-2 px-4 py-2 bg-red-50 rounded-full">
-                            <ImageIcon className="w-4 h-4 text-red-600" />
-                            <span className="text-sm font-semibold text-red-600">
-                              {images.length}
+                        {/* Text side */}
+                        <div className="md:w-1/2 w-full flex flex-col justify-center p-8 md:p-10">
+                          <div className="flex items-center gap-2 mb-4">
+                            <Calendar className="w-5 h-5 text-red-600" />
+                            <span className="text-red-600 font-medium">
+                              {new Date(eventDate).toLocaleDateString(
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
                             </span>
                           </div>
+
+                          <h2 className="text-3xl md:text-4xl font-semibold tracking-wide text-orange-500 uppercase mb-3">
+                            {event.title}
+                          </h2>
+
+                          {event.content && (
+                            <p className="text-gray-600 leading-relaxed mb-8 max-w-xl">
+                              {event.content}
+                            </p>
+                          )}
+
+                          {/* underline + VIEW like reference design */}
+                          <button
+                            onClick={() =>
+                              secondaryImages.length > 0
+                                ? toggleExpand(event._id)
+                                : primaryImage &&
+                                  setSelectedImage(primaryImage)
+                            }
+                            className="flex items-center gap-4 text-sm font-semibold tracking-[0.2em] text-green-700 uppercase"
+                          >
+                            <span className="w-16 h-[2px] bg-green-500" />
+                            <span>View</span>
+                          </button>
+
+                          {/* small info about images count */}
+                          {images.length > 1 && (
+                            <p className="mt-3 text-xs text-gray-400">
+                              {images.length} images in this story
+                            </p>
+                          )}
                         </div>
                       </div>
 
-                      {/* Image Grid */}
-                      <div className="p-8">
-                        {images.length > 0 ? (
-                          <>
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                              {displayImages.map((img, imgIndex) => {
-                                const imageUrl = getImageUrl(img);
-
-                                return (
-                                  <div
-                                    key={imgIndex}
-                                    className="group relative aspect-square overflow-hidden rounded-lg cursor-pointer bg-gray-100"
-                                    onClick={() => setSelectedImage(imageUrl)}
-                                  >
-                                    <img
-                                      src={imageUrl}
-                                      alt={`${event.title} - ${
-                                        imgIndex + 1
-                                      }`}
-                                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                    />
-
-                                    {/* Overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                      <div className="absolute bottom-2 left-2 right-2">
-                                        <p className="text-white text-xs font-medium">
-                                          Image {imgIndex + 1}
-                                        </p>
-                                      </div>
-                                    </div>
-
-                                    {/* Zoom indicator */}
-                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                      <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center">
-                                        <ArrowRight className="w-6 h-6 text-gray-900 rotate-45" />
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-
-                            {/* See More Button */}
-                            {hasMoreImages && !isExpanded && (
-                              <div className="mt-8 text-center">
-                                <button
-                                  onClick={() => toggleExpand(event._id)}
-                                  className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-medium hover:shadow-lg hover:shadow-red-500/40 transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-2"
-                                >
-                                  <span>
-                                    See All {images.length} Images
-                                  </span>
-                                  <ArrowRight className="w-4 h-4" />
-                                </button>
-                              </div>
-                            )}
-
-                            {/* Show Less Button */}
-                            {isExpanded && (
-                              <div className="mt-8 text-center">
-                                <button
-                                  onClick={() => toggleExpand(event._id)}
-                                  className="px-8 py-3 bg-white text-gray-700 font-medium border-2 border-gray-200 hover:border-red-600 hover:text-red-600 transition-all duration-300 hover:shadow-md inline-flex items-center gap-2"
-                                >
-                                  <span>Show Less</span>
-                                  <ChevronDown className="w-4 h-4 rotate-180" />
-                                </button>
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <div className="text-center py-12 bg-gray-50 rounded-lg">
-                            <ImageIcon className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                            <p className="text-gray-500 text-sm">
-                              No images available for this event
+                      {/* Expanded thumbnail strip */}
+                      {isExpanded && secondaryImages.length > 0 && (
+                        <div className="px-6 pb-6 pt-4 bg-gray-50 border-t border-gray-100">
+                          <div className="flex justify-between items-center mb-3">
+                            <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
+                              Gallery
                             </p>
+                            <button
+                              onClick={() => toggleExpand(event._id)}
+                              className="text-xs text-gray-500 hover:text-red-600 flex items-center gap-1"
+                            >
+                              Show Less
+                              <ChevronDown className="w-3 h-3 rotate-180" />
+                            </button>
                           </div>
-                        )}
-                      </div>
+                          <div className="flex gap-3 overflow-x-auto pb-2">
+                            {secondaryImages.map((img, imgIndex) => {
+                              const imageUrl = getImageUrl(img);
+                              return (
+                                <div
+                                  key={imgIndex}
+                                  className="relative w-32 h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 cursor-pointer group"
+                                  onClick={() => setSelectedImage(imageUrl)}
+                                >
+                                  <img
+                                    src={imageUrl}
+                                    alt={`${event.title} - ${imgIndex + 2}`}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                  />
+                                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

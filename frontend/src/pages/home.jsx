@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ChevronDown,
   ArrowRight,
   Building2,
   Users,
   Award,
-  Sparkles, 
+  Sparkles,
   Calendar,
   MapPin,
   Phone,
@@ -32,32 +32,42 @@ const Home = () => {
   // 👇 images for About section from Cloudinary
   const [aboutImages, setAboutImages] = useState([]);
 
-  // 👇 HERO SLIDES – ONLY 3 FIXED CLOUDINARY IMAGES
-  //    👉 Put your 3 Cloudinary URLs here
+  // 🔹 Scroll animation refs & state
+  const aboutTextRef = useRef(null);
+  const aboutImageRef = useRef(null);
+  const servicesRef = useRef(null);
+  const projectsRef = useRef(null);
+
+  const [aboutVisible, setAboutVisible] = useState(false);
+  const [servicesVisible, setServicesVisible] = useState(false);
+  const [projectsVisible, setProjectsVisible] = useState(false);
+
+  //  HERO SLIDES – ONLY 3 FIXED CLOUDINARY IMAGES
   const [heroSlides] = useState([
     {
-      image: "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765191080/hotels/Hotel_Paharganj/Architecture/3.jpg", // e.g. "https://res.cloudinary.com/.../hero1.jpg"
+      image:
+        "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765191080/hotels/Hotel_Paharganj/Architecture/3.jpg",
       title: "Contemporary Architecture",
       subtitle: "Crafting Spaces That Inspire",
       cta: "Explore Projects",
     },
     {
-      image: "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765190986/hotels/Hotel_Kanpur/Architecure/3.jpg",
+      image:
+        "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765190986/hotels/Hotel_Kanpur/Architecure/3.jpg",
       title: "Interior Excellence",
       subtitle: "Where Design Meets Sophistication",
-      cta: "View Interiors",
+      cta: "Explore Projects",
     },
     {
-      image: "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765189409/hotels/Allenger/View_2.jpg",
+      image:
+        "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765189409/hotels/Allenger/View_2.jpg",
       title: "Commercial Innovation",
       subtitle: "Building Tomorrow's Workspaces",
-      cta: "Discover More",
+      cta: "Explore Projects",
     },
   ]);
 
   // 🔹 Fetch Cloudinary images once:
-  //    - set aboutImages (specific publicIds)
-  //    (no longer touches heroSlides)
   useEffect(() => {
     const url = "http://localhost:8080/api/images";
 
@@ -86,7 +96,7 @@ const Home = () => {
           }))
           .filter((img) => img.url);
 
-        console.log("✅ Normalized images:", normalized);
+        console.log(" Normalized images:", normalized);
 
         // ====== ABOUT IMAGES ONLY ======
         const getId = (img) => (img.publicId || "").toLowerCase();
@@ -99,7 +109,7 @@ const Home = () => {
         );
 
         const pickedAbout = [himachal, paharganj].filter(Boolean);
-        console.log("✅ About images picked:", pickedAbout);
+        console.log(" About images picked:", pickedAbout);
         setAboutImages(pickedAbout);
       })
       .catch((err) => {
@@ -107,7 +117,7 @@ const Home = () => {
       });
   }, []);
 
-  // hero slider auto-change
+  // 🔹 hero slider auto-change
   useEffect(() => {
     if (!heroSlides.length) return;
 
@@ -117,6 +127,49 @@ const Home = () => {
 
     return () => clearInterval(timer);
   }, [heroSlides.length]);
+
+  // 🔹 Intersection Observer for scroll animations
+  useEffect(() => {
+    const options = {
+      root: null,
+      threshold: 0.2,
+    };
+
+    const handleObserver = (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        if (
+          entry.target === aboutTextRef.current ||
+          entry.target === aboutImageRef.current
+        ) {
+          setAboutVisible(true);
+        }
+
+        if (entry.target === servicesRef.current) {
+          setServicesVisible(true);
+        }
+
+        if (entry.target === projectsRef.current) {
+          setProjectsVisible(true);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleObserver, options);
+
+    if (aboutTextRef.current) observer.observe(aboutTextRef.current);
+    if (aboutImageRef.current) observer.observe(aboutImageRef.current);
+    if (servicesRef.current) observer.observe(servicesRef.current);
+    if (projectsRef.current) observer.observe(projectsRef.current);
+
+    return () => {
+      if (aboutTextRef.current) observer.unobserve(aboutTextRef.current);
+      if (aboutImageRef.current) observer.unobserve(aboutImageRef.current);
+      if (servicesRef.current) observer.unobserve(servicesRef.current);
+      if (projectsRef.current) observer.unobserve(projectsRef.current);
+    };
+  }, []);
 
   const featuredProjects = [
     {
@@ -269,10 +322,11 @@ const Home = () => {
               </p>
             </div>
             <div className="flex gap-4 animate-fade-in-up animation-delay-600">
-              <button className="px-8 py-4 bg-red-600 text-white font-medium hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/50 active:scale-95">
+              {/* pill CTA buttons */}
+              <button className="px-8 py-4 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/50 active:scale-95">
                 {heroSlides[currentSlide]?.cta}
               </button>
-              <button className="px-8 py-4 border-2 border-white text-white font-medium hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-105 active:scale-95">
+              <button className="px-8 py-4 border-2 border-white text-white font-medium rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-105 active:scale-95">
                 GET IN TOUCH
               </button>
             </div>
@@ -297,7 +351,7 @@ const Home = () => {
         </section>
 
         {/* COMPANY LOGO CAROUSEL */}
-        <section className="py-16 bg-gray-50 border-y border-gray-200 overflow-hidden">
+        <section className="py-10 bg-gray-50 border-y border-gray-200 overflow-hidden">
           <div className="text-center mb-8">
             <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium">
               Trusted By Industry Leaders
@@ -332,23 +386,49 @@ const Home = () => {
           </div>
         </section>
 
-        {/* ABOUT SECTION */}
-        <section className="py-24 bg-white">
+        {/* ABOUT SECTION with scroll left-right / right-left animation */}
+        <section className="py-10 bg-white">
           <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-16 items-center">
-            <div className="space-y-6 animate-fade-in">
+            {/* TEXT */}
+            <div
+              ref={aboutTextRef}
+              className={`space-y-6 transition-all duration-1000 ease-out ${
+                aboutVisible
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 -translate-x-16"
+              }`}
+            >
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium">
                 ABOUT US
               </p>
-              <h2 className="text-4xl md:text-5xl font-light text-gray-900">
-                Building Dreams Since 2019
-              </h2>
+
+              {/* Typography flair with tighter space between B & uilding */}
+              <div className="flex items-baseline gap-1 md:gap-2">
+                <span className="text-6xl md:text-7xl text-red-600 font-light leading-none">
+                  B
+                </span>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 leading-tight">
+                  uilding Dreams Since 2019
+                </h2>
+              </div>
+
               <p className="text-gray-600 leading-relaxed">
-                Founded in 2019, CENT’ANNI is a young, multi-disciplinary architecture firm driven by the belief that great design can shape communities. Rooted in collaboration, sustainability, and meticulous attention to detail, the studio crafts bespoke solutions that balance beauty, efficiency, and innovation across hospitality, residential, commercial, industrial, and competition projects.
+                Founded in 2019, CENT’ANNI is a young, multi-disciplinary
+                architecture firm driven by the belief that great design can
+                shape communities. Rooted in collaboration, sustainability, and
+                meticulous attention to detail, the studio crafts bespoke
+                solutions that balance beauty, efficiency, and innovation across
+                hospitality, residential, commercial, industrial, and
+                competition projects.
               </p>
               <p className="text-gray-600 leading-relaxed">
-                In just a few years, CENT’ANNI has grown from a small practice into a trusted name, consistently delivering thoughtful, enduring spaces that challenge conventions and set new benchmarks in every context they touch.
+                In just a few years, CENT’ANNI has grown from a small practice
+                into a trusted name, consistently delivering thoughtful, enduring
+                spaces that challenge conventions and set new benchmarks in
+                every context they touch.
               </p>
-              <button className="px-8 py-3 bg-red-600 text-white font-medium hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 active:scale-95 mt-4 group">
+              {/* pill Learn More button */}
+              <button className="px-8 py-3 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 active:scale-95 mt-4 group">
                 <span className="flex items-center gap-2">
                   LEARN MORE
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -356,8 +436,16 @@ const Home = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="overflow-hidden rounded-lg group">
+            {/* IMAGES */}
+            <div
+              ref={aboutImageRef}
+              className={`grid grid-cols-2 gap-4 transition-all duration-1000 ease-out ${
+                aboutVisible
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 translate-x-16"
+              }`}
+            >
+              <div className="overflow-hidden rounded-lg group shadow-lg shadow-black/5">
                 <img
                   src={
                     aboutImages[0]?.url ||
@@ -367,7 +455,7 @@ const Home = () => {
                   className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
-              <div className="overflow-hidden rounded-lg mt-8 group">
+              <div className="overflow-hidden rounded-lg mt-8 group shadow-lg shadow-black/5">
                 <img
                   src={
                     aboutImages[1]?.url ||
@@ -381,10 +469,16 @@ const Home = () => {
           </div>
         </section>
 
-        {/* SERVICES */}
-        <section className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-16">
+        {/* SERVICES – scroll bottom to top with stagger */}
+        <section className="py-10 bg-white">
+          <div ref={servicesRef} className="max-w-7xl mx-auto px-4">
+            <div
+              className={`text-center mb-16 transform transition-all duration-1000 ${
+                servicesVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10"
+              }`}
+            >
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-4">
                 OUR SERVICES
               </p>
@@ -400,9 +494,16 @@ const Home = () => {
               {services.map((service, index) => (
                 <div
                   key={index}
-                  className="p-8 bg-gray-50 hover:bg-white border-2 border-gray-100 hover:border-red-600 transition-all duration-300 group cursor-pointer hover:shadow-2xl hover:shadow-red-600/10 hover:-translate-y-2"
+                  className={`p-8 bg-gray-50 hover:bg-white border-2 border-gray-100 hover:border-red-600 transition-all duration-700 group cursor-pointer hover:shadow-2xl hover:shadow-red-600/10 hover:-translate-y-2 transform ${
+                    servicesVisible
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-10"
+                  }`}
+                  style={{
+                    transitionDelay: servicesVisible ? `${index * 120}ms` : "0ms",
+                  }}
                 >
-                  <div className="w-16 h-16 bg-red-600 group-hover:bg-red-700 text-white rounded-lg flex items-center justify-center text-2xl font-light mb-6 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                  <div className="w-16 h-16 bg-red-600 group-hover:bg-red-700 text-white rounded-xl flex items-center justify-center text-2xl font-light mb-6 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
                     {service.icon}
                   </div>
                   <h3 className="text-xl font-medium mb-3 text-gray-900 group-hover:text-red-600 transition-colors duration-300">
@@ -417,10 +518,16 @@ const Home = () => {
           </div>
         </section>
 
-        {/* FEATURED PROJECTS */}
-        <section className="py-24 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-16">
+        {/* FEATURED PROJECTS – cards rise from bottom on scroll */}
+        <section className="py-10 bg-gray-50">
+          <div ref={projectsRef} className="max-w-7xl mx-auto px-4">
+            <div
+              className={`text-center mb-16 transform transition-all duration-1000 ${
+                projectsVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10"
+              }`}
+            >
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-4">
                 FEATURED WORK
               </p>
@@ -432,10 +539,19 @@ const Home = () => {
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProjects.map((project) => (
+              {featuredProjects.map((project, index) => (
                 <div
                   key={project.id}
-                  className="group cursor-pointer bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                  className={`group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 transform ${
+                    projectsVisible
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-10"
+                  }`}
+                  style={{
+                    transitionDelay: projectsVisible
+                      ? `${index * 130}ms`
+                      : "0ms",
+                  }}
                   onMouseEnter={() => setHoveredProject(project.id)}
                   onMouseLeave={() => setHoveredProject(null)}
                 >
@@ -447,9 +563,13 @@ const Home = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
                     <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 bg-red-600 text-white text-xs font-medium uppercase tracking-wider">
-                        {project.category}
-                      </span>
+                      {/* gradient pill like your screenshot */}
+                      <span className="inline-flex items-center px-6 py-2 rounded-full
+  bg-gradient-to-r from-red-500 via-red-600 to-red-700
+  text-white text-xs font-semibold uppercase tracking-[0.2em] shadow-lg">
+  {project.category}
+</span>
+
                     </div>
                     <div
                       className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
@@ -478,7 +598,8 @@ const Home = () => {
                     <p className="text-gray-600 text-sm leading-relaxed mb-4">
                       {project.desc}
                     </p>
-                    <button className="text-red-600 font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 hover:text-red-700">
+                    {/* pill-ish text button */}
+                    <button className="text-red-600 font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 hover:text-red-700 px-4 py-2 rounded-full hover:bg-red-50">
                       VIEW PROJECT
                       <ArrowRight className="w-4 h-4" />
                     </button>
@@ -487,7 +608,8 @@ const Home = () => {
               ))}
             </div>
             <div className="text-center mt-12">
-              <button className="px-8 py-3 bg-red-600 text-white font-medium hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 active:scale-95">
+              {/* pill VIEW ALL button */}
+              <button className="px-10 py-3 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 active:scale-95">
                 VIEW ALL PROJECTS
               </button>
             </div>
