@@ -25,7 +25,7 @@ const fileFilter = (req, file, cb) => {
 const eventUpload = multer({
   storage: multer.memoryStorage(),
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB before compression
+  limits: { fileSize: 50 * 1024 * 1024 }, // 10 MB before compression
 }).array("images", 15); // field name = images
 
 // Upload compressed buffer to Cloudinary
@@ -223,13 +223,16 @@ const deleteMediaEvent = async (req, res) => {
 // ===================================
 // CREATE PROJECT – Cloudinary
 // ===================================
+// ===================================
+// CREATE PROJECT – Cloudinary (UPDATED)
+// ===================================
 const createProject = async (req, res) => {
   try {
     const {
       name,
       client,
       type,
-      budget,
+      area,
       startDate,
       status,
       description,
@@ -244,13 +247,38 @@ const createProject = async (req, res) => {
       });
     }
 
-    // captions can be array or single string
+    // -----------------------------
+    // PARSE ADDITIONAL FEATURES
+    // -----------------------------
+    const keys = Array.isArray(req.body.feature_keys)
+      ? req.body.feature_keys
+      : req.body.feature_keys
+      ? [req.body.feature_keys]
+      : [];
+
+    const values = Array.isArray(req.body.feature_values)
+      ? req.body.feature_values
+      : req.body.feature_values
+      ? [req.body.feature_values]
+      : [];
+
+    const additionalFeatures = keys.map((key, index) => ({
+      key,
+      value: values[index] || "",
+    }));
+
+    // -----------------------------
+    // PARSE CAPTIONS
+    // -----------------------------
     let captions = req.body.captions || [];
     if (!Array.isArray(captions)) captions = [captions];
 
+    // -----------------------------
+    // HANDLE IMAGES
+    // -----------------------------
     const images = [];
-
     const files = req.files || [];
+
     if (files.length) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -273,16 +301,20 @@ const createProject = async (req, res) => {
       }
     }
 
+    // -----------------------------
+    // CREATE PROJECT
+    // -----------------------------
     const project = await Project.create({
       name,
       client,
       type,
-      budget,
+      area,
       startDate,
       status,
       description,
       location,
       progress,
+      additionalFeatures,
       images,
     });
 
@@ -296,6 +328,8 @@ const createProject = async (req, res) => {
     res.status(500).send({ success: false, message: "Server error" });
   }
 };
+
+
 
 // ===================================
 // GET ALL PROJECTS
@@ -333,6 +367,9 @@ const getProjectById = async (req, res) => {
 // ===================================
 // UPDATE PROJECT – Cloudinary
 // ===================================
+// ===================================
+// UPDATE PROJECT – Cloudinary (UPDATED)
+// ===================================
 const updateProject = async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
@@ -343,12 +380,14 @@ const updateProject = async (req, res) => {
         .json({ success: false, message: "Project not found" });
     }
 
-    // update primitive fields
-    const updatableFields = [
+    // -----------------------------
+    // UPDATE BASIC FIELDS
+    // -----------------------------
+    const fields = [
       "name",
       "client",
       "type",
-      "budget",
+      "area",
       "startDate",
       "status",
       "description",
@@ -356,22 +395,45 @@ const updateProject = async (req, res) => {
       "progress",
     ];
 
-    updatableFields.forEach((field) => {
+    fields.forEach((field) => {
       if (req.body[field] !== undefined) {
         project[field] = req.body[field];
       }
     });
 
-    // new captions for new images
+    // -----------------------------
+    // UPDATE ADDITIONAL FEATURES
+    // -----------------------------
+    const keys = Array.isArray(req.body.feature_keys)
+      ? req.body.feature_keys
+      : req.body.feature_keys
+      ? [req.body.feature_keys]
+      : [];
+
+    const values = Array.isArray(req.body.feature_values)
+      ? req.body.feature_values
+      : req.body.feature_values
+      ? [req.body.feature_values]
+      : [];
+
+    if (keys.length > 0) {
+      project.additionalFeatures = keys.map((key, index) => ({
+        key,
+        value: values[index] || "",
+      }));
+    }
+
+    // -----------------------------
+    // HANDLE NEW IMAGES
+    // -----------------------------
     let captions = req.body.captions || [];
     if (!Array.isArray(captions)) captions = [captions];
 
     const files = req.files || [];
+
     if (files.length) {
       for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-
-        const compressedBuffer = await sharp(file.buffer)
+        const compressedBuffer = await sharp(files[i].buffer)
           .resize({ width: 1920, withoutEnlargement: true })
           .jpeg({ quality: 80 })
           .toBuffer();
@@ -401,6 +463,7 @@ const updateProject = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 // ===================================
 // DELETE PROJECT – Cloudinary cleanup
