@@ -1,7 +1,8 @@
+// App.jsx
 import { useState } from "react";
 import Navbar from "./components/common/Navbar";
 import ModernFooter from "./components/common/ModernFooter";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ContactPage from "./pages/ContactPage";
 import ManageBlogs from "./pages/admin/ManageBlogs.jsx";
 import BlogPage from "./pages/BlogPage";
@@ -15,6 +16,8 @@ import Register from "./pages/register.jsx";
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ManageProjects from "./pages/admin/ManageProjects.jsx";
+import Artical from "./pages/admin/AddArticalnew.jsx"; 
+import ManageArtical from "./pages/admin/manageArtical.jsx"; 
 import AddProjects from "./pages/admin/AddProjects.jsx";
 import Home from "./pages/home.jsx";
 import ProjectDetails from "./pages/ProjectDetails.jsx";
@@ -22,25 +25,52 @@ import ScrollToTop from "./components/ScrollToTop.jsx";
 import EditProject from "./pages/admin/EditProject.jsx";
 import PublicRoute from "./components/PublicRoute.jsx";
 
-
 function App() {
   return (
     <>
       <BrowserRouter>
-      <ScrollToTop/>
+        <ScrollToTop />
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home/>} />
+          {/* Public pages */}
+          <Route path="/" element={<Home />} />
           <Route path="/aboutus" element={<Aboutus />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/media" element={<BlogPage />} />
+
+          {/* Article routes (canonical) */}
+          <Route
+            path="/admin/articles"
+            element={
+              <ProtectedRoute>
+                <ManageArtical />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/articles/new"
+            element={
+              <ProtectedRoute>
+                <Artical />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Backwards-compatible aliases (keep if external links/old bookmarks exist) */}
+          <Route path="/admin/managearticle" element={<Navigate to="/admin/articles" replace />} />
+          <Route path="/admin/articals" element={<Navigate to="/admin/articles/new" replace />} />
+
+          {/* Auth */}
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-          <Route path = "/register" element ={<Register/>}/>
+          <Route path="/register" element={<Register />} />
+
+          {/* Projects */}
           <Route path="/projects/:id" element={<ProjectDetails />} />
-        
+
           {/* Admin Routes */}
-          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute> } />
+          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+
           <Route path="/admin/media" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
           <Route path="/admin/media/new" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />
 
@@ -50,9 +80,10 @@ function App() {
           <Route path="/admin/projects/new" element={<ProtectedRoute><AddProjects /></ProtectedRoute>} />
           <Route path="/admin/projects/edit/:id" element={<EditProject />} />
 
-          
-       
+          {/* 404 fallback (optional) */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+
         <ModernFooter />
       </BrowserRouter>
     </>

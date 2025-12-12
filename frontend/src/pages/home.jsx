@@ -12,6 +12,8 @@ import {
   Mail,
   Maximize2,
 } from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // 🔹 LOGO IMAGES (green text logos)
 import logo1 from "../assets/Picture1.png";
@@ -26,13 +28,18 @@ import logo11 from "../assets/picture11.png";
 import logo12 from "../assets/picture12.png";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [hoveredProject, setHoveredProject] = useState(null);
 
-  // 👇 images for About section from Cloudinary
+  //  images for About section from Cloudinary
   const [aboutImages, setAboutImages] = useState([]);
 
-  // 🔹 Scroll animation refs & state
+  //  Projects fetched for Featured Projects (only 3 most recent)
+  const [featuredProjects, setFeaturedProjects] = useState([]);
+  const [featuredLoading, setFeaturedLoading] = useState(true);
+
+  //  Scroll animation refs & state
   const aboutTextRef = useRef(null);
   const aboutImageRef = useRef(null);
   const servicesRef = useRef(null);
@@ -67,6 +74,16 @@ const Home = () => {
     },
   ]);
 
+  // Helper: get epoch ms from Mongo ObjectId if createdAt not present
+  const getTimestampFromObjectId = (id = "") => {
+    try {
+      if (typeof id !== "string" || id.length < 8) return 0;
+      return parseInt(id.substring(0, 8), 16) * 1000;
+    } catch {
+      return 0;
+    }
+  };
+
   // 🔹 Fetch Cloudinary images once:
   useEffect(() => {
     const url = "http://localhost:8080/api/images";
@@ -74,8 +91,6 @@ const Home = () => {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        console.log("🔍 RAW /api/images response:", data);
-
         let imagesArray = [];
 
         if (Array.isArray(data)) {
@@ -85,7 +100,6 @@ const Home = () => {
         } else if (Array.isArray(data.resources)) {
           imagesArray = data.resources;
         } else {
-          console.log("❌ No images array found in response");
           return;
         }
 
@@ -96,9 +110,6 @@ const Home = () => {
           }))
           .filter((img) => img.url);
 
-        console.log(" Normalized images:", normalized);
-
-        // ====== ABOUT IMAGES ONLY ======
         const getId = (img) => (img.publicId || "").toLowerCase();
 
         const himachal = normalized.find((img) =>
@@ -109,7 +120,6 @@ const Home = () => {
         );
 
         const pickedAbout = [himachal, paharganj].filter(Boolean);
-        console.log(" About images picked:", pickedAbout);
         setAboutImages(pickedAbout);
       })
       .catch((err) => {
@@ -171,38 +181,68 @@ const Home = () => {
     };
   }, []);
 
-  const featuredProjects = [
-    {
-      id: 1,
-      title: "Modern Villa Residence",
-      category: "Architecture",
-      location: "Mumbai, India",
-      year: "2024",
-      image:
-        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
-      desc: "A contemporary residential masterpiece blending minimalist design with sustainable architecture.",
-    },
-    {
-      id: 2,
-      title: "Corporate Headquarters",
-      category: "Commercial",
-      location: "Bangalore, India",
-      year: "2024",
-      image:
-        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
-      desc: "Dynamic office space designed to foster collaboration and innovation.",
-    },
-    {
-      id: 3,
-      title: "Luxury Penthouse",
-      category: "Interior",
-      location: "Delhi, India",
-      year: "2024",
-      image:
-        "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&h=600&fit=crop",
-      desc: "Sophisticated interior design featuring bespoke furniture and elegant materials.",
-    },
-  ];
+  // ---------- New: fetch latest 3 projects from DB ----------
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadLatestProjects = async () => {
+      setFeaturedLoading(true);
+      try {
+        // DO NOT change your endpoint
+        const res = await axios.get("/api/v1/admin/project");
+        const allProjects = res.data?.projects || [];
+
+        // Sort by createdAt (newest first), fallback to startDate, fallback to ObjectId timestamp
+        const sorted = allProjects.sort((a, b) => {
+          const aDate =
+            new Date(a.createdAt || a.startDate || getTimestampFromObjectId(a._id)).getTime() ||
+            0;
+          const bDate =
+            new Date(b.createdAt || b.startDate || getTimestampFromObjectId(b._id)).getTime() ||
+            0;
+          return bDate - aDate;
+        });
+
+        const topThree = sorted.slice(0, 3).map((p) => {
+          // same image logic as in Projects.jsx (relative -> prefix)
+          const rawUrl = p.images?.[0]?.url;
+          const firstImage = rawUrl
+            ? rawUrl.startsWith("http")
+              ? rawUrl
+              : `http://localhost:8080${rawUrl}`
+            : "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop";
+
+          const year = p.startDate ? new Date(p.startDate).getFullYear() : (p.createdAt ? new Date(p.createdAt).getFullYear() : "----");
+
+          return {
+            id: p._id,
+            title: p.name || p.title || "Untitled Project",
+            category: p.type || "Project",
+            location: p.location || "Location",
+            year,
+            image: firstImage,
+            desc:
+              p.description ||
+              "A contemporary piece of architecture showcasing design excellence.",
+          };
+        });
+
+        if (!cancelled) {
+          setFeaturedProjects(topThree);
+        }
+      } catch (err) {
+        console.error("Error fetching projects for home featured:", err);
+      } finally {
+        if (!cancelled) setFeaturedLoading(false);
+      }
+    };
+
+    loadLatestProjects();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const stats = [
     {
@@ -282,6 +322,16 @@ const Home = () => {
         .animation-delay-200 { animation-delay: 0.2s; opacity: 0; }
         .animation-delay-400 { animation-delay: 0.4s; opacity: 0; }
         .animation-delay-600 { animation-delay: 0.6s; opacity: 0; }
+
+        /* Cross-browser 3-line clamp (works without Tailwind plugin) */
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 3;
+          overflow: hidden;
+          max-height: 4.5em; /* approx 3 lines at 1.5em line-height */
+          line-height: 1.5em;
+        }
       `}</style>
 
       <div className="bg-white text-gray-800">
@@ -323,10 +373,16 @@ const Home = () => {
             </div>
             <div className="flex gap-4 animate-fade-in-up animation-delay-600">
               {/* pill CTA buttons */}
-              <button className="px-8 py-4 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/50 active:scale-95">
+              <button
+                onClick={() => navigate("/projects")}
+                className="px-8 py-4 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/50 active:scale-95"
+              >
                 {heroSlides[currentSlide]?.cta}
               </button>
-              <button className="px-8 py-4 border-2 border-white text-white font-medium rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-105 active:scale-95">
+              <button
+                onClick={() => navigate("/contact")}
+                className="px-8 py-4 border-2 border-white text-white font-medium rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300 hover:scale-105 active:scale-95"
+              >
                 GET IN TOUCH
               </button>
             </div>
@@ -440,9 +496,7 @@ const Home = () => {
             <div
               ref={aboutImageRef}
               className={`grid grid-cols-2 gap-4 transition-all duration-1000 ease-out ${
-                aboutVisible
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 translate-x-16"
+                aboutVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-16"
               }`}
             >
               <div className="overflow-hidden rounded-lg group shadow-lg shadow-black/5">
@@ -474,9 +528,7 @@ const Home = () => {
           <div ref={servicesRef} className="max-w-7xl mx-auto px-4">
             <div
               className={`text-center mb-16 transform transition-all duration-1000 ${
-                servicesVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-10"
+                servicesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
               }`}
             >
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-4">
@@ -495,9 +547,7 @@ const Home = () => {
                 <div
                   key={index}
                   className={`p-8 bg-gray-50 hover:bg-white border-2 border-gray-100 hover:border-red-600 transition-all duration-700 group cursor-pointer hover:shadow-2xl hover:shadow-red-600/10 hover:-translate-y-2 transform ${
-                    servicesVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-10"
+                    servicesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
                   }`}
                   style={{
                     transitionDelay: servicesVisible ? `${index * 120}ms` : "0ms",
@@ -518,14 +568,12 @@ const Home = () => {
           </div>
         </section>
 
-        {/* FEATURED PROJECTS – cards rise from bottom on scroll */}
+        {/* FEATURED PROJECTS – fetches 3 latest from DB */}
         <section className="py-10 bg-gray-50">
           <div ref={projectsRef} className="max-w-7xl mx-auto px-4">
             <div
               className={`text-center mb-16 transform transition-all duration-1000 ${
-                projectsVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-10"
+                projectsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
               }`}
             >
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-4">
@@ -538,78 +586,73 @@ const Home = () => {
                 Explore our latest architectural and design achievements
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProjects.map((project, index) => (
-                <div
-                  key={project.id}
-                  className={`group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 transform ${
-                    projectsVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-10"
-                  }`}
-                  style={{
-                    transitionDelay: projectsVisible
-                      ? `${index * 130}ms`
-                      : "0ms",
-                  }}
-                  onMouseEnter={() => setHoveredProject(project.id)}
-                  onMouseLeave={() => setHoveredProject(null)}
-                >
-                  <div className="relative overflow-hidden h-64">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-                    <div className="absolute top-4 left-4">
-                      {/* gradient pill like your screenshot */}
-                      <span className="inline-flex items-center px-6 py-2 rounded-full
+
+            {/* Loading / Empty handling */}
+            {featuredLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : featuredProjects.length === 0 ? (
+              <div className="text-center py-12">
+                <Sparkles className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No recent projects yet.</p>
+                <div className="mt-4">
+                  <button onClick={() => navigate("/projects")} className="px-6 py-2 bg-red-600 text-white rounded-full">View All Projects</button>
+                </div>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredProjects.map((project, index) => (
+                  <div
+                    key={project.id}
+                    className={`group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 transform ${
+                      projectsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                    }`}
+                    style={{ transitionDelay: projectsVisible ? `${index * 130}ms` : "0ms" }}
+                    onMouseEnter={() => setHoveredProject(project.id)}
+                    onMouseLeave={() => setHoveredProject(null)}
+                    onClick={() => navigate(`/projects/${project.id}`)}
+                  >
+                    <div className="relative overflow-hidden h-64">
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                      <div className="absolute top-4 left-4">
+                        <span className="inline-flex items-center px-6 py-2 rounded-full
   bg-gradient-to-r from-red-500 via-red-600 to-red-700
   text-white text-xs font-semibold uppercase tracking-[0.2em] shadow-lg">
-  {project.category}
-</span>
+                          {project.category}
+                        </span>
+                      </div>
+                      <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${hoveredProject === project.id ? "opacity-100" : "opacity-0"}`}>
+                        <Maximize2 className="w-12 h-12 text-white" />
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-medium mb-2 text-gray-900 group-hover:text-red-600 transition-colors duration-300">
+                        {project.title}
+                      </h3>
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                        <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{project.location}</span>
+                        <span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{project.year}</span>
+                      </div>
+                      {/* clamped description */}
+                      <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">{project.desc}</p>
+                      <button className="text-red-600 font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 hover:text-red-700 px-4 py-2 rounded-full hover:bg-red-50">
+                        VIEW PROJECT
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
-                    </div>
-                    <div
-                      className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
-                        hoveredProject === project.id
-                          ? "opacity-100"
-                          : "opacity-0"
-                      }`}
-                    >
-                      <Maximize2 className="w-12 h-12 text-white" />
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-medium mb-2 text-gray-900 group-hover:text-red-600 transition-colors duration-300">
-                      {project.title}
-                    </h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {project.location}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {project.year}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                      {project.desc}
-                    </p>
-                    {/* pill-ish text button */}
-                    <button className="text-red-600 font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 hover:text-red-700 px-4 py-2 rounded-full hover:bg-red-50">
-                      VIEW PROJECT
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
             <div className="text-center mt-12">
-              {/* pill VIEW ALL button */}
-              <button className="px-10 py-3 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 active:scale-95">
+              <button onClick={() => navigate("/projects")} className="px-10 py-3 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 active:scale-95">
                 VIEW ALL PROJECTS
               </button>
             </div>

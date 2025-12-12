@@ -19,6 +19,7 @@ const Navbar = () => {
     { label: "Projects", path: "/projects" },
     { label: "About Us", path: "/aboutus" },
     { label: "Media", path: "/media" },
+    { label: "Article", path: "/article" }, // <-- NEW item added
     { label: "Contact", path: "/contact" },
   ];
 
