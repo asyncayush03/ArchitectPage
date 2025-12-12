@@ -149,7 +149,7 @@ const ModernFooter = () => {
                   +91-7303863399
                 </p>
               </div>
-
+ 
               <div className="flex items-center gap-3 group cursor-pointer">
                 <Mail className="w-5 h-5 text-red-600 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <p className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
@@ -259,33 +259,88 @@ const ModernFooter = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
-          <div className="flex flex-wrap items-center gap-4">
-            <p>© 2025 CENT’ANNI. All Rights Reserved.</p>
+<div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 relative">
 
-            <a
-              href="/privacy"
-              className="hover:text-red-600 transition-colors duration-300"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="/terms"
-              className="hover:text-red-600 transition-colors duration-300"
-            >
-              Terms of Service
-            </a>
-          </div>
+  {/* Admin Access - Bottom Left */}
+  <a
+    href="login"
+    className="absolute left-0 -bottom-10 text-xs text-gray-500 hover:text-red-600 transition-colors duration-300 underline"
+  >
+    Admin Access
+  </a>
 
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500">Made with</span>
-            <span className="text-red-600 animate-pulse">❤</span>
-            <span className="text-gray-500">for Generations</span>
-          </div>
-        </div>
+  <div className="flex flex-wrap items-center gap-4">
+    <p>© 2025 CENT’ANNI. All Rights Reserved.</p>
+
+    <a
+      href="/privacy"
+      className="hover:text-red-600 transition-colors duration-300"
+    >
+      Privacy Policy
+    </a>
+    <a
+      href="/terms"
+      className="hover:text-red-600 transition-colors duration-300"
+    >
+      Terms of Service
+    </a>
+  </div>
+
+  {/* Contributors Section - Bottom Right */}
+<div className="flex items-center gap-2 relative">
+
+  <p className="text-xs text-gray-500 mr-3">Contributors:</p>
+
+  <div className="flex -space-x-3"> 
+    {/* Contributor 1 */}
+    <a
+      href="https://portfolio-link-1.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-10 h-10 rounded-full overflow-hidden border-2 border-red-400 
+                 hover:scale-110 hover:z-10 transition-all duration-300"
+      style={{ zIndex: 3 }}
+    >
+      <img
+        src="/contributors/image.png"
+        alt="Contributor 1"
+        className="w-full h-full object-cover"
+      />
+    </a>
+
+    {/* Contributor 2 */}
+    <a
+      href="https://portfolio-link-2.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-10 h-10 rounded-full overflow-hidden border-2 border-red-400 
+                 hover:scale-110 hover:z-10 transition-all duration-300"
+      style={{ zIndex: 2 }}
+    >
+      <img
+        src="/contributors/image.png"
+        alt="Contributor 2"
+        className="w-full h-full object-cover"
+      />
+    </a>
+  </div>
+
+</div>
+
+
+  <div className="flex items-center gap-2 mt-10 md:mt-0">
+    <span className="text-gray-500">Made with</span>
+    <span className="text-red-600 animate-pulse">❤</span>
+    <span className="text-gray-500">for Generations</span>
+  </div>
+
+</div>
+
       </div>
     </footer>
   );
+
+
 };
 
 export default ModernFooter;

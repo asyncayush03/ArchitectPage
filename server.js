@@ -6,7 +6,7 @@ const path = require("path");
 const cors = require("cors");               // 👈 add this
 const connectDB = require("./config/db");
 const imageRoutes = require("./routes/imageRoutes");
-
+const contactRoute = require("./routes/contactRoute");
 
 dotenv.config();
 connectDB();
@@ -26,7 +26,7 @@ app.use(
 // routes
 app.use("/api", imageRoutes);
 app.use("/api/v1/admin", require("./routes/adminRoute"));
-
+app.use("/api", contactRoute);
 // static uploads (if any)
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
