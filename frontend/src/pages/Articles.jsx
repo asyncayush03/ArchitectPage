@@ -28,34 +28,12 @@ const Articles = () => {
     const loadArticles = async () => {
       setLoading(true);
       try {
-        // Try multiple endpoints
-        const endpoints = [
-          "/api/v1/admin/articles",
-          "/api/v1/admin/article",
-          `${process.env.REACT_APP_API_BASE || "http://localhost:8080/api/v1/admin"}/articles`,
-        ];
-
-        let res = null;
-        for (const endpoint of endpoints) {
-          try {
-            res = await axios.get(endpoint);
-            if (res.data) break;
-          } catch (err) {
-            continue;
-          }
-        }
-
-        if (res && res.data) {
-          // Handle different response shapes
-          const articlesData = res.data.articles || res.data || [];
-          console.log("Fetched Articles:", articlesData);
-          setArticles(articlesData);
-        } else {
-          // Fallback dummy data for demo
-          setArticles(dummyArticles);
-        }
+        const res = await axios.get("/api/v1/admin/articles");
+        const articlesData = res.data?.articles || res.data || [];
+        console.log("Fetched Articles:", articlesData);
+        setArticles(articlesData);
       } catch (error) {
-        console.log("Error loading articles", error);
+        console.error("API failed, using dummy data", error);
         setArticles(dummyArticles);
       } finally {
         setLoading(false);
@@ -84,30 +62,41 @@ const Articles = () => {
   const filteredArticles =
     activeFilter === "all"
       ? articles
-      : articles.filter((a) => 
-          a.tags?.some(tag => tag.toLowerCase() === activeFilter) ||
-          a.category?.toLowerCase() === activeFilter
+      : articles.filter(
+          (a) =>
+            a.tags?.some((tag) => tag.toLowerCase() === activeFilter) ||
+            a.category?.toLowerCase() === activeFilter
         );
 
   const displayedArticles = filteredArticles.slice(0, displayCount);
   const hasMore = displayCount < filteredArticles.length;
 
   const handleLoadMore = () => {
-    setDisplayCount(prev => prev + 5);
+    setDisplayCount((prev) => prev + 5);
   };
 
-  // Normalize article data
+  // ----------------------------
+  // NORMALIZE ARTICLE DATA
+  // ----------------------------
   const normalizeArticle = (article) => {
+    const fixUrl = (url) => {
+      if (!url) return null;
+      return url.startsWith("http") ? url : `http://localhost:8080${url}`;
+    };
+
     return {
       _id: article._id || article.id,
       title: article.title || article.name || "Untitled",
-      publishDate: article.publishDate || article.createdAt || new Date().toISOString(),
+      publishDate:
+        article.publishDate || article.createdAt || new Date().toISOString(),
       summary: article.summary || article.description?.substring(0, 150) || "",
       tags: Array.isArray(article.tags) ? article.tags : [],
-      images: article.images || [],
-      videos: article.videos || [],
-      hasVideo: article.videos && article.videos.length > 0,
-      hasImage: article.images && article.images.length > 0,
+      images: (article.images || []).map((img) => ({
+        url: fixUrl(img.url || img),
+      })),
+      videos: (article.videos || []).map((vid) => ({
+        url: fixUrl(vid.url || vid),
+      })),
     };
   };
 
@@ -125,6 +114,10 @@ const Articles = () => {
         
         .animate-fade-in-up { 
           animation: fadeInUp 0.8s ease-out forwards; 
+        }
+        
+        .animate-bounce-slow {
+          animation: bounceSlow 2s ease-in-out infinite;
         }
         
         .delay-100 { animation-delay: 0.1s; opacity: 0; }
@@ -159,7 +152,8 @@ const Articles = () => {
 
             <div className="overflow-hidden">
               <p className="text-xl text-gray-600 mb-12 font-light max-w-2xl mx-auto animate-fade-in-up delay-200">
-                Explore our latest thoughts on architecture, sustainability, and design innovation
+                Explore our latest thoughts on architecture, sustainability, and
+                design innovation
               </p>
             </div>
           </div>
@@ -237,19 +231,18 @@ const Articles = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {displayedArticles.map((article, index) => {
                     const normalized = normalizeArticle(article);
-                    
-                    const rawUrl = normalized.images?.[0]?.url;
-                    const firstImage = rawUrl
-                      ? rawUrl.startsWith("http")
-                        ? rawUrl
-                        : `http://localhost:8080${rawUrl}`
-                      : "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop";
+
+                    const firstImage =
+                      normalized.images?.[0]?.url ||
+                      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop";
 
                     const firstVideo = normalized.videos?.[0]?.url;
+                    const hasVideo = normalized.videos?.length > 0;
 
                     return (
                       <div
                         key={normalized._id}
+                        
                         className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 animate-fade-in-up"
                         style={{
                           animationDelay: `${(index % 3) * 0.1}s`,
@@ -261,7 +254,7 @@ const Articles = () => {
                       >
                         {/* Media Preview */}
                         <div className="relative h-64 overflow-hidden">
-                          {normalized.hasVideo && firstVideo ? (
+                          {hasVideo && firstVideo ? (
                             <div className="relative w-full h-full">
                               <video
                                 src={firstVideo}
@@ -271,7 +264,7 @@ const Articles = () => {
                                 playsInline
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                              
+
                               {/* Play icon overlay */}
                               <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -295,7 +288,7 @@ const Articles = () => {
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-                              
+
                               {/* Image badge */}
                               <div className="absolute top-4 right-4">
                                 <span className="px-3 py-1 bg-red-600 text-white text-xs font-semibold uppercase tracking-[0.2em] rounded-sm flex items-center gap-1">
@@ -326,16 +319,18 @@ const Articles = () => {
                         {/* Content */}
                         <div className="px-6 py-5">
                           {/* Tags */}
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {normalized.tags.slice(0, 3).map((tag, idx) => (
-                              <span
-                                key={idx}
-                                className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
+                          {normalized.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {normalized.tags.slice(0, 3).map((tag, idx) => (
+                                <span
+                                  key={idx}
+                                  className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
 
                           {/* Title */}
                           <h3 className="text-xl font-semibold mb-2 text-red-600 group-hover:text-red-700 transition-colors duration-300 line-clamp-2">
@@ -345,7 +340,9 @@ const Articles = () => {
                           {/* Date */}
                           <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
                             <Calendar className="w-4 h-4" />
-                            {new Date(normalized.publishDate).toLocaleDateString(undefined, {
+                            {new Date(
+                              normalized.publishDate
+                            ).toLocaleDateString(undefined, {
                               year: "numeric",
                               month: "long",
                               day: "numeric",
@@ -354,14 +351,22 @@ const Articles = () => {
 
                           {/* Summary */}
                           <p className="text-gray-600 text-sm leading-relaxed mb-5 line-clamp-3">
-                            {normalized.summary || "Discover insights and perspectives on architecture, design, and sustainability."}
+                            {normalized.summary ||
+                              "Discover insights and perspectives on architecture, design, and sustainability."}
                           </p>
 
                           {/* Read More */}
-                          <button className="text-sm font-semibold text-red-600 flex items-center gap-2 uppercase tracking-wide group-hover:gap-3 transition-all duration-300">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation(); // 🔑 prevents card click conflict
+                              navigate(`/articles/${normalized._id}`);
+                            }}
+                            className="text-sm font-semibold text-red-600 flex items-center gap-2 uppercase tracking-wide group-hover:gap-3 transition-all duration-300"
+                          >
                             READ ARTICLE
                             <ArrowRight className="w-4 h-4" />
                           </button>
+                          
                         </div>
                       </div>
                     );
@@ -404,54 +409,84 @@ const dummyArticles = [
     _id: "1",
     title: "Sustainable Urban Villa — Case Study",
     publishDate: "2025-09-05",
-    summary: "A compact villa design using cross-ventilation and recycled materials.",
+    summary:
+      "A compact villa design using cross-ventilation and recycled materials.",
     tags: ["architecture", "sustainability", "case-study"],
-    images: [{ url: "https://images.unsplash.com/photo-1494526585095-c41746248156?w=800" }],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1494526585095-c41746248156?w=800",
+      },
+    ],
     videos: [],
   },
   {
     _id: "2",
     title: "The Future of Adaptive Architecture",
     publishDate: "2025-08-20",
-    summary: "Exploring how buildings can respond to changing environmental conditions.",
+    summary:
+      "Exploring how buildings can respond to changing environmental conditions.",
     tags: ["research", "architecture", "design"],
-    images: [{ url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800" }],
-    videos: [{ url: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" }],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800",
+      },
+    ],
+    videos: [],
   },
   {
     _id: "3",
     title: "Minimalist Interior Design Principles",
     publishDate: "2025-08-15",
-    summary: "Creating serene spaces through thoughtful material selection and negative space.",
+    summary:
+      "Creating serene spaces through thoughtful material selection and negative space.",
     tags: ["design", "interiors"],
-    images: [{ url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800" }],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800",
+      },
+    ],
     videos: [],
   },
   {
     _id: "4",
     title: "Green Roofs and Urban Biodiversity",
     publishDate: "2025-07-30",
-    summary: "How green roofs contribute to urban ecosystems and building efficiency.",
+    summary:
+      "How green roofs contribute to urban ecosystems and building efficiency.",
     tags: ["sustainability", "research"],
-    images: [{ url: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800" }],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800",
+      },
+    ],
     videos: [],
   },
   {
     _id: "5",
     title: "Historic Renovation: Balancing Old and New",
     publishDate: "2025-07-15",
-    summary: "A case study on preserving heritage while introducing modern functionality.",
+    summary:
+      "A case study on preserving heritage while introducing modern functionality.",
     tags: ["case-study", "architecture"],
-    images: [{ url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800" }],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800",
+      },
+    ],
     videos: [],
   },
   {
     _id: "6",
     title: "Biophilic Design in Modern Offices",
     publishDate: "2025-07-01",
-    summary: "Integrating nature into workplace design for improved wellbeing and productivity.",
+    summary:
+      "Integrating nature into workplace design for improved wellbeing and productivity.",
     tags: ["design", "sustainability"],
-    images: [{ url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800" }],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800",
+      },
+    ],
     videos: [],
   },
 ];

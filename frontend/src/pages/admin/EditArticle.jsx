@@ -1,7 +1,7 @@
-// AddArticle.jsx
-import React, { useState } from "react";
+// EditArticle.jsx
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Calendar,
@@ -10,14 +10,16 @@ import {
   Save,
   Loader,
   X,
-  Plus,
-  AlertCircle,
   Images,
+  AlertCircle,
 } from "lucide-react";
 
-export default function AddArticle() {
+export default function EditArticle() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -27,15 +29,42 @@ export default function AddArticle() {
     tags: "",
   });
 
+  const [existingImages, setExistingImages] = useState([]);
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
 
   const API_BASE = "/api/v1/admin";
 
-  /* ================= HELPERS ================= */
+  /* ================= FETCH ================= */
+  useEffect(() => {
+    const loadArticle = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/article/${id}`);
+        const a = res.data.article;
+
+        setForm({
+          title: a.title || "",
+          publishDate: a.publishDate?.slice(0, 10) || "",
+          summary: a.summary || "",
+          description: a.description || "",
+          tags: (a.tags || []).join(","),
+        });
+
+        setExistingImages(a.images || []);
+      } catch {
+        alert("Failed to load article");
+        navigate("/admin/article");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadArticle();
+  }, [id, navigate]);
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  /* ================= MEDIA HANDLERS ================= */
   const handleImagesChange = (e) => {
     const files = Array.from(e.target.files || []);
     setImages((prev) => [
@@ -58,6 +87,9 @@ export default function AddArticle() {
     ]);
   };
 
+  const removeExistingImage = (idx) =>
+    setExistingImages((p) => p.filter((_, i) => i !== idx));
+
   const removeImage = (idx) =>
     setImages((p) => p.filter((_, i) => i !== idx));
 
@@ -67,37 +99,40 @@ export default function AddArticle() {
   /* ================= SUBMIT ================= */
   const onSubmit = async (e) => {
     e.preventDefault();
-
-    if (!form.title.trim() || !form.description.trim()) {
-      alert("Title and description are required");
-      return;
-    }
-
     try {
-      setLoading(true);
+      setSaving(true);
 
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => v && fd.append(k, v));
+
       images.forEach((i) => fd.append("images", i.file));
       videos.forEach((v) => fd.append("videos", v.file));
 
       const token = localStorage.getItem("token");
 
-      await axios.post(`${API_BASE}/article`, fd, {
+      await axios.put(`${API_BASE}/article/${id}`, fd, {
         headers: {
-          Authorization: token ? `Bearer ${token}` : undefined,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
-      alert("Article created successfully!");
+      alert("Article updated successfully!");
       navigate("/admin/article");
-    } catch (err) {
-      alert("Failed to create article");
+    } catch {
+      alert("Update failed");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <Loader className="w-10 h-10 animate-spin text-red-600" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -110,9 +145,7 @@ export default function AddArticle() {
           >
             <ArrowLeft />
           </button>
-          <h1 className="text-3xl font-light flex items-center gap-2">
-            <Plus /> Create Article
-          </h1>
+          <h1 className="text-3xl font-light">Edit Article</h1>
         </div>
       </div>
 
@@ -177,10 +210,34 @@ export default function AddArticle() {
             />
           </div>
 
+          {/* EXISTING MEDIA */}
+          {existingImages.length > 0 && (
+            <div>
+              <h2 className="text-lg font-semibold mb-4">Existing Media</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {existingImages.map((img, i) => (
+                  <div key={i} className="relative">
+                    <img
+                      src={img.url}
+                      className="h-36 w-full object-cover rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeExistingImage(i)}
+                      className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* MEDIA UPLOAD */}
           <div>
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Images className="text-red-600" /> Media Uploads
+              <Images className="text-red-600" /> Upload New Media
             </h2>
 
             {/* IMAGES */}
@@ -250,21 +307,19 @@ export default function AddArticle() {
             </button>
 
             <button
-              disabled={loading}
+              disabled={saving}
               className="px-6 py-3 bg-red-600 text-white rounded-lg flex items-center gap-2"
             >
-              {loading ? <Loader className="animate-spin" /> : <Save />}
-              Publish Article
+              {saving ? <Loader className="animate-spin" /> : <Save />}
+              Update Article
             </button>
           </div>
         </form>
 
-        {/* HELP */}
         <div className="mt-6 bg-blue-50 border p-4 rounded-lg flex gap-2">
           <AlertCircle className="text-blue-600" />
           <p className="text-sm">
-            Provide a short summary for listing pages. Use images and videos to
-            enrich your article.
+            You can keep existing media or remove and upload new ones.
           </p>
         </div>
       </div>

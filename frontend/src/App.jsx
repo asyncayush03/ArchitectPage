@@ -25,6 +25,7 @@ import ScrollToTop from "./components/ScrollToTop.jsx";
 import EditProject from "./pages/admin/EditProject.jsx";
 import PublicRoute from "./components/PublicRoute.jsx";
 import ArticleDetail from "./pages/ArticleDetail.jsx";
+import EditArticle from "./pages/admin/EditArticle.jsx";
 import Articles from "./pages/Articles.jsx";
 function App() {
   return (
@@ -40,6 +41,11 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/media" element={<BlogPage />} />
           <Route path="/article" element={<Articles/>} />
+          <Route path="/admin/articles/edit/:id" element={<EditArticle />} />
+          <Route path="/article/:id" element={<ArticleDetail />} />
+          <Route path="/articles/:id" element={<ArticleDetail />} />
+
+
 
           {/* Article routes (canonical) */}
           <Route

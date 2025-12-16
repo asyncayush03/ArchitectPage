@@ -80,7 +80,7 @@ export default function ManageArticles() {
     if (!window.confirm("Delete this article permanently?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`/api/v1/admin/articles/${id}`, {
+      await axios.delete(`/api/v1/admin/article/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setArticles((prev) => prev.filter((a) => a._id !== id));
