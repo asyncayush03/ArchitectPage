@@ -375,12 +375,8 @@ import React, { useEffect, useState } from "react";
 import {
   LayoutGrid,
   FileText,
-  Settings,
-  TrendingUp,
   FolderOpen,
   ArrowRight,
-  BarChart3,
-  Activity,
   Sparkles,
   LogOut,
   Newspaper
@@ -398,38 +394,38 @@ export default function AdminDashboard() {
   }, []);
 
   const fetchCounts = async () => {
-    try {
-      // Fetch Media
-      const mediaRes = await axios.get("/api/v1/admin/blog");
-      setMediaCount(mediaRes.data.events?.length || 0);
+  try {
+    const token = localStorage.getItem("token");
 
-      // Fetch Projects
-      const projectRes = await axios.get("/api/v1/admin/project");
-      setProjectCount(projectRes.data.projects?.length || 0);
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
 
-      // Fetch Articles
-      const endpoints = ["/api/v1/admin/article", "/api/v1/admin/articles"];
-      let articleRes = null;
+    // MEDIA
+    const mediaRes = await axios.get("/api/v1/admin/blog", { headers });
+    setMediaCount(mediaRes.data.events?.length || 0);
 
-      for (const ep of endpoints) {
-        try {
-          articleRes = await axios.get(ep);
-          break;
-        } catch (e) {}
-      }
+    // PROJECTS
+    const projectRes = await axios.get("/api/v1/admin/project", { headers });
+    setProjectCount(projectRes.data.projects?.length || 0);
 
-      if (Array.isArray(articleRes?.data)) {
-        setArticleCount(articleRes.data.length);
-      } else if (Array.isArray(articleRes?.data?.articles)) {
-        setArticleCount(articleRes.data.articles.length);
-      } else setArticleCount(0);
+    // ARTICLES ✅ FIXED
+    const articleRes = await axios.get("/api/v1/admin/article", { headers });
+    setArticleCount(
+      Array.isArray(articleRes.data.articles)
+        ? articleRes.data.articles.length
+        : 0
+    );
 
-    } catch (error) {
-      console.log("Dashboard count fetch error:", error);
-    }
-  };
+  } catch (error) {
+    console.error("Dashboard count fetch error:", error);
+  }
+};
 
-  // Dashboard Cards
+
+  // -------------------------
+  // DASHBOARD CARDS
+  // -------------------------
   const cards = [
     {
       id: "media",
@@ -456,73 +452,69 @@ export default function AdminDashboard() {
       icon: Newspaper,
       color: "from-red-600 to-red-800",
       stats: `${articleCount} Articles`,
-      to: "/admin/articles",
+      to: "/admin/article",
     },
   ];
 
-  // Stats
+  // -------------------------
+  // STATS
+  // -------------------------
   const stats = [
     {
       label: "Media Posts",
       value: mediaCount,
       change: "+2 This Week",
       icon: FileText,
-      color: "red",
     },
     {
       label: "Projects",
       value: projectCount,
       change: "+1 Added",
       icon: FolderOpen,
-      color: "red",
     },
     {
       label: "Articles",
       value: articleCount,
-      change: "+3 Growth",
+      change: "+3 Added",
       icon: Newspaper,
-      color: "red",
     },
   ];
 
-  // Quick Actions
+  // -------------------------
+  // QUICK ACTIONS
+  // -------------------------
   const quickActions = [
     {
       label: "New Project",
       icon: FolderOpen,
       to: "/admin/projects/new",
-      color: "red",
     },
     {
       label: "Write Media Post",
       icon: FileText,
       to: "/admin/media/new",
-      color: "red",
     },
     {
       label: "Write Article",
       icon: Newspaper,
-      to: "/admin/articles/new",
-      color: "red",
+      to: "/admin/article/new",
     },
     {
       label: "Logout",
       icon: LogOut,
       action: "logout",
-      color: "red",
     },
   ];
 
   return (
     <>
-      {/* Styles */}
       <style>{`
-        @keyframes fadeInUp { 
-          from { opacity: 0; transform: translateY(30px); } 
-          to { opacity: 1; transform: translateY(0); } 
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in-up { 
-          animation: fadeInUp 0.8s ease-out forwards; 
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
         }
       `}</style>
 
@@ -530,40 +522,36 @@ export default function AdminDashboard() {
 
         {/* HERO */}
         <section className="relative min-h-[50vh] flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-red-800 text-white">
-          <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+          <div className="max-w-6xl mx-auto px-4 text-center">
             <LayoutGrid className="w-20 h-20 mx-auto mb-6 opacity-90" />
-            <h1 className="text-5xl md:text-6xl font-light mb-4 animate-fade-in-up">Admin Dashboard</h1>
-            <p className="text-xl text-white/90 mb-8 animate-fade-in-up delay-100">
+            <h1 className="text-5xl md:text-6xl font-light mb-4 animate-fade-in-up">
+              Admin Dashboard
+            </h1>
+            <p className="text-xl text-white/90 mb-8 animate-fade-in-up">
               Manage your architecture portfolio with ease
             </p>
 
-            <div className="flex justify-center gap-4 animate-fade-in-up delay-200">
-              <Link 
-                to="/admin/projects/new"
-                className="px-8 py-3 bg-white text-red-600 font-medium hover:bg-gray-100 transition-all flex items-center gap-2"
-              >
-                NEW PROJECT <ArrowRight />
-              </Link>
-            </div>
+            <Link
+              to="/admin/projects/new"
+              className="px-8 py-3 bg-white text-red-600 font-medium flex items-center gap-2 justify-center"
+            >
+              NEW PROJECT <ArrowRight />
+            </Link>
           </div>
         </section>
 
         {/* STATS */}
-        <section className="py-16 bg-white border-y border-gray-100">
+        <section className="py-16 bg-white border-y">
           <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6 px-4">
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-lg shadow hover:-translate-y-2 hover:shadow-xl transition-all border-2 border-gray-100 hover:border-red-600 animate-fade-in-up"
+                className="bg-white p-6 rounded-lg shadow border animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.1}s`, opacity: 0 }}
               >
                 <div className="flex justify-between mb-4">
-                  <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
-                    <stat.icon className="w-6 h-6 text-red-600" />
-                  </div>
-                  <span className="text-green-600 text-sm bg-green-50 px-3 py-1 rounded-full">
-                    {stat.change}
-                  </span>
+                  <stat.icon className="w-6 h-6 text-red-600" />
+                  <span className="text-green-600 text-sm">{stat.change}</span>
                 </div>
                 <p className="text-3xl font-light">{stat.value}</p>
                 <p className="text-gray-600 text-sm">{stat.label}</p>
@@ -572,26 +560,26 @@ export default function AdminDashboard() {
           </div>
         </section>
 
-        {/* MANAGEMENT CARDS */}
+        {/* MANAGEMENT */}
         <section className="py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 px-4">
             {cards.map((card, index) => (
               <Link
                 key={card.id}
                 to={card.to}
-                className="group bg-white p-8 rounded-lg shadow hover:shadow-2xl transition-all hover:-translate-y-2 animate-fade-in-up"
+                className="bg-white p-8 rounded-lg shadow hover:shadow-xl transition animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.1}s`, opacity: 0 }}
               >
                 <div className={`w-16 h-16 bg-gradient-to-br ${card.color} rounded-xl mb-6 flex items-center justify-center`}>
                   <card.icon className="w-8 h-8 text-white" />
                 </div>
 
-                <h3 className="text-2xl mb-2 group-hover:text-red-600">{card.title}</h3>
+                <h3 className="text-2xl mb-2">{card.title}</h3>
                 <p className="text-gray-600 mb-6">{card.description}</p>
 
                 <div className="flex justify-between items-center">
                   <span className="text-gray-500">{card.stats}</span>
-                  <ArrowRight className="text-red-600 group-hover:translate-x-1 transition" />
+                  <ArrowRight className="text-red-600" />
                 </div>
               </Link>
             ))}
@@ -601,12 +589,9 @@ export default function AdminDashboard() {
         {/* QUICK ACTIONS */}
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border">
+            <div className="p-8 rounded-2xl shadow border">
               <div className="flex justify-between mb-8">
-                <div>
-                  <h3 className="text-2xl font-medium">Quick Actions</h3>
-                  <p className="text-gray-600">Fast access to common tasks</p>
-                </div>
+                <h3 className="text-2xl font-medium">Quick Actions</h3>
                 <Sparkles className="w-8 h-8 text-red-600" />
               </div>
 
@@ -618,20 +603,17 @@ export default function AdminDashboard() {
                       if (action.action === "logout") {
                         localStorage.removeItem("token");
                         window.location.href = "/login";
-                      } else window.location.href = action.to;
+                      } else {
+                        window.location.href = action.to;
+                      }
                     }}
-                    className="group p-6 bg-white border rounded-xl hover:border-red-600 hover:shadow-lg cursor-pointer transition"
+                    className="p-6 bg-white border rounded-xl cursor-pointer hover:border-red-600"
                   >
-                    <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-600 mb-3">
-                      <action.icon className="w-6 h-6 text-red-600 group-hover:text-white" />
-                    </div>
-                    <p className="text-gray-700 group-hover:text-red-600 font-medium">
-                      {action.label}
-                    </p>
+                    <action.icon className="w-6 h-6 text-red-600 mb-2" />
+                    <p className="font-medium">{action.label}</p>
                   </div>
                 ))}
               </div>
-
             </div>
           </div>
         </section>
@@ -640,3 +622,4 @@ export default function AdminDashboard() {
     </>
   );
 }
+

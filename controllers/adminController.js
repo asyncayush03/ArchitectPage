@@ -1,5 +1,5 @@
 // controllers/adminController.js
-
+const Article = require("../models/articleModel");
 const adminModel = require("../models/adminModel");
 const Blog = require("../models/blogModel");
 const Project = require("../models/projectModel");
@@ -15,18 +15,40 @@ const sharp = require("sharp");
 // MULTER (MEMORY) FOR ALL IMAGES
 // -----------------------------------
 const fileFilter = (req, file, cb) => {
-  const allowed = /jpeg|jpg|png|webp/;
-  const okMime = allowed.test(file.mimetype.toLowerCase());
-  const okName = allowed.test(file.originalname.toLowerCase());
-  if (okMime && okName) cb(null, true);
-  else cb(new Error("Only image files allowed (jpg, jpeg, png, webp)"));
+  if (
+    file.mimetype.startsWith("image/") ||
+    file.mimetype.startsWith("video/")
+  ) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only image and video files are allowed"), false);
+  }
 };
 
+// -----------------------------------
+// MULTER (MEMORY) FOR IMAGES + VIDEOS
+// -----------------------------------
 const eventUpload = multer({
   storage: multer.memoryStorage(),
-  fileFilter,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 10 MB before compression
-}).array("images", 15); // field name = images
+  fileFilter: (req, file, cb) => {
+    // allow images & videos
+    if (
+      file.mimetype.startsWith("image/") ||
+      file.mimetype.startsWith("video/")
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image and video files are allowed"), false);
+    }
+  },
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50 MB per file
+  },
+}).fields([
+  { name: "images", maxCount: 15 },
+  { name: "videos", maxCount: 5 },
+]);
+
 
 // Upload compressed buffer to Cloudinary
 const uploadCompressedToCloudinary = (buffer, folder) =>
@@ -122,26 +144,29 @@ const createMediaEvent = async (req, res) => {
       });
     }
 
-    const files = req.files || [];
-    if (files.length === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "At least one image is required" });
-    }
+    const imageFiles = req.files?.images || [];
 
-    const uploads = await Promise.all(
-      files.map(async (file) => {
-        const compressedBuffer = await sharp(file.buffer)
-          .resize({ width: 1920, withoutEnlargement: true })
-          .jpeg({ quality: 80 })
-          .toBuffer();
+if (imageFiles.length === 0) {
+  return res.status(400).json({
+    success: false,
+    message: "At least one image is required",
+  });
+}
 
-        return uploadCompressedToCloudinary(
-          compressedBuffer,
-          "architectpage/events"
-        );
-      })
+const uploads = await Promise.all(
+  imageFiles.map(async (file) => {
+    const compressedBuffer = await sharp(file.buffer)
+      .resize({ width: 1920, withoutEnlargement: true })
+      .jpeg({ quality: 80 })
+      .toBuffer();
+
+    return uploadCompressedToCloudinary(
+      compressedBuffer,
+      "architectpage/events"
     );
+  })
+);
+
 
     const imageUrls = uploads.map((u) => u.secure_url);
     const imagePublicIds = uploads.map((u) => u.public_id);
@@ -277,11 +302,12 @@ const createProject = async (req, res) => {
     // HANDLE IMAGES
     // -----------------------------
     const images = [];
-    const files = req.files || [];
+const imageFiles = req.files?.images || [];
 
-    if (files.length) {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+if (imageFiles.length) {
+  for (let i = 0; i < imageFiles.length; i++) {
+    const file = imageFiles[i];
+
 
         const compressedBuffer = await sharp(file.buffer)
           .resize({ width: 1920, withoutEnlargement: true })
@@ -429,11 +455,12 @@ const updateProject = async (req, res) => {
     let captions = req.body.captions || [];
     if (!Array.isArray(captions)) captions = [captions];
 
-    const files = req.files || [];
+    const imageFiles = req.files?.images || [];
 
-    if (files.length) {
-      for (let i = 0; i < files.length; i++) {
-        const compressedBuffer = await sharp(files[i].buffer)
+if (imageFiles.length) {
+  for (let i = 0; i < imageFiles.length; i++) {
+    const compressedBuffer = await sharp(imageFiles[i].buffer)
+
           .resize({ width: 1920, withoutEnlargement: true })
           .jpeg({ quality: 80 })
           .toBuffer();
@@ -504,6 +531,243 @@ const deleteProject = async (req, res) => {
   }
 };
 
+
+/* ----------------------------------
+   Upload buffer to Cloudinary
+---------------------------------- */
+const uploadToCloudinary = (buffer, folder) =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      }
+    );
+    stream.end(buffer);
+  });
+
+/* ==================================
+   CREATE ARTICLE
+================================== */
+const createArticle = async (req, res) => {
+  try {
+    const { title, summary, description, category, publishDate } = req.body;
+
+    if (!title || !description) {
+      return res.status(400).json({
+        success: false,
+        message: "Title and description are required",
+      });
+    }
+
+    // -------------------------
+    // TAGS
+    // -------------------------
+    const tags =
+      typeof req.body.tags === "string"
+        ? req.body.tags.split(",").map((t) => t.trim())
+        : Array.isArray(req.body.tags)
+        ? req.body.tags
+        : [];
+
+    // -------------------------
+    // CAPTIONS
+    // -------------------------
+    let captions = req.body.captions || [];
+    if (!Array.isArray(captions)) captions = [captions];
+
+    // -------------------------
+// IMAGES LOOP  ✅ THIS IS IT
+// -------------------------
+const images = [];
+const imageFiles = req.files?.images || [];
+
+for (let i = 0; i < imageFiles.length; i++) {
+  const file = imageFiles[i];
+
+  // compress image
+  const compressed = await sharp(file.buffer)
+    .resize({ width: 1920, withoutEnlargement: true })
+    .jpeg({ quality: 80 })
+    .toBuffer();
+
+  // upload to cloudinary
+  const uploaded = await uploadToCloudinary(
+    compressed,
+    "centanni/articles/images"
+  );
+
+  // push into array
+  images.push({
+    url: uploaded.secure_url,
+    caption: req.body.captions?.[i] || "",
+    publicId: uploaded.public_id,
+  });
+}
+
+
+
+    const article = await Article.create({
+      title,
+      summary,
+      description,
+      category,
+      publishDate,
+      tags,
+      images,
+      videos: req.body.videos || [],
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Article created successfully",
+      article,
+    });
+  } catch (error) {
+    console.error("Create Article Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+/* ==================================
+   GET ALL ARTICLES
+================================== */
+const getArticles = async (req, res) => {
+  try {
+    const articles = await Article.find().sort({ publishDate: -1 });
+
+    res.status(200).json({
+      success: true,
+      articles,
+    });
+  } catch (error) {
+    console.error("Fetch Articles Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+/* ==================================
+   GET ARTICLE BY ID
+================================== */
+const getArticleById = async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id);
+
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        message: "Article not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      article,
+    });
+  } catch (error) {
+    console.error("Get Article Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+/* ==================================
+   UPDATE ARTICLE
+================================== */
+const updateArticle = async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id);
+
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        message: "Article not found",
+      });
+    }
+
+    const fields = [
+      "title",
+      "summary",
+      "description",
+      "category",
+      "publishDate",
+    ];
+
+    fields.forEach((f) => {
+      if (req.body[f] !== undefined) article[f] = req.body[f];
+    });
+
+    if (req.body.tags) {
+      article.tags =
+        typeof req.body.tags === "string"
+          ? req.body.tags.split(",").map((t) => t.trim())
+          : req.body.tags;
+    }
+
+    await article.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Article updated successfully",
+      article,
+    });
+  } catch (error) {
+    console.error("Update Article Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+/* ==================================
+   DELETE ARTICLE
+================================== */
+const deleteArticle = async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id);
+
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        message: "Article not found",
+      });
+    }
+
+    // delete images from cloudinary
+    await Promise.all(
+      (article.images || []).map((img) =>
+        img.publicId
+          ? cloudinary.uploader.destroy(img.publicId)
+          : Promise.resolve()
+      )
+    );
+
+    await article.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: "Article deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Article Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+
 // EXPORT ALL
 module.exports = {
   adminLogin,
@@ -523,4 +787,11 @@ module.exports = {
 
   // multer
   eventUpload,
+
+  // articles
+  createArticle,
+  getArticles,
+  getArticleById,
+  updateArticle,
+  deleteArticle,
 };

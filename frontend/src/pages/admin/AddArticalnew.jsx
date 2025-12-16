@@ -126,7 +126,7 @@ export default function AddArticle() {
       }
 
       alert("Article created successfully!");
-      navigate("/admin/articles");
+      navigate("/admin/article");
     } catch (err) {
       console.error("Error creating article:", err);
       alert("Error adding article: " + (err.response?.data?.message || err.message));

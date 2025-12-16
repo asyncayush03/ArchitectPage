@@ -24,7 +24,8 @@ import ProjectDetails from "./pages/ProjectDetails.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import EditProject from "./pages/admin/EditProject.jsx";
 import PublicRoute from "./components/PublicRoute.jsx";
-
+import ArticleDetail from "./pages/ArticleDetail.jsx";
+import Articles from "./pages/Articles.jsx";
 function App() {
   return (
     <>
@@ -38,10 +39,11 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/media" element={<BlogPage />} />
+          <Route path="/article" element={<Articles/>} />
 
           {/* Article routes (canonical) */}
           <Route
-            path="/admin/articles"
+            path="/admin/article"
             element={
               <ProtectedRoute>
                 <ManageArtical />
@@ -49,7 +51,7 @@ function App() {
             }
           />
           <Route
-            path="/admin/articles/new"
+            path="/admin/article/new"
             element={
               <ProtectedRoute>
                 <Artical />
@@ -58,8 +60,8 @@ function App() {
           />
 
           {/* Backwards-compatible aliases (keep if external links/old bookmarks exist) */}
-          <Route path="/admin/managearticle" element={<Navigate to="/admin/articles" replace />} />
-          <Route path="/admin/articals" element={<Navigate to="/admin/articles/new" replace />} />
+          {/* <Route path="/admin/managearticle" element={<Navigate to="/admin/articles" replace />} />
+          <Route path="/admin/article" element={<Navigate to="/admin/articles/new" replace />} /> */}
 
           {/* Auth */}
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
