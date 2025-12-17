@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Building2, Users, Award, Sparkles, ChevronDown } from "lucide-react";
+import { Building2, Users, Award, Sparkles, ChevronDown, ArrowRight } from "lucide-react";
 
 export default function Aboutus() {
   const projectImages = [
@@ -39,50 +39,31 @@ export default function Aboutus() {
       image:
         "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
     },
-    {
-      title: "Coastal Retreat",
-      category: "Residential",
-      image:
-        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop",
-    },
-    {
-      title: "Plaza Design",
-      category: "Public Space",
-      image:
-        "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&h=600&fit=crop",
-    },
-    {
-      title: "Boutique Hotel",
-      category: "Hospitality",
-      image:
-        "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop",
-    },
   ];
 
   const strengths = [
     {
-      icon: <Users className="w-6 h-6" />,
-      title: "Hands-on approach",
-      desc: "Our team oversees projects to maintain the highest standards.",
+      icon: <Users className="w-8 h-8" />,
+      title: "Hands-on Approach",
+      desc: "Our team oversees projects to maintain the highest standards of quality and precision.",
     },
     {
-      icon: <Sparkles className="w-6 h-6" />,
-      title: "Contemporary style",
-      desc: "We draw inspiration from local environment and heritage.",
+      icon: <Sparkles className="w-8 h-8" />,
+      title: "Contemporary Style",
+      desc: "We draw inspiration from local environment and cultural heritage.",
     },
     {
-      icon: <Building2 className="w-6 h-6" />,
-      title: "Comprehensive approach",
+      icon: <Building2 className="w-8 h-8" />,
+      title: "Comprehensive Approach",
       desc: "We provide master planning and landscape design services.",
     },
     {
-      icon: <Award className="w-6 h-6" />,
-      title: "Industry recognition",
+      icon: <Award className="w-8 h-8" />,
+      title: "Industry Recognition",
       desc: "Featured in international architecture publications.",
     },
   ];
 
-  // scroll-based animations
   const whoRef = useRef(null);
   const strengthsRef = useRef(null);
   const projectsRef = useRef(null);
@@ -122,275 +103,254 @@ export default function Aboutus() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+    <div className="bg-white text-gray-800 min-h-screen">
       <style>{`
-        * {-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
-        body {overflow-x: hidden;}
-
+        @keyframes fadeInUp { 
+          from { opacity: 0; transform: translateY(30px); } 
+          to { opacity: 1; transform: translateY(0); } 
+        }
         @keyframes float {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
+          50% { transform: translateY(-8px); }
         }
+        
+        .animate-fade-in-up { 
+          animation: fadeInUp 0.8s ease-out forwards; 
+        }
+
         .animate-float {
           animation: float 3s ease-in-out infinite;
         }
+        
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
       `}</style>
 
-      {/* HERO */}
-      <header className="relative text-center pt-10 pb-8 md:pt-12 md:pb-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-red-50/40 to-transparent" />
+      {/* HERO SECTION */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50">
+        <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent" />
 
-        <div className="relative z-10">
-          <div className="inline-block mb-4 px-8 py-2 bg-red-500/5 rounded-full border border-red-200/40 shadow-sm">
-            <h1 className="text-gray-800 text-sm tracking-[0.4em] font-light">
-              ABOUT US
+        {/* Animated background elements */}
+        <div className="absolute top-20 right-20 w-72 h-72 bg-red-500/10 rounded-full blur-3xl animate-pulse" />
+        <div
+          className="absolute bottom-20 left-20 w-96 h-96 bg-red-600/5 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+          <div className="mb-6 overflow-hidden">
+            <p className="text-sm tracking-[0.3em] text-red-600 font-medium uppercase animate-fade-in-up">
+              ABOUT OUR STUDIO
+            </p>
+          </div>
+
+          <div className="overflow-hidden">
+            <h1 className="text-5xl md:text-7xl font-light mb-6 tracking-tight text-gray-900 animate-fade-in-up delay-100">
+              Who We Are
             </h1>
           </div>
 
-          <p className="mt-4 text-sm md:text-base text-gray-500 max-w-xl mx-auto font-light">
-            Crafting spaces that balance functionality, emotion and timeless
-            design.
-          </p>
-
-          <div className="w-24 h-px bg-gradient-to-r from-transparent via-red-400 to-transparent mx-auto mt-6" />
-        </div>
-
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 scroll-indicator">
-          <ChevronDown className="w-5 h-5 text-gray-400" />
-        </div>
-      </header>
-
-      {/* HERO IMAGE + REST OF PAGE */}
-      <section className="w-full px-4 sm:px-6 lg:px-8 mb-14 md:mb-16 -mt-4 md:-mt-6 relative z-10">
-        {/* big hero image */}
-        <div className="relative group overflow-hidden rounded-2xl shadow-2xl border border-gray-100 bg-white">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
-
-          <img
-            src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&h=900&fit=crop"
-            alt="Founders"
-            className="w-full h-auto transform-gpu transition-transform duration-500 group-hover:scale-105"
-          />
-
-          {/* red badge */}
-          <div className="absolute top-6 right-6 z-20 animate-float">
-            <div className="bg-gradient-to-br from-red-500 to-red-600 text-white px-6 py-3 text-xs font-bold shadow-xl rounded-md">
-              <div className="flex items-center gap-2">
-                <Award className="w-4 h-4" />
-                <div className="leading-tight">
-                  <div>ARCHITECTURE</div>
-                  <div className="text-[10px] uppercase tracking-wide">
-                    Top Fifty
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* text over image */}
-          <div className="absolute bottom-0 left-0 right-0 z-20 p-8 md:p-12 text-white">
-            <h2 className="text-2xl md:text-3xl font-light mb-3 tracking-wide">
-              Visionary Leadership
-            </h2>
-            <p className="text-xs md:text-sm text-gray-200 max-w-3xl leading-relaxed">
-              Founded by pioneers in contemporary architecture and sustainable
-              design, CENT’ANNI leads projects with an eye for detail, integrity
-              and innovation.
+          <div className="overflow-hidden">
+            <p className="text-xl text-gray-600 mb-12 font-light max-w-2xl mx-auto animate-fade-in-up delay-200">
+              Crafting spaces that balance functionality, emotion and timeless design through visionary leadership and innovative solutions.
             </p>
           </div>
         </div>
 
-        {/* Who We Are (reduced top margin) */}
-        <section className="mt-6 md:mt-8 max-w-6xl mx-auto px-2 md:px-4">
-          {/* Section Title with transition */}
-          <div
-            ref={whoRef}
-            className={`text-center mb-10 md:mb-12 transform transition-all duration-700 ${
-              whoVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-            }`}
-          >
-            <h2 className="text-2xl md:text-3xl font-light text-gray-800 tracking-wide">
-              Who We Are
-            </h2>
-            <div className="w-24 h-px bg-gradient-to-r from-transparent via-red-400 to-transparent mx-auto mt-4" />
-          </div>
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
+          <ChevronDown className="w-6 h-6 text-gray-400" />
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-            {/* Philosophy Column */}
-            <div
-              className={`group p-7 md:p-8 rounded-xl bg-white border border-gray-200 shadow-lg 
-                hover:shadow-2xl hover:border-red-300 transition-all duration-700 transform
-                ${
-                  whoVisible
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-6"
-                }`}
-              style={{ transitionDelay: whoVisible ? "120ms" : "0ms" }}
-            >
-              <div className="relative inline-block mb-4">
-                <h3 className="text-red-500 text-xs md:text-sm tracking-[0.25em] font-light">
-                  OUR PHILOSOPHY
-                </h3>
-                <span className="absolute left-1/2 -bottom-1 w-0 h-[2px] bg-red-500 group-hover:w-full transition-all duration-500 -translate-x-1/2" />
-              </div>
-
-              <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                CENT’ANNI is founded on the belief that architecture has the
-                power to transform lives and communities. The quality of our
-                surroundings directly influences our sense of wellbeing and
-                belonging.
+      {/* MAIN CONTENT */}
+      <div className="bg-white">
+        {/* Philosophy & Vision Section */}
+        <section ref={whoRef} className="py-24 bg-white border-y border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-3">
+                OUR FOUNDATION
               </p>
-
-              <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                Our philosophy focuses on balancing functionality, user
-                experience, sustainability and emotional value. We evolve each
-                space through a meaningful inside-out design approach.
-              </p>
-
-              <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                At the intersection of simplicity, technology and creativity,
-                CENT’ANNI creates designs enriched with environmental
-                sensitivity and cultural context.
-              </p>
-
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Collaboration is central to our process. Guided by our clients’
-                visions and shaped by our experience, every project becomes a
-                thoughtful and impactful architectural journey.
-              </p>
+              <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
+                Philosophy, Vision & Mission
+              </h2>
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto" />
             </div>
 
-            {/* Vision & Mission Column */}
-            <div
-              className={`group p-7 md:p-8 rounded-xl bg-white border border-gray-200 shadow-lg 
-                hover:shadow-2xl hover:border-red-300 transition-all duration-700 transform
-                ${
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Philosophy */}
+              <div
+                className={`group p-8 bg-gray-50 rounded-2xl border border-gray-200 hover:border-red-300 hover:shadow-xl transition-all duration-500 transform ${
                   whoVisible
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-6"
                 }`}
-              style={{ transitionDelay: whoVisible ? "260ms" : "0ms" }}
-            >
-              <div className="relative inline-block mb-4">
-                <h3 className="text-red-500 text-xs md:text-sm tracking-[0.25em] font-light">
-                  OUR VISION & MISSION
+                style={{ transitionDelay: whoVisible ? "0ms" : "0ms" }}
+              >
+                <h3 className="text-red-600 text-sm tracking-[0.2em] font-medium uppercase mb-4">
+                  Philosophy
                 </h3>
-                <span className="absolute left-1/2 -bottom-1 w-0 h-[2px] bg-red-500 group-hover:w-full transition-all duration-500 -translate-x-1/2" />
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  CENT'ANNI is founded on the belief that architecture has the power to transform lives and communities. Quality surroundings directly influence our sense of wellbeing and belonging.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  We balance functionality, user experience, sustainability and emotional value through meaningful inside-out design.
+                </p>
               </div>
 
-              <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                CENT’ANNI envisions becoming a leading architectural practice in
-                the region and a globally recognized studio driven by design
-                innovation and timeless quality.
-              </p>
+              {/* Vision */}
+              <div
+                className={`group p-8 bg-gray-50 rounded-2xl border border-gray-200 hover:border-red-300 hover:shadow-xl transition-all duration-500 transform ${
+                  whoVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-6"
+                }`}
+                style={{ transitionDelay: whoVisible ? "120ms" : "0ms" }}
+              >
+                <h3 className="text-red-600 text-sm tracking-[0.2em] font-medium uppercase mb-4">
+                  Vision
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  CENT'ANNI envisions becoming a leading architectural practice in the region and globally recognized studio driven by design innovation and timeless quality.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  We deliver high-precision built environments through collaboration with structural, MEP and civil consultants.
+                </p>
+              </div>
 
-              <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                We devote focused effort to delivering high-precision built
-                environments through collaboration with structural, MEP and
-                civil consultants, ensuring clarity and excellence at every
-                stage.
-              </p>
-
-              <p className="text-gray-600 text-sm leading-relaxed mb-3">
-                Our mission is to create architecture that is aesthetically
-                meaningful, economically efficient and environmentally conscious
-                — enriching communities and uplifting human experience.
-              </p>
-
-              <p className="text-gray-600 text-sm leading-relaxed">
-                CENT’ANNI aims to be a practice shaped by people and for people
-                — working toward a world that feels more alive, connected and
-                beautifully livable.
-              </p>
+              {/* Mission */}
+              <div
+                className={`group p-8 bg-gray-50 rounded-2xl border border-gray-200 hover:border-red-300 hover:shadow-xl transition-all duration-500 transform ${
+                  whoVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-6"
+                }`}
+                style={{ transitionDelay: whoVisible ? "240ms" : "0ms" }}
+              >
+                <h3 className="text-red-600 text-sm tracking-[0.2em] font-medium uppercase mb-4">
+                  Mission
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  Our mission is to create architecture that is aesthetically meaningful, economically efficient and environmentally conscious.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  We enrich communities and uplift human experience through spaces shaped by people and for people.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Project Showcase with scroll transition */}
-        <div
-          ref={projectsRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14 md:mt-16 px-2 md:px-4"
-        >
-          {projectImages.map((img, idx) => (
-            <div
-              key={idx}
-              className={`group relative overflow-hidden rounded-lg shadow-lg cursor-pointer bg-white transform transition-all duration-700 ${
-                projectsVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-6"
-              }`}
-              style={{
-                transitionDelay: projectsVisible ? `${idx * 120}ms` : "0ms",
-              }}
-            >
-              <img
-                src={img.image}
-                alt={img.title}
-                className="w-full h-full object-cover transform-gpu transition-transform duration-300 group-hover:scale-105 aspect-video"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <div>
-                  <p className="text-white font-semibold text-sm mb-1">
-                    {img.title}
-                  </p>
-                  <p className="text-red-400 text-xs tracking-wider">
-                    {img.category}
-                  </p>
-                </div>
-              </div>
+        {/* Strengths Section */}
+        <section ref={strengthsRef} className="py-24 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-3">
+                WHAT SETS US APART
+              </p>
+              <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
+                Our Strengths
+              </h2>
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto" />
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Strengths Section with transition */}
-      <section
-        ref={strengthsRef}
-        className="w-full px-4 sm:px-6 lg:px-8 mb-32"
-      >
-        <div
-          className={`text-center mb-16 transform transition-all duration-700 ${
-            strengthsVisible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-6"
-          }`}
-        >
-          <div className="inline-block mb-4 px-8 py-2 bg-gradient-to-r from-red-500/10 via-red-500/10 to-red-500/10 rounded-full">
-            <h2 className="text-red-400 text-lg tracking-[0.3em] font-light">
-              STRENGTHS
-            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {strengths.map((strength, idx) => (
+                <div
+                  key={idx}
+                  className={`group p-8 bg-white rounded-2xl border border-gray-200 hover:border-red-300 hover:shadow-xl transition-all duration-500 transform ${
+                    strengthsVisible
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-6"
+                  }`}
+                  style={{
+                    transitionDelay: strengthsVisible ? `${idx * 120}ms` : "0ms",
+                  }}
+                >
+                  <div className="flex items-start gap-5">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-300">
+                      {strength.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        {strength.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">
+                        {strength.desc}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="w-24 h-px bg-gradient-to-r from-transparent via-red-400 to-transparent mx-auto" />
-        </div>
+        </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-          {strengths.map((strength, idx) => (
-            <div
-              key={idx}
-              className={`p-8 rounded-lg bg-white shadow-lg hover:shadow-2xl transition-all duration-700 border border-gray-100 hover:border-red-200 transform ${
-                strengthsVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-6"
-              }`}
-              style={{
-                transitionDelay: strengthsVisible ? `${idx * 120}ms` : "0ms",
-              }}
-            >
-              <div className="flex items-start gap-4">
-                <div className="text-red-500">{strength.icon}</div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-3 text-base">
-                    {strength.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">
-                    {strength.desc}
-                  </p>
-                </div>
-              </div>
+        {/* Project Showcase */}
+        <section ref={projectsRef} className="py-24 bg-white border-y border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-3">
+                FEATURED WORKS
+              </p>
+              <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
+                Our Projects
+              </h2>
+              <div className="w-16 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto" />
             </div>
-          ))}
-        </div>
-      </section>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projectImages.map((project, index) => (
+                <div
+                  key={index}
+                  className={`group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 animate-fade-in-up ${
+                    projectsVisible ? "opacity-100" : "opacity-0"
+                  }`}
+                  style={{
+                    animationDelay: projectsVisible ? `${(index % 3) * 0.1}s` : "0ms",
+                    opacity: projectsVisible ? 1 : 0,
+                  }}
+                >
+                  {/* Image */}
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+
+                    <div className="absolute top-4 left-4">
+                      <span className="px-4 py-1 bg-red-600 text-white text-xs font-semibold uppercase tracking-[0.2em] rounded-sm">
+                        {project.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="px-6 py-5">
+                    <h3 className="text-xl font-semibold mb-3 text-red-600 group-hover:text-red-700 transition-colors duration-300">
+                      {project.title}
+                    </h3>
+
+                    <p className="text-gray-600 text-sm leading-relaxed mb-5">
+                      A contemporary architectural solution showcasing innovation and timeless design principles.
+                    </p>
+
+                    <button className="text-sm font-semibold text-red-600 flex items-center gap-2 uppercase tracking-wide group-hover:gap-3 transition-all duration-300">
+                      VIEW PROJECT
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+      </div>
     </div>
   );
 }
