@@ -382,7 +382,7 @@ import {
   Newspaper
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios from "../../utils/axios";
 
 export default function AdminDashboard() {
   const [mediaCount, setMediaCount] = useState(0);

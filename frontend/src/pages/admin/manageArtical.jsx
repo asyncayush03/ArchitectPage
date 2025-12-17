@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import axios from "axios";
+import axios from "../../utils/axios";
 import {
   Plus,
   Trash2,
@@ -237,27 +237,21 @@ export default function ManageArticles() {
                     </p>
 
                     <div className="flex gap-3 mt-4">
-                      <button
-                        onClick={() => openViewer(article)}
-                        className="px-4 py-2 bg-gray-100 rounded flex items-center gap-2"
-                      >
-                        <Eye /> View ({mediaCount})
-                      </button>
+  <button
+    onClick={() => openViewer(article)}
+    className="px-4 py-2 bg-gray-100 rounded flex items-center gap-2"
+  >
+    <Eye /> View ({mediaCount})
+  </button>
 
-                      <Link
-                        to={`/admin/article/edit/${article._id}`}
-                        className="px-4 py-2 bg-blue-50 text-blue-600 rounded flex items-center gap-2"
-                      >
-                        <Edit /> Edit
-                      </Link>
+  <button
+    onClick={() => deleteArticle(article._id)}
+    className="px-4 py-2 bg-red-50 text-red-600 rounded flex items-center gap-2"
+  >
+    <Trash2 /> Delete
+  </button>
+</div>
 
-                      <button
-                        onClick={() => deleteArticle(article._id)}
-                        className="px-4 py-2 bg-red-50 text-red-600 rounded flex items-center gap-2"
-                      >
-                        <Trash2 /> Delete
-                      </button>
-                    </div>
                   </div>
                 </div>
               );

@@ -20,17 +20,18 @@ const ModernFooter = () => {
 
   const quickLinks = [
     { label: "Projects", url: "/projects" },
-    { label: "Studio", url: "/studio" },
+    { label: "Aboutus", url: "/aboutus" },
     { label: "Media", url: "/media" },
+    {label: "Articles", url: "/article" },
     { label: "Contact", url: "/contact" },
   ];
 
   const services = [
-    { label: "Architecture", url: "/services/architecture" },
-    { label: "Interior Design", url: "/services/interior" },
-    { label: "Landscape Architecture", url: "/services/landscape" },
-    { label: "Urban Planning", url: "/services/urban-planning" },
-    { label: "Exhibitions", url: "/services/exhibitions" },
+    { label: "Architecture", url: "/projects" },
+    { label: "Interior Design", url: "/projects" },
+    { label: "Landscape Architecture", url: "/projects" },
+    { label: "Urban Planning", url: "/projects" },
+    { label: "Exhibitions", url: "/projects" },
   ];
 
   const socialLinks = [
@@ -76,45 +77,6 @@ const ModernFooter = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* CTA Section */}
-        {/* <div className="mb-16 text-center">
-          <div className="relative mb-8 flex justify-center">
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
-            <h2 className="relative text-center text-red-600 text-xs tracking-[0.3em] font-semibold bg-gradient-to-br from-gray-50 to-white px-6 uppercase">
-              Get in touch
-            </h2>
-          </div>
-
-          <h3 className="text-gray-900 text-4xl md:text-5xl font-light mb-6 tracking-tight">
-            Let&apos;s Create Something Beautiful
-          </h3>
-
-          <p className="text-gray-600 text-center max-w-2xl mx-auto leading-relaxed mb-8">
-            We are ready to lead you into the exciting world of contemporary
-            architecture and sustainable design.
-          </p>
-
-
-          <div className="max-w-md mx-auto flex gap-2">
-            <div className="flex-1 relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full pl-12 pr-4 py-3 rounded-full bg-white border-2 border-gray-200 focus:outline-none focus:border-red-500 text-gray-800 placeholder:text-gray-400 transition-all duration-300 shadow-sm hover:shadow-md"
-              />
-            </div>
-            <button
-              onClick={handleNewsletterSubmit}
-              className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-full font-medium hover:shadow-lg hover:shadow-red-500/40 transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2"
-            >
-              <span>Subscribe</span>
-              <Send className="w-4 h-4" />
-            </button>
-          </div>
-        </div> */}
-
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 pb-12 border-b border-gray-200">
           {/* Company Info */}
@@ -328,11 +290,7 @@ const ModernFooter = () => {
 </div>
 
 
-  <div className="flex items-center gap-2 mt-10 md:mt-0">
-    <span className="text-gray-500">Made with</span>
-    <span className="text-red-600 animate-pulse">❤</span>
-    <span className="text-gray-500">for Generations</span>
-  </div>
+
 
 </div>
 

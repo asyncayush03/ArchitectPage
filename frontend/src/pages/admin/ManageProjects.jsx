@@ -18,7 +18,7 @@ import {
   Eye,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../../utils/axios";
 
 export default function ManageProjects() {
   const navigate = useNavigate();

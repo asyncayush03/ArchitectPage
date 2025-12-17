@@ -12,7 +12,7 @@ import {
   Save,
   X,
 } from "lucide-react";
-import axios from "axios";
+import axios from "../../utils/axios";
 import { useNavigate } from "react-router-dom";
 
 export default function AddProjects() {

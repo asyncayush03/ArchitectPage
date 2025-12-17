@@ -7,7 +7,7 @@ import {
   Maximize2,
   Sparkles,
 } from "lucide-react";
-import axios from "axios";
+import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 
 const Projects = () => {

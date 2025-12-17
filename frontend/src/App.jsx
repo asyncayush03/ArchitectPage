@@ -10,7 +10,6 @@ import Aboutus from "./pages/Aboutus.jsx";
 import Login from "./pages/login";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
 import AddBlog from "./pages/admin/AddBlog.jsx";
-import AddEmployee from "./pages/admin/AddEmployee.jsx";
 import Projects from "./pages/Projects.jsx";
 import Register from "./pages/register.jsx";
 
@@ -82,7 +81,6 @@ function App() {
           <Route path="/admin/media" element={<ProtectedRoute><ManageBlogs /></ProtectedRoute>} />
           <Route path="/admin/media/new" element={<ProtectedRoute><AddBlog /></ProtectedRoute>} />
 
-          <Route path="/admin/employees" element={<ProtectedRoute><AddEmployee /></ProtectedRoute>} />
 
           <Route path="/admin/projects" element={<ProtectedRoute><ManageProjects /></ProtectedRoute>} />
           <Route path="/admin/projects/new" element={<ProtectedRoute><AddProjects /></ProtectedRoute>} />

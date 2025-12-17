@@ -1,6 +1,6 @@
 // EditArticle.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,

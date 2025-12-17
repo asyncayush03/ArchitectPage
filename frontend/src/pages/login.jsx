@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Lock, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import image from "../assets/modern.jpg";
-import axios from "axios";
+import axios from "../utils/axios";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);

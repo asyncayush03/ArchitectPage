@@ -8,7 +8,7 @@ import {
   Send,
   ArrowRight,
 } from "lucide-react";
-import axios from "axios";
+import axios from "../utils/axios";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({

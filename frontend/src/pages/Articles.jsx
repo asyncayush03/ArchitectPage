@@ -9,7 +9,7 @@ import {
   Sparkles,
   Play,
 } from "lucide-react";
-import axios from "axios";
+import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 
 const Articles = () => {

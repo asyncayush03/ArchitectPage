@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ArrowLeft, Save, Loader, FolderOpen, Building, DollarSign, Calendar, TrendingUp } from "lucide-react";
-import axios from "axios";
+import axios from "../../utils/axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function EditProject() {

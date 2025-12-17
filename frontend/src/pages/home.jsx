@@ -12,7 +12,7 @@ import {
   Mail,
   Maximize2,
 } from "lucide-react";
-import axios from "axios";
+import axios from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 
 // 🔹 LOGO IMAGES (green text logos)

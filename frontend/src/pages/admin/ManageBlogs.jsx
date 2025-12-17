@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import axios from "axios";
+import axios from "../../utils/axios";
 import {
   Plus,
   Trash2,
