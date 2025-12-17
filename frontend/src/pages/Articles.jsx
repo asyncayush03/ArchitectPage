@@ -24,24 +24,23 @@ const Articles = () => {
   // ----------------------------
   // FETCH ARTICLES FROM BACKEND
   // ----------------------------
-  useEffect(() => {
-    const loadArticles = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get("/api/v1/admin/articles");
-        const articlesData = res.data?.articles || res.data || [];
-        console.log("Fetched Articles:", articlesData);
-        setArticles(articlesData);
-      } catch (error) {
-        console.error("API failed, using dummy data", error);
-        setArticles(dummyArticles);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const loadArticles = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("/api/v1/admin/article");
+      setArticles(res.data?.articles || []);
+    } catch (error) {
+      console.error("Failed to load articles:", error);
+      setArticles([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    loadArticles();
-  }, []);
+  loadArticles();
+}, []);
+
 
   useEffect(() => {
     setDisplayCount(5);
@@ -164,7 +163,7 @@ const Articles = () => {
         </section>
 
         {/* Filter Navigation */}
-        <section className="py-16 bg-white border-y border-gray-100">
+        {/* <section className="py-16 bg-white border-y border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-2">
@@ -203,7 +202,7 @@ const Articles = () => {
               </p>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Articles Grid */}
         <section className="py-24 bg-gray-50">
@@ -242,7 +241,6 @@ const Articles = () => {
                     return (
                       <div
                         key={normalized._id}
-                        
                         className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 animate-fade-in-up"
                         style={{
                           animationDelay: `${(index % 3) * 0.1}s`,
@@ -250,7 +248,7 @@ const Articles = () => {
                         }}
                         onMouseEnter={() => setHoveredArticle(normalized._id)}
                         onMouseLeave={() => setHoveredArticle(null)}
-                        onClick={() => navigate(`/articles/${normalized._id}`)}
+                        onClick={() => navigate(`/article/${normalized._id}`)}
                       >
                         {/* Media Preview */}
                         <div className="relative h-64 overflow-hidden">
@@ -359,14 +357,13 @@ const Articles = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation(); // 🔑 prevents card click conflict
-                              navigate(`/articles/${normalized._id}`);
+                              navigate(`/article/${normalized._id}`);
                             }}
                             className="text-sm font-semibold text-red-600 flex items-center gap-2 uppercase tracking-wide group-hover:gap-3 transition-all duration-300"
                           >
                             READ ARTICLE
                             <ArrowRight className="w-4 h-4" />
                           </button>
-                          
                         </div>
                       </div>
                     );

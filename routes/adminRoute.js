@@ -56,7 +56,7 @@ router.put("/project/:id", eventUpload, updateProject);
 // ==================================
 
 // PUBLIC
-router.get("/articles", getArticles);
+router.get("/article", getArticles);
 router.get("/article/:id", getArticleById);
 
 // ADMIN

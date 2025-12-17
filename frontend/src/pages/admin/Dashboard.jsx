@@ -412,9 +412,7 @@ export default function AdminDashboard() {
     // ARTICLES ✅ FIXED
     const articleRes = await axios.get("/api/v1/admin/article", { headers });
     setArticleCount(
-      Array.isArray(articleRes.data.articles)
-        ? articleRes.data.articles.length
-        : 0
+         articleRes.data.articles?.length || 0
     );
 
   } catch (error) {

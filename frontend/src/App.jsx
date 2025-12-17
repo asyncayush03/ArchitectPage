@@ -41,7 +41,7 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/media" element={<BlogPage />} />
           <Route path="/article" element={<Articles/>} />
-          <Route path="/admin/articles/edit/:id" element={<EditArticle />} />
+          <Route path="/admin/article/edit/:id" element={<EditArticle />} />
           <Route path="/article/:id" element={<ArticleDetail />} />
           <Route path="/articles/:id" element={<ArticleDetail />} />
 

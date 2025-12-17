@@ -23,10 +23,10 @@ const ArticleDetail = () => {
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState({
-    open: false,
-    index: 0,
-    type: "image",
-  });
+  open: false,
+  index: 0,
+});
+
 
   // ----------------------------
   // FETCH ARTICLE FROM DATABASE
@@ -89,29 +89,27 @@ const ArticleDetail = () => {
   // ----------------------------
   // LIGHTBOX HANDLERS
   // ----------------------------
-  const openLightbox = (index, type) => {
-    setLightbox({ open: true, index, type });
-  };
+  const openLightbox = (index) => {
+  setLightbox({ open: true, index });
+};
 
   const closeLightbox = () => {
     setLightbox({ open: false, index: 0, type: "image" });
   };
 
   const nextMedia = () => {
-    const allMedia = [...article.images, ...article.videos];
-    setLightbox((prev) => ({
-      ...prev,
-      index: (prev.index + 1) % allMedia.length,
-    }));
-  };
+  setLightbox((prev) => ({
+    ...prev,
+    index: (prev.index + 1) % allMedia.length,
+  }));
+};
 
-  const prevMedia = () => {
-    const allMedia = [...article.images, ...article.videos];
-    setLightbox((prev) => ({
-      ...prev,
-      index: (prev.index - 1 + allMedia.length) % allMedia.length,
-    }));
-  };
+const prevMedia = () => {
+  setLightbox((prev) => ({
+    ...prev,
+    index: (prev.index - 1 + allMedia.length) % allMedia.length,
+  }));
+};
 
   if (loading) {
     return (
@@ -148,9 +146,10 @@ const ArticleDetail = () => {
   }
 
   const allMedia = [
-    ...article.images.map((i) => ({ type: "image", url: i.url })),
-    ...article.videos.map((v) => ({ type: "video", url: v.url })),
-  ];
+  ...article.images.map((i) => ({ type: "image", url: i.url })),
+  ...article.videos.map((v) => ({ type: "video", url: v.url })),
+];
+
 
   const mainMedia = allMedia[0] || { type: "image", url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200" };
 
@@ -285,48 +284,33 @@ const ArticleDetail = () => {
                 MEDIA GALLERY
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {allMedia.map((media, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => openLightbox(idx, media.type)}
-                    className="relative group overflow-hidden rounded-lg aspect-square bg-gray-100 hover:shadow-xl transition-all duration-300"
-                  >
-                    {media.type === "image" ? (
-                      <img
-                        src={media.url}
-                        alt={`Gallery ${idx + 1}`}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="relative w-full h-full bg-black/20 flex items-center justify-center">
-                        <video
-                          src={media.url}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          muted
-                        />
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                          <Play className="w-12 h-12 text-white group-hover:scale-125 transition-transform" />
-                        </div>
-                      </div>
-                    )}
+  {allMedia.map((media, idx) => (
+    <button
+      key={idx}
+      onClick={() => openLightbox(idx)}
+      className="relative group overflow-hidden rounded-lg aspect-square bg-gray-100 hover:shadow-xl transition"
+    >
+      {media.type === "image" ? (
+        <img
+          src={media.url}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+        />
+      ) : (
+        <div className="relative w-full h-full">
+          <video
+            src={media.url}
+            className="w-full h-full object-cover"
+            muted
+          />
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <Play className="w-12 h-12 text-white" />
+          </div>
+        </div>
+      )}
+    </button>
+  ))}
+</div>
 
-                    {/* Media Type Badge */}
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {media.type === "image" ? (
-                        <span className="px-2 py-1 bg-white/90 backdrop-blur-sm text-gray-800 text-xs rounded-full flex items-center gap-1">
-                          <ImageIcon className="w-3 h-3" />
-                          Image
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 bg-white/90 backdrop-blur-sm text-gray-800 text-xs rounded-full flex items-center gap-1">
-                          <VideoIcon className="w-3 h-3" />
-                          Video
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
             </div>
           )}
 

@@ -43,7 +43,7 @@ export default function ManageArticles() {
     setError(null);
 
     try {
-      const res = await axios.get("/api/v1/admin/articles");
+      const res = await axios.get("/api/v1/admin/article");
       const data = res.data?.articles || [];
 
       const normalized = data.map((a) => ({
@@ -245,7 +245,7 @@ export default function ManageArticles() {
                       </button>
 
                       <Link
-                        to={`/admin/articles/edit/${article._id}`}
+                        to={`/admin/article/edit/${article._id}`}
                         className="px-4 py-2 bg-blue-50 text-blue-600 rounded flex items-center gap-2"
                       >
                         <Edit /> Edit
