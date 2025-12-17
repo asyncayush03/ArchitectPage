@@ -31,18 +31,14 @@ const fileFilter = (req, file, cb) => {
 const eventUpload = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
-    // allow images & videos
     if (
       file.mimetype.startsWith("image/") ||
       file.mimetype.startsWith("video/")
-    ) {
-      cb(null, true);
-    } else {
-      cb(new Error("Only image and video files are allowed"), false);
-    }
+    ) cb(null, true);
+    else cb(new Error("Only image/video allowed"), false);
   },
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50 MB per file
+    fileSize: 200 * 1024 * 1024, // ✅ 200MB
   },
 }).fields([
   { name: "images", maxCount: 15 },
@@ -146,27 +142,26 @@ const createMediaEvent = async (req, res) => {
 
     const imageFiles = req.files?.images || [];
 
-if (imageFiles.length === 0) {
-  return res.status(400).json({
-    success: false,
-    message: "At least one image is required",
-  });
-}
+    if (imageFiles.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one image is required",
+      });
+    }
 
-const uploads = await Promise.all(
-  imageFiles.map(async (file) => {
-    const compressedBuffer = await sharp(file.buffer)
-      .resize({ width: 1920, withoutEnlargement: true })
-      .jpeg({ quality: 80 })
-      .toBuffer();
+    const uploads = await Promise.all(
+      imageFiles.map(async (file) => {
+        const compressedBuffer = await sharp(file.buffer)
+          .resize({ width: 1920, withoutEnlargement: true })
+          .jpeg({ quality: 80 })
+          .toBuffer();
 
-    return uploadCompressedToCloudinary(
-      compressedBuffer,
-      "architectpage/events"
+        return uploadCompressedToCloudinary(
+          compressedBuffer,
+          "architectpage/events"
+        );
+      })
     );
-  })
-);
-
 
     const imageUrls = uploads.map((u) => u.secure_url);
     const imagePublicIds = uploads.map((u) => u.public_id);
@@ -246,9 +241,6 @@ const deleteMediaEvent = async (req, res) => {
 };
 
 // ===================================
-// CREATE PROJECT – Cloudinary
-// ===================================
-// ===================================
 // CREATE PROJECT – Cloudinary (UPDATED)
 // ===================================
 const createProject = async (req, res) => {
@@ -302,12 +294,11 @@ const createProject = async (req, res) => {
     // HANDLE IMAGES
     // -----------------------------
     const images = [];
-const imageFiles = req.files?.images || [];
+    const imageFiles = req.files?.images || [];
 
-if (imageFiles.length) {
-  for (let i = 0; i < imageFiles.length; i++) {
-    const file = imageFiles[i];
-
+    if (imageFiles.length) {
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i];
 
         const compressedBuffer = await sharp(file.buffer)
           .resize({ width: 1920, withoutEnlargement: true })
@@ -355,8 +346,6 @@ if (imageFiles.length) {
   }
 };
 
-
-
 // ===================================
 // GET ALL PROJECTS
 // ===================================
@@ -390,9 +379,6 @@ const getProjectById = async (req, res) => {
   }
 };
 
-// ===================================
-// UPDATE PROJECT – Cloudinary
-// ===================================
 // ===================================
 // UPDATE PROJECT – Cloudinary (UPDATED)
 // ===================================
@@ -457,10 +443,9 @@ const updateProject = async (req, res) => {
 
     const imageFiles = req.files?.images || [];
 
-if (imageFiles.length) {
-  for (let i = 0; i < imageFiles.length; i++) {
-    const compressedBuffer = await sharp(imageFiles[i].buffer)
-
+    if (imageFiles.length) {
+      for (let i = 0; i < imageFiles.length; i++) {
+        const compressedBuffer = await sharp(imageFiles[i].buffer)
           .resize({ width: 1920, withoutEnlargement: true })
           .jpeg({ quality: 80 })
           .toBuffer();
@@ -490,7 +475,6 @@ if (imageFiles.length) {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 
 // ===================================
 // DELETE PROJECT – Cloudinary cleanup
@@ -531,14 +515,17 @@ const deleteProject = async (req, res) => {
   }
 };
 
-
 /* ----------------------------------
-   Upload buffer to Cloudinary
+   Upload VIDEO buffer to Cloudinary
 ---------------------------------- */
-const uploadToCloudinary = (buffer, folder) =>
+const uploadVideoToCloudinary = (buffer, folder) =>
   new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder },
+      {
+        folder,
+        resource_type: "video", // ⭐ REQUIRED
+        chunk_size: 6 * 1024 * 1024, // ⭐ REQUIRED for stability
+      },
       (err, result) => {
         if (err) return reject(err);
         resolve(result);
@@ -567,8 +554,6 @@ const createArticle = async (req, res) => {
     const tags =
       typeof req.body.tags === "string"
         ? req.body.tags.split(",").map((t) => t.trim())
-        : Array.isArray(req.body.tags)
-        ? req.body.tags
         : [];
 
     // -------------------------
@@ -578,35 +563,45 @@ const createArticle = async (req, res) => {
     if (!Array.isArray(captions)) captions = [captions];
 
     // -------------------------
-// IMAGES LOOP  ✅ THIS IS IT
-// -------------------------
-const images = [];
-const imageFiles = req.files?.images || [];
+    // IMAGES LOOP  ✅ THIS IS IT
+    // -------------------------
+    const images = [];
+    const imageFiles = req.files?.images || [];
 
-for (let i = 0; i < imageFiles.length; i++) {
-  const file = imageFiles[i];
+    for (const file of imageFiles) {
+      const compressed = await sharp(file.buffer)
+        .resize({ width: 1920, withoutEnlargement: true })
+        .jpeg({ quality: 80 })
+        .toBuffer();
 
-  // compress image
-  const compressed = await sharp(file.buffer)
-    .resize({ width: 1920, withoutEnlargement: true })
-    .jpeg({ quality: 80 })
-    .toBuffer();
+      const uploaded = await uploadCompressedToCloudinary(
+        compressed,
+        "centanni/articles/images"
+      );
 
-  // upload to cloudinary
-  const uploaded = await uploadToCloudinary(
-    compressed,
-    "centanni/articles/images"
-  );
+      images.push({
+        url: uploaded.secure_url,
+        publicId: uploaded.public_id,
+      });
+    }
 
-  // push into array
-  images.push({
-    url: uploaded.secure_url,
-    caption: req.body.captions?.[i] || "",
-    publicId: uploaded.public_id,
-  });
-}
+    // -------------------------
+    // VIDEOS LOOP  ✅ FIX
+    // -------------------------
+    const videos = [];
+    const videoFiles = req.files?.videos || [];
 
+    for (const file of videoFiles) {
+      const uploaded = await uploadVideoToCloudinary(
+        file.buffer,
+        "centanni/articles/videos"
+      );
 
+      videos.push({
+        url: uploaded.secure_url,
+        publicId: uploaded.public_id,
+      });
+    }
 
     const article = await Article.create({
       title,
@@ -616,7 +611,7 @@ for (let i = 0; i < imageFiles.length; i++) {
       publishDate,
       tags,
       images,
-      videos: req.body.videos || [],
+      videos,
     });
 
     res.status(201).json({
@@ -628,7 +623,7 @@ for (let i = 0; i < imageFiles.length; i++) {
     console.error("Create Article Error:", error);
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: error.message,
     });
   }
 };
@@ -752,6 +747,15 @@ const deleteArticle = async (req, res) => {
       )
     );
 
+    // delete videos from cloudinary
+    await Promise.all(
+      (article.videos || []).map((vid) =>
+        vid.publicId
+          ? cloudinary.uploader.destroy(vid.publicId, { resource_type: "video" })
+          : Promise.resolve()
+      )
+    );
+
     await article.deleteOne();
 
     res.status(200).json({
@@ -766,7 +770,6 @@ const deleteArticle = async (req, res) => {
     });
   }
 };
-
 
 // EXPORT ALL
 module.exports = {
