@@ -151,15 +151,16 @@ const ModernFooter = () => {
             <ul className="space-y-3">
               {services.map((service, index) => (
                 <li key={index}>
-                  <a
-                    href={service.url}
-                    className="group inline-flex items-center text-sm text-gray-600 hover:text-red-600 transition-all duration-300"
-                  >
-                    <ArrowRight className="w-0 h-4 mr-0 text-red-600 group-hover:w-4 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" />
-                    <span className="group-hover:translate-x-1 transform transition-transform duration-300">
-                      {service.label}
-                    </span>
-                  </a>
+                  <Link
+  to={service.url}
+  className="group inline-flex items-center text-sm text-gray-600 hover:text-red-600 transition-all duration-300"
+>
+  <ArrowRight className="w-0 h-4 mr-0 text-red-600 group-hover:w-4 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" />
+  <span className="group-hover:translate-x-1 transform transition-transform duration-300">
+    {service.label}
+  </span>
+</Link>
+
                 </li>
               ))}
             </ul>
@@ -224,28 +225,31 @@ const ModernFooter = () => {
 <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 relative">
 
   {/* Admin Access - Bottom Left */}
-  <a
-    href="login"
-    className="absolute left-0 -bottom-10 text-xs text-gray-500 hover:text-red-600 transition-colors duration-300 underline"
-  >
-    Admin Access
-  </a>
+  <Link
+  to="/login"
+  className="absolute left-0 -bottom-10 text-xs text-gray-500 hover:text-red-600 transition-colors duration-300 underline"
+>
+  Admin Access
+</Link>
+
 
   <div className="flex flex-wrap items-center gap-4">
     <p>© 2025 CENT’ANNI. All Rights Reserved.</p>
 
-    <a
-      href="/privacy"
-      className="hover:text-red-600 transition-colors duration-300"
-    >
-      Privacy Policy
-    </a>
-    <a
-      href="/terms"
-      className="hover:text-red-600 transition-colors duration-300"
-    >
-      Terms of Service
-    </a>
+    <Link
+  to="/privacy"
+  className="hover:text-red-600 transition-colors duration-300"
+>
+  Privacy Policy
+</Link>
+
+<Link
+  to="/terms"
+  className="hover:text-red-600 transition-colors duration-300"
+>
+  Terms of Service
+</Link>
+
   </div>
 
   {/* Contributors Section - Bottom Right */}

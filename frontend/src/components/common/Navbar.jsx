@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import CentanniLogo from "../../assets/centanni-logo.png"; // <-- update path if needed
+import { Link, NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -54,49 +55,32 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             {/* Logo */}
-            <a href="/" className="group flex items-center space-x-3">
+            <Link to="/" className="group flex items-center space-x-3">
               <img
                 src={CentanniLogo}
                 alt="CENT'ANNI logo"
                 className="h-8 md:h-10 w-auto transform group-hover:scale-110 group-hover:translate-y-0.5 transition-transform duration-300"
               />
-            </a>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-1">
               {navItems.map((item, index) => (
                 <div key={index} className="relative">
-                  <a
-                    href={item.path}
-                    onMouseEnter={() =>
-                      item.hasDropdown && setActiveDropdown(index)
-                    }
-                    onMouseLeave={() => setActiveDropdown(null)}
-                    className={`relative px-5 py-2 text-sm tracking-wide transition-all duration-300 group flex items-center gap-1
-                      ${
-                        isActive(item.path)
-                          ? "text-red-600 font-medium"
-                          : "text-gray-700 hover:text-red-600 font-light"
-                      }`}
-                  >
-                    <span>{item.label}</span>
-                    {item.hasDropdown && (
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-300 ${
-                          activeDropdown === index ? "rotate-180" : ""
-                        }`}
-                      />
-                    )}
+                  <NavLink
+  to={item.path}
+  className={({ isActive }) =>
+    `relative px-5 py-2 text-sm tracking-wide transition-all duration-300 group flex items-center gap-1
+     ${
+       isActive
+         ? "text-red-600 font-medium"
+         : "text-gray-700 hover:text-red-600 font-light"
+     }`
+  }
+>
+  <span>{item.label}</span>
+</NavLink>
 
-                    <span
-                      className={`absolute bottom-1 left-1/2 -translate-x-1/2 h-[2px] bg-gradient-to-r from-red-500 to-red-600 rounded-full transition-all duration-300
-                        ${
-                          isActive(item.path)
-                            ? "w-3/4 opacity-100"
-                            : "w-0 group-hover:w-3/4 opacity-0 group-hover:opacity-100"
-                        }`}
-                    />
-                  </a>
 
                   {/* Dropdown Menu (if used later) */}
                   {item.hasDropdown && activeDropdown === index && (
@@ -105,36 +89,22 @@ const Navbar = () => {
                       onMouseLeave={() => setActiveDropdown(null)}
                       className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-2 dropdown-enter"
                     >
-                      <a
-                        href="/services/design"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
-                      >
-                        Design Services
-                      </a>
-                      <a
-                        href="/services/development"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
-                      >
-                        Development
-                      </a>
-                      <a
-                        href="/services/consulting"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors duration-200"
-                      >
-                        Consulting
-                      </a>
+                      <Link to="/services/design">Design Services</Link>
+<Link to="/services/development">Development</Link>
+<Link to="/services/consulting">Consulting</Link>
+
                     </div>
                   )}
                 </div>
               ))}
 
-              {/* CTA Button */}
-              <a
-                href="/contact"
-                className="ml-4 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-medium rounded-full hover:shadow-lg hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-300"
-              >
-                GET IN TOUCH
-              </a>
+              <Link
+  to="/contact"
+  className="ml-4 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-medium rounded-full hover:shadow-lg hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-300"
+>
+  GET IN TOUCH
+</Link>
+
             </div>
 
             {/* Mobile Menu Button */}
@@ -143,7 +113,11 @@ const Navbar = () => {
               className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-300"
               aria-label="Toggle menu"
             >
-              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {menuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -153,19 +127,21 @@ const Navbar = () => {
           <div className="md:hidden bg-white border-t border-gray-100 mobile-menu-enter">
             <div className="px-4 py-4 space-y-2">
               {navItems.map((item, index) => (
-                <a
-                  key={index}
-                  href={item.path}
-                  onClick={() => setMenuOpen(false)}
-                  className={`block px-4 py-3 text-sm tracking-wide rounded-lg transition-all duration-300
-                    ${
-                      isActive(item.path)
-                        ? "bg-red-50 text-red-600 font-medium border border-red-200"
-                        : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
-                    }`}
-                >
-                  {item.label}
-                </a>
+                <NavLink
+  to={item.path}
+  onClick={() => setMenuOpen(false)}
+  className={({ isActive }) =>
+    `block px-4 py-3 text-sm tracking-wide rounded-lg transition-all duration-300
+     ${
+       isActive
+         ? "bg-red-50 text-red-600 font-medium border border-red-200"
+         : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
+     }`
+  }
+>
+  {item.label}
+</NavLink>
+
               ))}
 
               <a
