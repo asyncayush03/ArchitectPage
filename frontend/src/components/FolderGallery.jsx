@@ -6,8 +6,8 @@ function FolderGallery({ folder = "" }) {
 
   useEffect(() => {
     const url = folder
-      ? `http://localhost:8080/api/images?folder=${encodeURIComponent(folder)}`
-      : "http://localhost:8080/api/images";
+      ? `api/images?folder=${encodeURIComponent(folder)}`
+      : "/api/images";
 
     fetch(url)
       .then((res) => res.json())

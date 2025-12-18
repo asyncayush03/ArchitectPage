@@ -30,8 +30,9 @@ export default function ProjectDetails() {
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const getImageUrl = (img) => {
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
     if (!img || !img.url) return null;
-    return img.url.startsWith("http") ? img.url : `http://localhost:8080${img.url}`;
+    return img.url.startsWith("http") ? img.url : `${API_BASE_URL}${img.url}`;
   };
 
   // SLIDE AUTO ROTATION

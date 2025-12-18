@@ -334,11 +334,13 @@ export default function ManageProjects() {
             <div className="grid gap-6">
               {filteredProjects.map((project, index) => {
                 const rawUrl = project.images?.[0]?.url;
+                const API_BASE_URL = import.meta.env.VITE_API_URL;
                 const firstImage = rawUrl
-                  ? rawUrl.startsWith("http")
-                    ? rawUrl
-                    : `http://localhost:8080${rawUrl}`
-                  : null;
+                
+  ? rawUrl.startsWith("http")
+    ? rawUrl
+    : `${API_BASE_URL}${rawUrl}`
+  : null;
 
                 return (
                   <div

@@ -79,8 +79,9 @@ useEffect(() => {
   // ----------------------------
   const normalizeArticle = (article) => {
     const fixUrl = (url) => {
+      const API_BASE_URL = import.meta.env.VITE_API_URL;
       if (!url) return null;
-      return url.startsWith("http") ? url : `http://localhost:8080${url}`;
+      return url.startsWith("http") ? url : `{API_BASE_URL}/${url}`;
     };
 
     return {

@@ -52,15 +52,18 @@ const MediaGalleryPage = () => {
   };
 
   // Helper to get correct image URL (Cloudinary OR local uploads)
-  const getImageUrl = (img) => {
-    let imageUrl = img?.url || img; // support {url: "..."} or plain string
-    if (!imageUrl) return "";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
-      return imageUrl;
-    }
-    return `http://localhost:8080${imageUrl}`;
-  };
+const getImageUrl = (img) => {
+  let imageUrl = img?.url || img; // support { url: "..." } or string
+  if (!imageUrl) return "";
+
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    return imageUrl;
+  }
+
+  return `${API_BASE_URL}${imageUrl}`;
+};
 
   const openImage = (images, index) => {
     const processedImages = images.map(img => getImageUrl(img));

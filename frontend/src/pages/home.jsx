@@ -85,47 +85,49 @@ const Home = () => {
   };
 
   // 🔹 Fetch Cloudinary images once:
-  useEffect(() => {
-    const url = "http://localhost:8080/api/images";
+useEffect(() => {
+  const fetchImages = async () => {
+    try {
+      const res = await axios.get("/api/images");
+      const data = res.data;
 
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        let imagesArray = [];
+      let imagesArray = [];
 
-        if (Array.isArray(data)) {
-          imagesArray = data;
-        } else if (Array.isArray(data.images)) {
-          imagesArray = data.images;
-        } else if (Array.isArray(data.resources)) {
-          imagesArray = data.resources;
-        } else {
-          return;
-        }
+      if (Array.isArray(data)) {
+        imagesArray = data;
+      } else if (Array.isArray(data.images)) {
+        imagesArray = data.images;
+      } else if (Array.isArray(data.resources)) {
+        imagesArray = data.resources;
+      } else {
+        return;
+      }
 
-        const normalized = imagesArray
-          .map((img) => ({
-            publicId: img.publicId || img.public_id || img.id,
-            url: img.url || img.secure_url,
-          }))
-          .filter((img) => img.url);
+      const normalized = imagesArray
+        .map((img) => ({
+          publicId: img.publicId || img.public_id || img.id,
+          url: img.url || img.secure_url,
+        }))
+        .filter((img) => img.url);
 
-        const getId = (img) => (img.publicId || "").toLowerCase();
+      const getId = (img) => (img.publicId || "").toLowerCase();
 
-        const himachal = normalized.find((img) =>
-          getId(img).includes("hotel_himachal")
-        );
-        const paharganj = normalized.find((img) =>
-          getId(img).includes("hotel_paharganj")
-        );
+      const himachal = normalized.find((img) =>
+        getId(img).includes("hotel_himachal")
+      );
+      const paharganj = normalized.find((img) =>
+        getId(img).includes("hotel_paharganj")
+      );
 
-        const pickedAbout = [himachal, paharganj].filter(Boolean);
-        setAboutImages(pickedAbout);
-      })
-      .catch((err) => {
-        console.error("Error fetching /api/images:", err);
-      });
-  }, []);
+      const pickedAbout = [himachal, paharganj].filter(Boolean);
+      setAboutImages(pickedAbout);
+    } catch (err) {
+      console.error("Error fetching /api/images:", err);
+    }
+  };
+
+  fetchImages();
+}, []);
 
   // 🔹 hero slider auto-change
   useEffect(() => {
@@ -206,11 +208,13 @@ const Home = () => {
         const topThree = sorted.slice(0, 3).map((p) => {
           // same image logic as in Projects.jsx (relative -> prefix)
           const rawUrl = p.images?.[0]?.url;
-          const firstImage = rawUrl
-            ? rawUrl.startsWith("http")
-              ? rawUrl
-              : `http://localhost:8080${rawUrl}`
-            : "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+const firstImage = rawUrl
+  ? rawUrl.startsWith("http")
+    ? rawUrl
+    : `${API_BASE_URL}${rawUrl}`
+  : "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop";
 
           const year = p.startDate ? new Date(p.startDate).getFullYear() : (p.createdAt ? new Date(p.createdAt).getFullYear() : "----");
 

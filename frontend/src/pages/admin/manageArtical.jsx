@@ -32,8 +32,12 @@ export default function ManageArticles() {
     media: [],
   });
 
-  const normalizeUrl = (url) =>
-    url?.startsWith("http") ? url : `http://localhost:8080${url}`;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+const normalizeUrl = (url) =>
+  url?.startsWith("http")
+    ? url
+    : `${API_BASE_URL}${url}`;
 
   /* =============================
      FETCH ARTICLES

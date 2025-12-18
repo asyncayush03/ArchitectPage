@@ -193,10 +193,11 @@ const Projects = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {currentProjects.map((project, index) => {
                   const rawUrl = project.images?.[0]?.url;
+                  const API_BASE_URL = import.meta.env.VITE_API_URL;
                   const firstImage = rawUrl
                     ? rawUrl.startsWith("http")
                       ? rawUrl
-                      : `http://localhost:8080${rawUrl}`
+                      : `${API_BASE_URL}${rawUrl}`
                     : "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop";
 
                   const year = project.startDate
