@@ -17,15 +17,27 @@ const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https:https://centanni-j41j.onrender.com/"
-    ],
-    credentials: true
-  })
-);
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://centanni-j41j.onrender.com"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:5173",
+//       "https:https://centanni-j41j.onrender.com/"
+//     ],
+//     credentials: true
+//   })
+// );
 
 // routes
 app.use("/api", imageRoutes);
