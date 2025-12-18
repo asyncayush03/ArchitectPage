@@ -256,7 +256,7 @@ const ModernFooter = () => {
   <div className="flex -space-x-3"> 
     {/* Contributor 1 */}
     <a
-      href="https://portfolio-link-1.com"
+      href="https://asyncayush03.github.io/PortFolio2.0/"
       target="_blank"
       rel="noopener noreferrer"
       className="w-10 h-10 rounded-full overflow-hidden border-2 border-red-400 
@@ -272,7 +272,7 @@ const ModernFooter = () => {
 
     {/* Contributor 2 */}
     <a
-      href="https://portfolio-link-2.com"
+      href="https://ayush-portfolio-three-ecru.vercel.app/"
       target="_blank"
       rel="noopener noreferrer"
       className="w-10 h-10 rounded-full overflow-hidden border-2 border-red-400 
@@ -288,10 +288,6 @@ const ModernFooter = () => {
   </div>
 
 </div>
-
-
-
-
 </div>
 
       </div>
