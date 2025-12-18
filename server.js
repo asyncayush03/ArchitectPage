@@ -21,7 +21,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://YOUR-FRONTEND.onrender.com"
+      "https:https://centanni-j41j.onrender.com/"
     ],
     credentials: true
   })
