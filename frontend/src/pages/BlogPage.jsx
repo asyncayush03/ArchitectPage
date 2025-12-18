@@ -7,13 +7,17 @@ import {
   X,
   Image as ImageIcon,
   Sparkles,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const MediaGalleryPage = () => {
   const [events, setEvents] = useState([]);
   const [expandedEvent, setExpandedEvent] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [allImages, setAllImages] = useState([]);
 
   // Fetch Events
   useEffect(() => {
@@ -56,6 +60,25 @@ const MediaGalleryPage = () => {
       return imageUrl;
     }
     return `http://localhost:8080${imageUrl}`;
+  };
+
+  const openImage = (images, index) => {
+    const processedImages = images.map(img => getImageUrl(img));
+    setAllImages(processedImages);
+    setSelectedImageIndex(index);
+    setSelectedImage(processedImages[index]);
+  };
+
+  const goToPrevious = () => {
+    const newIndex = selectedImageIndex === 0 ? allImages.length - 1 : selectedImageIndex - 1;
+    setSelectedImageIndex(newIndex);
+    setSelectedImage(allImages[newIndex]);
+  };
+
+  const goToNext = () => {
+    const newIndex = selectedImageIndex === allImages.length - 1 ? 0 : selectedImageIndex + 1;
+    setSelectedImageIndex(newIndex);
+    setSelectedImage(allImages[newIndex]);
   };
 
   return (
@@ -195,7 +218,7 @@ const MediaGalleryPage = () => {
                   return (
                     <div
                       key={event._id}
-                      className={`bg-white rounded-xl shadow-lg overflow-hidden ${
+                      className={`bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:border-red-300 transition-all duration-500 ${
                         animateFromRight
                           ? "card-animate-right"
                           : "card-animate-left"
@@ -212,9 +235,9 @@ const MediaGalleryPage = () => {
                       >
                         {/* Image side */}
                         <div
-                          className="md:w-1/2 w-full cursor-pointer"
+                          className="md:w-1/2 w-full cursor-pointer group"
                           onClick={() =>
-                            primaryImage && setSelectedImage(primaryImage)
+                            primaryImage && openImage(images, 0)
                           }
                         >
                           {primaryImage ? (
@@ -222,7 +245,7 @@ const MediaGalleryPage = () => {
                               <img
                                 src={primaryImage}
                                 alt={event.title}
-                                className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                               />
                             </div>
                           ) : (
@@ -248,12 +271,12 @@ const MediaGalleryPage = () => {
                             </span>
                           </div>
 
-                          <h2 className="text-3xl md:text-4xl font-semibold tracking-wide text-orange-500 uppercase mb-3">
+                          <h2 className="text-3xl md:text-4xl font-semibold tracking-wide text-gray-900 uppercase mb-3">
                             {event.title}
                           </h2>
 
                           {event.content && (
-                            <p className="text-gray-600 leading-relaxed mb-8 max-w-xl">
+                            <p className="text-gray-600 leading-relaxed mb-8 max-w-xl text-sm">
                               {event.content}
                             </p>
                           )}
@@ -264,12 +287,13 @@ const MediaGalleryPage = () => {
                               secondaryImages.length > 0
                                 ? toggleExpand(event._id)
                                 : primaryImage &&
-                                  setSelectedImage(primaryImage)
+                                  openImage(images, 0)
                             }
-                            className="flex items-center gap-4 text-sm font-semibold tracking-[0.2em] text-green-700 uppercase"
+                            className="flex items-center gap-3 text-sm font-semibold tracking-[0.2em] text-red-600 uppercase hover:text-red-700 transition-colors duration-300"
                           >
-                            <span className="w-16 h-[2px] bg-green-500" />
-                            <span>View</span>
+                            <span className="w-12 h-[2px] bg-red-600" />
+                            <span>VIEW</span>
+                            <ArrowRight className="w-4 h-4" />
                           </button>
 
                           {/* small info about images count */}
@@ -283,14 +307,14 @@ const MediaGalleryPage = () => {
 
                       {/* Expanded thumbnail strip */}
                       {isExpanded && secondaryImages.length > 0 && (
-                        <div className="px-6 pb-6 pt-4 bg-gray-50 border-t border-gray-100">
+                        <div className="px-6 pb-6 pt-4 bg-white border-t border-gray-100">
                           <div className="flex justify-between items-center mb-3">
-                            <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
+                            <p className="text-xs uppercase tracking-[0.2em] text-gray-600 font-medium">
                               Gallery
                             </p>
                             <button
                               onClick={() => toggleExpand(event._id)}
-                              className="text-xs text-gray-500 hover:text-red-600 flex items-center gap-1"
+                              className="text-xs text-gray-600 hover:text-red-600 flex items-center gap-1 font-medium transition-colors duration-300"
                             >
                               Show Less
                               <ChevronDown className="w-3 h-3 rotate-180" />
@@ -302,8 +326,8 @@ const MediaGalleryPage = () => {
                               return (
                                 <div
                                   key={imgIndex}
-                                  className="relative w-32 h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 cursor-pointer group"
-                                  onClick={() => setSelectedImage(imageUrl)}
+                                  className="relative w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 cursor-pointer group border border-gray-200 hover:border-red-300 transition-all duration-300"
+                                  onClick={() => openImage(images, imgIndex + 1)}
                                 >
                                   <img
                                     src={imageUrl}
@@ -331,12 +355,42 @@ const MediaGalleryPage = () => {
             className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 animate-zoom-in"
             onClick={() => setSelectedImage(null)}
           >
+            {/* Close Button */}
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors duration-300 backdrop-blur-sm"
+              className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors duration-300 backdrop-blur-sm z-10"
             >
               <X className="w-6 h-6 text-white" />
             </button>
+
+            {/* Previous Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                goToPrevious();
+              }}
+              className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors duration-300 backdrop-blur-sm z-10"
+            >
+              <ChevronLeft className="w-6 h-6 text-white" />
+            </button>
+
+            {/* Next Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                goToNext();
+              }}
+              className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors duration-300 backdrop-blur-sm z-10"
+            >
+              <ChevronRight className="w-6 h-6 text-white" />
+            </button>
+
+            {/* Image Counter */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
+              <p className="text-white text-sm font-medium">
+                {selectedImageIndex + 1} / {allImages.length}
+              </p>
+            </div>
 
             <div className="max-w-6xl max-h-[90vh] overflow-auto">
               <img

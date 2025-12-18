@@ -2,42 +2,36 @@ import React, { useEffect, useRef, useState } from "react";
 import { Building2, Users, Award, Sparkles, ChevronDown, ArrowRight } from "lucide-react";
 
 export default function Aboutus() {
-  const projectImages = [
+  const workSamples = [
     {
       title: "Modern Villa",
       category: "Residential",
-      image:
-        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
+      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
     },
     {
       title: "Corporate Hub",
       category: "Commercial",
-      image:
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop",
+      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop",
     },
     {
       title: "Urban Oasis",
       category: "Mixed Use",
-      image:
-        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
+      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
     },
     {
       title: "Skyline Tower",
       category: "High Rise",
-      image:
-        "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&h=600&fit=crop",
+      image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&h=600&fit=crop",
     },
     {
       title: "Heritage Restoration",
       category: "Restoration",
-      image:
-        "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800&h=600&fit=crop",
+      image: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800&h=600&fit=crop",
     },
     {
       title: "Innovation Center",
       category: "Corporate",
-      image:
-        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
+      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
     },
   ];
 
@@ -67,6 +61,7 @@ export default function Aboutus() {
   const whoRef = useRef(null);
   const strengthsRef = useRef(null);
   const projectsRef = useRef(null);
+  const [hoveredProject, setHoveredProject] = useState(null);
 
   const [whoVisible, setWhoVisible] = useState(false);
   const [strengthsVisible, setStrengthsVisible] = useState(false);
@@ -287,7 +282,7 @@ export default function Aboutus() {
           </div>
         </section>
 
-        {/* Project Showcase */}
+        {/* Work Samples - Image Grid with Hover Overlay */}
         <section ref={projectsRef} className="py-24 bg-white border-y border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
@@ -295,61 +290,64 @@ export default function Aboutus() {
                 FEATURED WORKS
               </p>
               <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
-                Our Projects
+                Our Work Samples
               </h2>
               <div className="w-16 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent mx-auto" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projectImages.map((project, index) => (
+              {workSamples.map((work, index) => (
                 <div
                   key={index}
-                  className={`group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 animate-fade-in-up ${
+                  className={`group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 animate-fade-in-up ${
                     projectsVisible ? "opacity-100" : "opacity-0"
                   }`}
                   style={{
                     animationDelay: projectsVisible ? `${(index % 3) * 0.1}s` : "0ms",
                     opacity: projectsVisible ? 1 : 0,
                   }}
+                  onMouseEnter={() => setHoveredProject(index)}
+                  onMouseLeave={() => setHoveredProject(null)}
                 >
-                  {/* Image */}
-                  <div className="relative h-64 overflow-hidden">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
+                  {/* Background Image */}
+                  <img
+                    src={work.image}
+                    alt={work.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+                  {/* Overlay - Always visible dark overlay */}
+                  <div className="absolute inset-0 bg-black/40 transition-all duration-500" />
 
-                    <div className="absolute top-4 left-4">
-                      <span className="px-4 py-1 bg-red-600 text-white text-xs font-semibold uppercase tracking-[0.2em] rounded-sm">
-                        {project.category}
+                  {/* Content Overlay - Shows on Hover */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-8 transition-all duration-500 ${
+                      hoveredProject === index
+                        ? "opacity-100 translate-y-0"
+                        : "opacity-0 translate-y-4"
+                    }`}
+                  >
+                    <div className="transform transition-all duration-500">
+                      <span className="inline-block px-4 py-1 bg-red-600 text-white text-xs font-semibold uppercase tracking-[0.2em] rounded-sm mb-4">
+                        {work.category}
                       </span>
+                      <h3 className="text-2xl font-semibold text-white mb-3">
+                        {work.title}
+                      </h3>
+                      <p className="text-gray-200 text-sm leading-relaxed mb-5">
+                        A contemporary architectural solution showcasing innovation and timeless design principles.
+                      </p>
+                      <button className="text-sm font-semibold text-red-400 flex items-center gap-2 uppercase tracking-wide hover:text-red-300 transition-colors duration-300 group/btn">
+                        VIEW PROJECT
+                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                      </button>
                     </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="px-6 py-5">
-                    <h3 className="text-xl font-semibold mb-3 text-red-600 group-hover:text-red-700 transition-colors duration-300">
-                      {project.title}
-                    </h3>
-
-                    <p className="text-gray-600 text-sm leading-relaxed mb-5">
-                      A contemporary architectural solution showcasing innovation and timeless design principles.
-                    </p>
-
-                    <button className="text-sm font-semibold text-red-600 flex items-center gap-2 uppercase tracking-wide group-hover:gap-3 transition-all duration-300">
-                      VIEW PROJECT
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
-
       </div>
     </div>
   );

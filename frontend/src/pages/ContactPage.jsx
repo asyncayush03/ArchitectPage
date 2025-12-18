@@ -58,42 +58,81 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+    <div className="bg-white text-gray-800 min-h-screen">
       <style>{`
-        * {-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
-        body {overflow-x: hidden;}
-        @keyframes fade-in {from {opacity: 0;transform: translateY(20px);}to {opacity: 1;transform: translateY(0);}}
-        .animate-fade-in {animation: fade-in 0.8s ease-out;will-change: opacity, transform;}
+        @keyframes fadeInUp { 
+          from { opacity: 0; transform: translateY(30px); } 
+          to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes fade-in {
+          from {opacity: 0; transform: translateY(20px);}
+          to {opacity: 1; transform: translateY(0);}
+        }
+        .animate-fade-in-up { 
+          animation: fadeInUp 0.8s ease-out forwards; 
+        }
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out;
+          will-change: opacity, transform;
+        }
         .scroll-indicator {animation: bounce 2s infinite;}
-        @keyframes bounce {0%, 100% { transform: translateY(0); }50% { transform: translateY(10px); }}
-        @keyframes float {0%, 100% { transform: translateY(0px); }50% { transform: translateY(-10px); }}
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(10px); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
         .animate-float {animation: float 3s ease-in-out infinite;}
-        @keyframes shimmer {0% {background-position: -1000px 0;}100% {background-position: 1000px 0;}}
+        @keyframes shimmer {
+          0% {background-position: -1000px 0;}
+          100% {background-position: 1000px 0;}
+        }
         .shimmer {
           background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
           background-size: 1000px 100%;
           animation: shimmer 3s infinite;
         }
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
       `}</style>
 
-      {/* Hero Header */}
-      <header className="relative text-center py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-red-50/30 to-transparent"></div>
-        <div className="relative z-10">
-          <div className="inline-block mb-4 px-8 py-2 bg-red-500/5 rounded-full border border-red-200/30">
-            <h1 className="text-gray-800 text-sm tracking-[0.4em] font-light">
-              CONTACT US
+      {/* HERO SECTION */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-50">
+        <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent" />
+
+        {/* Animated background elements */}
+        <div className="absolute top-20 right-20 w-72 h-72 bg-red-500/10 rounded-full blur-3xl animate-pulse" />
+        <div
+          className="absolute bottom-20 left-20 w-96 h-96 bg-red-600/5 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
+          <div className="mb-6 overflow-hidden">
+            <p className="text-sm tracking-[0.3em] text-red-600 font-medium uppercase animate-fade-in-up">
+              GET IN TOUCH
+            </p>
+          </div>
+
+          <div className="overflow-hidden">
+            <h1 className="text-5xl md:text-7xl font-light mb-6 tracking-tight text-gray-900 animate-fade-in-up delay-100">
+              Contact Us
             </h1>
           </div>
-          <div className="w-24 h-px bg-gradient-to-r from-transparent via-red-400 to-transparent mx-auto mt-6 mb-8"></div>
-          <p className="text-gray-600 text-sm max-w-2xl mx-auto px-4 leading-relaxed">
-            Let's start a conversation about your vision. CENT’ANNI is here to design timeless spaces.
-          </p>
+
+          <div className="overflow-hidden">
+            <p className="text-xl text-gray-600 mb-12 font-light max-w-2xl mx-auto animate-fade-in-up delay-200">
+              Let's start a conversation about your vision. CENT'ANNI is here to design timeless spaces that inspire.
+            </p>
+          </div>
         </div>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
+
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
           <ChevronDown className="w-6 h-6 text-gray-400" />
         </div>
-      </header>
+      </section>
 
       {/* Visit Us Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 animate-fade-in">
@@ -121,7 +160,7 @@ const ContactPage = () => {
                   Our Studio
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  <span className="font-medium text-gray-800">CENT’ANNI</span>
+                  <span className="font-medium text-gray-800">CENT'ANNI</span>
                   <br />
                   E-78, Sector-80, Noida
                   <br />
@@ -374,7 +413,6 @@ const ContactPage = () => {
         </div>
 
         <div className="overflow-hidden rounded-2xl shadow-2xl border border-gray-200">
-          
           <iframe
             title="J.B.K. Architecture Location"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14163.188421790268!2d77.36729657142956!3d28.56092870888667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cef590948edbf%3A0x7a9b12f8f0b3f193!2sSector%2078%2C%20Noida%2C%20Uttar%20Pradesh!5e1!3m2!1sen!2sin!4v1765563414799!5m2!1sen!2sin"
