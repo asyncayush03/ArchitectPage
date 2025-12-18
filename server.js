@@ -20,7 +20,7 @@ app.use(morgan("dev"));
 const corsOptions = {
   origin: [
     "http://localhost:5173",
-    "https://centanni-j41j.onrender.com"
+    "https://cent-anni.onrender.com"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
