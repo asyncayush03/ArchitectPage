@@ -21,7 +21,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://your-frontend.onrender.com"
+      "https://YOUR-FRONTEND.onrender.com"
     ],
     credentials: true
   })
@@ -34,18 +34,6 @@ app.use("/api", contactRoute);
 
 // static uploads
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-
-// serve frontend in production
-const __dirname1 = path.resolve();
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname1, "frontend/build")));
-
-  app.get("*", (req, res) =>
-    res.sendFile(
-      path.resolve(__dirname1, "frontend", "build", "index.html")
-    )
-  );
-}
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
