@@ -1,6 +1,8 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-// EMAIL VALIDATION FUNCTION
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// EMAIL VALIDATION
 const validateEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
@@ -10,7 +12,6 @@ exports.sendContactMessage = async (req, res) => {
   try {
     const { name, email, phone, projectType, message } = req.body;
 
-    // Validate required fields
     if (!name || !email || !message) {
       return res.status(400).json({
         success: false,
@@ -18,7 +19,6 @@ exports.sendContactMessage = async (req, res) => {
       });
     }
 
-    // Validate Email Format
     if (!validateEmail(email)) {
       return res.status(400).json({
         success: false,
@@ -26,19 +26,10 @@ exports.sendContactMessage = async (req, res) => {
       });
     }
 
-    // Nodemailer transporter
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.CONTACT_EMAIL,
-        pass: process.env.CONTACT_EMAIL_PASSWORD,
-      },
-    });
-
-    // Email content
-    const mailOptions = {
-      from: `"Website Contact Form" <${process.env.CONTACT_EMAIL}>`,
-      to: process.env.RECEIVE_EMAIL, // Your personal email address
+    await resend.emails.send({
+      from: "Centanni Contact <onboarding@resend.dev>",
+      to: ["designcentanni@gmail.com"],
+      replyTo: email,
       subject: `New Contact Message from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>
@@ -49,10 +40,7 @@ exports.sendContactMessage = async (req, res) => {
         <p><strong>Message:</strong></p>
         <p>${message}</p>
       `,
-    };
-
-    // Send Email
-    await transporter.sendMail(mailOptions);
+    });
 
     res.status(200).json({
       success: true,
