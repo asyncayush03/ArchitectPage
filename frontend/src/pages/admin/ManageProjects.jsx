@@ -416,10 +416,10 @@ export default function ManageProjects() {
 
                           <div>
                             <p className="text-xs text-gray-500 flex items-center gap-1 mb-1">
-                              <DollarSign className="w-3 h-3" /> Area (Sq.ft)
+                              <Building className="w-3 h-3" /> Area (Sq.ft)
                             </p>
                             <p className="text-sm font-semibold text-gray-900">
-                              {project.budget || "N/A"}
+                              {project.area || "N/A"}
                             </p>
                           </div>
 
