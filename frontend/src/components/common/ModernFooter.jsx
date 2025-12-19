@@ -22,7 +22,7 @@ const ModernFooter = () => {
     { label: "Projects", url: "/projects" },
     { label: "Aboutus", url: "/aboutus" },
     { label: "Media", url: "/media" },
-    {label: "Articles", url: "/article" },
+    { label: "Articles", url: "/article" },
     { label: "Contact", url: "/contact" },
   ];
 
@@ -111,7 +111,7 @@ const ModernFooter = () => {
                   +91-7303863399
                 </p>
               </div>
- 
+
               <div className="flex items-center gap-3 group cursor-pointer">
                 <Mail className="w-5 h-5 text-red-600 flex-shrink-0 group-hover:scale-110 transition-transform duration-300" />
                 <p className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
@@ -152,15 +152,14 @@ const ModernFooter = () => {
               {services.map((service, index) => (
                 <li key={index}>
                   <Link
-  to={service.url}
-  className="group inline-flex items-center text-sm text-gray-600 hover:text-red-600 transition-all duration-300"
->
-  <ArrowRight className="w-0 h-4 mr-0 text-red-600 group-hover:w-4 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" />
-  <span className="group-hover:translate-x-1 transform transition-transform duration-300">
-    {service.label}
-  </span>
-</Link>
-
+                    to={service.url}
+                    className="group inline-flex items-center text-sm text-gray-600 hover:text-red-600 transition-all duration-300"
+                  >
+                    <ArrowRight className="w-0 h-4 mr-0 text-red-600 group-hover:w-4 group-hover:mr-2 transition-all duration-300 opacity-0 group-hover:opacity-100" />
+                    <span className="group-hover:translate-x-1 transform transition-transform duration-300">
+                      {service.label}
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -222,83 +221,76 @@ const ModernFooter = () => {
         </div>
 
         {/* Bottom Bar */}
-<div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 relative">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 relative">
+          {/* Admin Access - Bottom Left */}
+          <Link
+            to="/login"
+            className="absolute left-0 -bottom-10 text-xs text-gray-500 hover:text-red-600 transition-colors duration-300 underline"
+          >
+            Admin Access
+          </Link>
 
-  {/* Admin Access - Bottom Left */}
-  <Link
-  to="/login"
-  className="absolute left-0 -bottom-10 text-xs text-gray-500 hover:text-red-600 transition-colors duration-300 underline"
->
-  Admin Access
-</Link>
+          <div className="flex flex-wrap items-center gap-4">
+            <p>© 2025 CENT’ANNI. All Rights Reserved.</p>
 
+            <Link
+              to="/privacy"
+              className="hover:text-red-600 transition-colors duration-300"
+            >
+              Privacy Policy
+            </Link>
 
-  <div className="flex flex-wrap items-center gap-4">
-    <p>© 2025 CENT’ANNI. All Rights Reserved.</p>
+            <Link
+              to="/terms"
+              className="hover:text-red-600 transition-colors duration-300"
+            >
+              Terms of Service
+            </Link>
+          </div>
 
-    <Link
-  to="/privacy"
-  className="hover:text-red-600 transition-colors duration-300"
->
-  Privacy Policy
-</Link>
+          {/* Contributors Section - Bottom Right */}
+          <div className="flex items-center gap-2 relative">
+            <p className="text-xs text-gray-500 mr-3">Contributors:</p>
 
-<Link
-  to="/terms"
-  className="hover:text-red-600 transition-colors duration-300"
->
-  Terms of Service
-</Link>
-
-  </div>
-
-  {/* Contributors Section - Bottom Right */}
-<div className="flex items-center gap-2 relative">
-
-  <p className="text-xs text-gray-500 mr-3">Contributors:</p>
-
-  <div className="flex -space-x-3"> 
-    {/* Contributor 1 */}
-    <a
-      href="https://asyncayush03.github.io/PortFolio2.0/"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="w-10 h-10 rounded-full overflow-hidden border-2 border-red-400 
+            <div className="flex -space-x-3">
+              {/* Contributor 1 */}
+              <a
+                href="https://asyncayush03.github.io/PortFolio2.0/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full overflow-hidden border-2 border-red-400 
                  hover:scale-110 hover:z-10 transition-all duration-300"
-      style={{ zIndex: 3 }}
-    >
-      <img
-        src="/contributors/image.png"
-        alt="Contributor 1"
-        className="w-full h-full object-cover"
-      />
-    </a>
+                style={{ zIndex: 3 }}
+              >
+                <img
+                  src="/contributors/contributor1.jpg"
+                  alt="Contributor 1"
+                  className="w-full h-full object-cover"
+                />
+              </a>
 
-    {/* Contributor 2 */}
-    <a
-      href="https://ayush-portfolio-three-ecru.vercel.app/"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="w-10 h-10 rounded-full overflow-hidden border-2 border-red-400 
+              {/* Contributor 2 */}
+              <a
+                href="https://ayush-portfolio-three-ecru.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full overflow-hidden border-2 border-red-400 
                  hover:scale-110 hover:z-10 transition-all duration-300"
-      style={{ zIndex: 2 }}
-    >
-      <img
-        src="/contributors/image.png"
-        alt="Contributor 2"
-        className="w-full h-full object-cover"
-      />
-    </a>
-  </div>
-
-</div>
-</div>
-
+                style={{ zIndex: 2 }}
+              >
+                <img
+                  src="/contributors/contributor2.jpeg"
+                  alt="Contributor 2"
+                  className="w-full h-full object-cover"
+                />
+              </a>
+              
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
   );
-
-
 };
 
 export default ModernFooter;
