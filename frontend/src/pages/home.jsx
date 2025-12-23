@@ -85,49 +85,49 @@ const Home = () => {
   };
 
   // 🔹 Fetch Cloudinary images once:
-useEffect(() => {
-  const fetchImages = async () => {
-    try {
-      const res = await axios.get("/api/images");
-      const data = res.data;
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const res = await axios.get("/api/images");
+        const data = res.data;
 
-      let imagesArray = [];
+        let imagesArray = [];
 
-      if (Array.isArray(data)) {
-        imagesArray = data;
-      } else if (Array.isArray(data.images)) {
-        imagesArray = data.images;
-      } else if (Array.isArray(data.resources)) {
-        imagesArray = data.resources;
-      } else {
-        return;
+        if (Array.isArray(data)) {
+          imagesArray = data;
+        } else if (Array.isArray(data.images)) {
+          imagesArray = data.images;
+        } else if (Array.isArray(data.resources)) {
+          imagesArray = data.resources;
+        } else {
+          return;
+        }
+
+        const normalized = imagesArray
+          .map((img) => ({
+            publicId: img.publicId || img.public_id || img.id,
+            url: img.url || img.secure_url,
+          }))
+          .filter((img) => img.url);
+
+        const getId = (img) => (img.publicId || "").toLowerCase();
+
+        const himachal = normalized.find((img) =>
+          getId(img).includes("hotel_himachal")
+        );
+        const paharganj = normalized.find((img) =>
+          getId(img).includes("hotel_paharganj")
+        );
+
+        const pickedAbout = [himachal, paharganj].filter(Boolean);
+        setAboutImages(pickedAbout);
+      } catch (err) {
+        console.error("Error fetching /api/images:", err);
       }
+    };
 
-      const normalized = imagesArray
-        .map((img) => ({
-          publicId: img.publicId || img.public_id || img.id,
-          url: img.url || img.secure_url,
-        }))
-        .filter((img) => img.url);
-
-      const getId = (img) => (img.publicId || "").toLowerCase();
-
-      const himachal = normalized.find((img) =>
-        getId(img).includes("hotel_himachal")
-      );
-      const paharganj = normalized.find((img) =>
-        getId(img).includes("hotel_paharganj")
-      );
-
-      const pickedAbout = [himachal, paharganj].filter(Boolean);
-      setAboutImages(pickedAbout);
-    } catch (err) {
-      console.error("Error fetching /api/images:", err);
-    }
-  };
-
-  fetchImages();
-}, []);
+    fetchImages();
+  }, []);
 
   // 🔹 hero slider auto-change
   useEffect(() => {
@@ -197,26 +197,32 @@ useEffect(() => {
         // Sort by createdAt (newest first), fallback to startDate, fallback to ObjectId timestamp
         const sorted = allProjects.sort((a, b) => {
           const aDate =
-            new Date(a.createdAt || a.startDate || getTimestampFromObjectId(a._id)).getTime() ||
-            0;
+            new Date(
+              a.createdAt || a.startDate || getTimestampFromObjectId(a._id)
+            ).getTime() || 0;
           const bDate =
-            new Date(b.createdAt || b.startDate || getTimestampFromObjectId(b._id)).getTime() ||
-            0;
+            new Date(
+              b.createdAt || b.startDate || getTimestampFromObjectId(b._id)
+            ).getTime() || 0;
           return bDate - aDate;
         });
 
         const topThree = sorted.slice(0, 3).map((p) => {
           // same image logic as in Projects.jsx (relative -> prefix)
           const rawUrl = p.images?.[0]?.url;
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+          const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-const firstImage = rawUrl
-  ? rawUrl.startsWith("http")
-    ? rawUrl
-    : `${API_BASE_URL}${rawUrl}`
-  : "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop";
+          const firstImage = rawUrl
+            ? rawUrl.startsWith("http")
+              ? rawUrl
+              : `${API_BASE_URL}${rawUrl}`
+            : "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop";
 
-          const year = p.startDate ? new Date(p.startDate).getFullYear() : (p.createdAt ? new Date(p.createdAt).getFullYear() : "----");
+          const year = p.startDate
+            ? new Date(p.startDate).getFullYear()
+            : p.createdAt
+            ? new Date(p.createdAt).getFullYear()
+            : "----";
 
           return {
             id: p._id,
@@ -254,7 +260,11 @@ const firstImage = rawUrl
       label: "Projects Completed",
       icon: <Building2 className="w-8 h-8" />,
     },
-    { number: "50+", label: "Team Members", icon: <Users className="w-8 h-8" /> },
+    {
+      number: "50+",
+      label: "Team Members",
+      icon: <Users className="w-8 h-8" />,
+    },
     {
       number: "20+",
       label: "Years Experience",
@@ -483,9 +493,9 @@ const firstImage = rawUrl
               </p>
               <p className="text-gray-600 leading-relaxed">
                 In just a few years, CENT’ANNI has grown from a small practice
-                into a trusted name, consistently delivering thoughtful, enduring
-                spaces that challenge conventions and set new benchmarks in
-                every context they touch.
+                into a trusted name, consistently delivering thoughtful,
+                enduring spaces that challenge conventions and set new
+                benchmarks in every context they touch.
               </p>
               {/* pill Learn More button */}
               <button className="px-8 py-3 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 active:scale-95 mt-4 group">
@@ -500,7 +510,9 @@ const firstImage = rawUrl
             <div
               ref={aboutImageRef}
               className={`grid grid-cols-2 gap-4 transition-all duration-1000 ease-out ${
-                aboutVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-16"
+                aboutVisible
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 translate-x-16"
               }`}
             >
               <div className="overflow-hidden rounded-lg group shadow-lg shadow-black/5">
@@ -513,7 +525,8 @@ const firstImage = rawUrl
                   className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
-              <div className="overflow-hidden rounded-lg mt-8 group shadow-lg shadow-black/5">
+
+              <div className="overflow-hidden rounded-lg group shadow-lg shadow-black/5">
                 <img
                   src={
                     aboutImages[1]?.url ||
@@ -532,7 +545,9 @@ const firstImage = rawUrl
           <div ref={servicesRef} className="max-w-7xl mx-auto px-4">
             <div
               className={`text-center mb-16 transform transition-all duration-1000 ${
-                servicesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                servicesVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10"
               }`}
             >
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-4">
@@ -551,10 +566,14 @@ const firstImage = rawUrl
                 <div
                   key={index}
                   className={`p-8 bg-gray-50 hover:bg-white border-2 border-gray-100 hover:border-red-600 transition-all duration-700 group cursor-pointer hover:shadow-2xl hover:shadow-red-600/10 hover:-translate-y-2 transform ${
-                    servicesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                    servicesVisible
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-10"
                   }`}
                   style={{
-                    transitionDelay: servicesVisible ? `${index * 120}ms` : "0ms",
+                    transitionDelay: servicesVisible
+                      ? `${index * 120}ms`
+                      : "0ms",
                   }}
                 >
                   <div className="w-16 h-16 bg-red-600 group-hover:bg-red-700 text-white rounded-xl flex items-center justify-center text-2xl font-light mb-6 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
@@ -577,7 +596,9 @@ const firstImage = rawUrl
           <div ref={projectsRef} className="max-w-7xl mx-auto px-4">
             <div
               className={`text-center mb-16 transform transition-all duration-1000 ${
-                projectsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                projectsVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10"
               }`}
             >
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-4">
@@ -601,7 +622,12 @@ const firstImage = rawUrl
                 <Sparkles className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500">No recent projects yet.</p>
                 <div className="mt-4">
-                  <button onClick={() => navigate("/projects")} className="px-6 py-2 bg-red-600 text-white rounded-full">View All Projects</button>
+                  <button
+                    onClick={() => navigate("/projects")}
+                    className="px-6 py-2 bg-red-600 text-white rounded-full"
+                  >
+                    View All Projects
+                  </button>
                 </div>
               </div>
             ) : (
@@ -610,9 +636,15 @@ const firstImage = rawUrl
                   <div
                     key={project.id}
                     className={`group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 transform ${
-                      projectsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                      projectsVisible
+                        ? "opacity-100 translate-y-0"
+                        : "opacity-0 translate-y-10"
                     }`}
-                    style={{ transitionDelay: projectsVisible ? `${index * 130}ms` : "0ms" }}
+                    style={{
+                      transitionDelay: projectsVisible
+                        ? `${index * 130}ms`
+                        : "0ms",
+                    }}
                     onMouseEnter={() => setHoveredProject(project.id)}
                     onMouseLeave={() => setHoveredProject(null)}
                     onClick={() => navigate(`/projects/${project.id}`)}
@@ -625,13 +657,21 @@ const firstImage = rawUrl
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
                       <div className="absolute top-4 left-4">
-                        <span className="inline-flex items-center px-6 py-2 rounded-full
+                        <span
+                          className="inline-flex items-center px-6 py-2 rounded-full
   bg-gradient-to-r from-red-500 via-red-600 to-red-700
-  text-white text-xs font-semibold uppercase tracking-[0.2em] shadow-lg">
+  text-white text-xs font-semibold uppercase tracking-[0.2em] shadow-lg"
+                        >
                           {project.category}
                         </span>
                       </div>
-                      <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${hoveredProject === project.id ? "opacity-100" : "opacity-0"}`}>
+                      <div
+                        className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+                          hoveredProject === project.id
+                            ? "opacity-100"
+                            : "opacity-0"
+                        }`}
+                      >
                         <Maximize2 className="w-12 h-12 text-white" />
                       </div>
                     </div>
@@ -640,11 +680,19 @@ const firstImage = rawUrl
                         {project.title}
                       </h3>
                       <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                        <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{project.location}</span>
-                        <span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{project.year}</span>
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {project.location}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          {project.year}
+                        </span>
                       </div>
                       {/* clamped description */}
-                      <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">{project.desc}</p>
+                      <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+                        {project.desc}
+                      </p>
                       <button className="text-red-600 font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 hover:text-red-700 px-4 py-2 rounded-full hover:bg-red-50">
                         VIEW PROJECT
                         <ArrowRight className="w-4 h-4" />
@@ -656,7 +704,10 @@ const firstImage = rawUrl
             )}
 
             <div className="text-center mt-12">
-              <button onClick={() => navigate("/projects")} className="px-10 py-3 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 active:scale-95">
+              <button
+                onClick={() => navigate("/projects")}
+                className="px-10 py-3 bg-red-600 text-white font-medium rounded-full hover:bg-red-700 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-red-600/30 active:scale-95"
+              >
                 VIEW ALL PROJECTS
               </button>
             </div>
