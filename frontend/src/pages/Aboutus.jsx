@@ -1,37 +1,50 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Building2, Users, Award, Sparkles, ChevronDown, ArrowRight } from "lucide-react";
+import {
+  Building2,
+  Users,
+  Award,
+  Sparkles,
+  ChevronDown,
+  ArrowRight,
+} from "lucide-react";
 
 export default function Aboutus() {
   const workSamples = [
     {
       title: "Modern Villa",
       category: "Residential",
-      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
+      image:
+        "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765190926/hotels/Hotel_Himachal/Site_images/UGP05622-Edited.jpg",
     },
     {
       title: "Corporate Hub",
       category: "Commercial",
-      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop",
+      image:
+        "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765190986/hotels/Hotel_Kanpur/Architecure/3.jpg",
     },
     {
       title: "Urban Oasis",
       category: "Mixed Use",
-      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
+      image:
+        "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765190953/hotels/Hotel_Himachal/Views/Night_human.jpg",
     },
     {
       title: "Skyline Tower",
       category: "High Rise",
-      image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&h=600&fit=crop",
+      image:
+        "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765189883/hotels/Competitions/LETI/13.jpg",
     },
     {
       title: "Heritage Restoration",
       category: "Restoration",
-      image: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800&h=600&fit=crop",
+      image:
+        "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765190947/hotels/Hotel_Himachal/Views/Final_Night_View.jpg",
     },
     {
       title: "Innovation Center",
       category: "Corporate",
-      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
+      image:
+        "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765191174/hotels/Hotel_Paharganj/Interiors/Entrance_Looby_BAR_Restaurant/With_Logo/Entrance_Lobby-View-01.jpg",
     },
   ];
 
@@ -148,7 +161,8 @@ export default function Aboutus() {
 
           <div className="overflow-hidden">
             <p className="text-xl text-gray-600 mb-12 font-light max-w-2xl mx-auto animate-fade-in-up delay-200">
-              Crafting spaces that balance functionality, emotion and timeless design through visionary leadership and innovative solutions.
+              Crafting spaces that balance functionality, emotion and timeless
+              design through visionary leadership and innovative solutions.
             </p>
           </div>
         </div>
@@ -161,7 +175,10 @@ export default function Aboutus() {
       {/* MAIN CONTENT */}
       <div className="bg-white">
         {/* Philosophy & Vision Section */}
-        <section ref={whoRef} className="py-24 bg-white border-y border-gray-100">
+        <section
+          ref={whoRef}
+          className="py-24 bg-white border-y border-gray-100"
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-3">
@@ -187,10 +204,13 @@ export default function Aboutus() {
                   Philosophy
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  CENT'ANNI is founded on the belief that architecture has the power to transform lives and communities. Quality surroundings directly influence our sense of wellbeing and belonging.
+                  CENT'ANNI is founded on the belief that architecture has the
+                  power to transform lives and communities. Quality surroundings
+                  directly influence our sense of wellbeing and belonging.
                 </p>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  We balance functionality, user experience, sustainability and emotional value through meaningful inside-out design.
+                  We balance functionality, user experience, sustainability and
+                  emotional value through meaningful inside-out design.
                 </p>
               </div>
 
@@ -207,10 +227,13 @@ export default function Aboutus() {
                   Vision
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  CENT'ANNI envisions becoming a leading architectural practice in the region and globally recognized studio driven by design innovation and timeless quality.
+                  CENT'ANNI envisions becoming a leading architectural practice
+                  in the region and globally recognized studio driven by design
+                  innovation and timeless quality.
                 </p>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  We deliver high-precision built environments through collaboration with structural, MEP and civil consultants.
+                  We deliver high-precision built environments through
+                  collaboration with structural, MEP and civil consultants.
                 </p>
               </div>
 
@@ -227,10 +250,13 @@ export default function Aboutus() {
                   Mission
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  Our mission is to create architecture that is aesthetically meaningful, economically efficient and environmentally conscious.
+                  Our mission is to create architecture that is aesthetically
+                  meaningful, economically efficient and environmentally
+                  conscious.
                 </p>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  We enrich communities and uplift human experience through spaces shaped by people and for people.
+                  We enrich communities and uplift human experience through
+                  spaces shaped by people and for people.
                 </p>
               </div>
             </div>
@@ -260,7 +286,9 @@ export default function Aboutus() {
                       : "opacity-0 translate-y-6"
                   }`}
                   style={{
-                    transitionDelay: strengthsVisible ? `${idx * 120}ms` : "0ms",
+                    transitionDelay: strengthsVisible
+                      ? `${idx * 120}ms`
+                      : "0ms",
                   }}
                 >
                   <div className="flex items-start gap-5">
@@ -283,7 +311,10 @@ export default function Aboutus() {
         </section>
 
         {/* Work Samples - Image Grid with Hover Overlay */}
-        <section ref={projectsRef} className="py-24 bg-white border-y border-gray-100">
+        <section
+          ref={projectsRef}
+          className="py-24 bg-white border-y border-gray-100"
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <p className="text-sm tracking-[0.3em] text-red-600 uppercase font-medium mb-3">
@@ -303,7 +334,9 @@ export default function Aboutus() {
                     projectsVisible ? "opacity-100" : "opacity-0"
                   }`}
                   style={{
-                    animationDelay: projectsVisible ? `${(index % 3) * 0.1}s` : "0ms",
+                    animationDelay: projectsVisible
+                      ? `${(index % 3) * 0.1}s`
+                      : "0ms",
                     opacity: projectsVisible ? 1 : 0,
                   }}
                   onMouseEnter={() => setHoveredProject(index)}
@@ -335,12 +368,10 @@ export default function Aboutus() {
                         {work.title}
                       </h3>
                       <p className="text-gray-200 text-sm leading-relaxed mb-5">
-                        A contemporary architectural solution showcasing innovation and timeless design principles.
+                        A contemporary architectural solution showcasing
+                        innovation and timeless design principles.
                       </p>
-                      <button className="text-sm font-semibold text-red-400 flex items-center gap-2 uppercase tracking-wide hover:text-red-300 transition-colors duration-300 group/btn">
-                        VIEW PROJECT
-                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                      </button>
+                    
                     </div>
                   </div>
                 </div>
