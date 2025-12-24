@@ -304,7 +304,6 @@ const Home = () => {
   const partners = [
     { name: "Group108", logo: logo1, url: "https://www.group-108.com/" },
     { name: "Allengers", logo: logo2, url: "https://www.allengers.com/" },
-    { name: "FORVIA", logo: logo4, url: "https://www.hella.com/en/" },
     { name: "Mobec", logo: logo6, url: "https://mobec.io/" },
     { name: "BAANTALAI", logo: logo7, url: "https://baantalai.com/" },
     {
