@@ -20,7 +20,7 @@ const Navbar = () => {
     { label: "Projects", path: "/projects" },
     { label: "About Us", path: "/aboutus" },
     { label: "Media", path: "/media" },
-    { label: "Article", path: "/article" }, // <-- NEW item added
+    { label: "Article", path: "/article" },
     { label: "Contact", path: "/contact" },
   ];
 
@@ -43,11 +43,10 @@ const Navbar = () => {
 
       {/* FIXED NAVBAR */}
       <nav
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-          scrolled
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled
             ? "bg-white/95 border-b border-gray-200 shadow-lg backdrop-blur-xl"
             : "bg-white/90 border-b border-gray-100 backdrop-blur-lg"
-        }`}
+          }`}
       >
         {/* glow line */}
         <div className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent" />
@@ -68,19 +67,17 @@ const Navbar = () => {
               {navItems.map((item, index) => (
                 <div key={index} className="relative">
                   <NavLink
-  to={item.path}
-  className={({ isActive }) =>
-    `relative px-5 py-2 text-sm tracking-wide transition-all duration-300 group flex items-center gap-1
-     ${
-       isActive
-         ? "text-red-600 font-medium"
-         : "text-gray-700 hover:text-red-600 font-light"
-     }`
-  }
->
-  <span>{item.label}</span>
-</NavLink>
-
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `relative px-5 py-2 text-sm tracking-wide transition-all duration-300 group flex items-center gap-1
+      ${isActive
+                        ? "text-red-600 font-medium"
+                        : "text-gray-700 hover:text-red-600 font-light"
+                      }`
+                    }
+                  >
+                    <span>{item.label}</span>
+                  </NavLink>
 
                   {/* Dropdown Menu (if used later) */}
                   {item.hasDropdown && activeDropdown === index && (
@@ -90,21 +87,19 @@ const Navbar = () => {
                       className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-2 dropdown-enter"
                     >
                       <Link to="/services/design">Design Services</Link>
-<Link to="/services/development">Development</Link>
-<Link to="/services/consulting">Consulting</Link>
-
+                      <Link to="/services/development">Development</Link>
+                      <Link to="/services/consulting">Consulting</Link>
                     </div>
                   )}
                 </div>
               ))}
 
               <Link
-  to="/contact"
-  className="ml-4 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-medium rounded-full hover:shadow-lg hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-300"
->
-  GET IN TOUCH
-</Link>
-
+                to="/contact"
+                className="ml-4 px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-medium rounded-full hover:shadow-lg hover:shadow-red-500/40 transform hover:scale-105 transition-all duration-300"
+              >
+                GET IN TOUCH
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -128,20 +123,18 @@ const Navbar = () => {
             <div className="px-4 py-4 space-y-2">
               {navItems.map((item, index) => (
                 <NavLink
-  to={item.path}
-  onClick={() => setMenuOpen(false)}
-  className={({ isActive }) =>
-    `block px-4 py-3 text-sm tracking-wide rounded-lg transition-all duration-300
-     ${
-       isActive
-         ? "bg-red-50 text-red-600 font-medium border border-red-200"
-         : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
-     }`
-  }
->
-  {item.label}
-</NavLink>
-
+                  to={item.path}
+                  onClick={() => setMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `block px-4 py-3 text-sm tracking-wide rounded-lg transition-all duration-300
+     ${isActive
+                      ? "bg-red-50 text-red-600 font-medium border border-red-200"
+                      : "text-gray-700 hover:text-red-600 hover:bg-gray-50"
+                    }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
               ))}
 
               <a

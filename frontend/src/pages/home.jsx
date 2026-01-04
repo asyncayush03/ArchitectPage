@@ -18,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 // 🔹 LOGO IMAGES (green text logos)
 import logo1 from "../assets/Picture1.png";
 import logo2 from "../assets/Picture2.png";
-import logo4 from "../assets/Picture4.png";
 import logo6 from "../assets/Picture6.png";
 import logo7 from "../assets/Picture7.png";
 import logo8 from "../assets/picture8.png";
@@ -294,7 +293,7 @@ const Home = () => {
       icon: "C",
     },
     {
-      title: "Product Design",
+      title: "Urban Design",
       desc: "Custom furniture and lighting collections that combine craft with creativity.",
       icon: "P",
     },
@@ -428,7 +427,7 @@ const Home = () => {
           </div>
           <div className="relative">
             <div className="text-gray-400 text-sm tracking-widest mb-6 text-center">
-              Our Partners
+              Our Clients
             </div>
             <div className="flex gap-16 px-8 animate-scroll">
               {partners.map((partner, index) => (

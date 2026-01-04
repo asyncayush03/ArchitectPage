@@ -20,7 +20,7 @@ const ModernFooter = () => {
 
   const quickLinks = [
     { label: "Projects", url: "/projects" },
-    { label: "Aboutus", url: "/aboutus" },
+    { label: "About Us", url: "/aboutus" },
     { label: "Media", url: "/media" },
     { label: "Articles", url: "/article" },
     { label: "Contact", url: "/contact" },
@@ -81,13 +81,18 @@ const ModernFooter = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 pb-12 border-b border-gray-200">
           {/* Company Info */}
           <div className="footer-item">
-            <div className="flex items-center space-x-3 mb-6">
+            <div className="flex items-center space-x-3 ">
               <img
                 src={CentanniLogo}
                 alt="CENT'ANNI logo"
                 className="h-10 md:h-12 w-auto float-animation"
               />
+              
             </div>
+            <p className="text-gray-500 text-xs tracking-[0.3em] uppercase mt-[-6px] ml-1 font-medium mb-4">
+  For Generations
+</p>
+
 
             <p className="text-gray-600 text-sm leading-relaxed mb-6">
               We deliver environments that inspire, empower, and endure for
