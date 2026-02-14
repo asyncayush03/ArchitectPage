@@ -10,7 +10,7 @@ const projectSchema = new mongoose.Schema({
     required: true,
   },
 
-  startDate: { type: String, required: true },
+  startDate: { type: Date, required: true },
   status: { type: String, required: true },
   description: { type: String, required: true },
   location: { type: String },

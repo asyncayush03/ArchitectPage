@@ -351,7 +351,9 @@ const createProject = async (req, res) => {
 // ===================================
 const getProjects = async (req, res) => {
   try {
-    const projects = await Project.find().sort({ createdAt: -1 });
+    const projects = await Project.find().sort({ startDate: -1 }); 
+    // -1 = newest first
+
     return res.send({ success: true, projects });
   } catch (error) {
     console.log("Fetch Projects Error:", error);

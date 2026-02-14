@@ -53,21 +53,21 @@ const Home = () => {
     {
       image:
         "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765191080/hotels/Hotel_Paharganj/Architecture/3.jpg",
-      title: "Contemporary Architecture",
+      title: "CONTEMPORARY ARCHITECTURE",
       subtitle: "Crafting Spaces That Inspire",
       cta: "Explore Projects",
     },
     {
       image:
         "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765190986/hotels/Hotel_Kanpur/Architecure/3.jpg",
-      title: "Interior Excellence",
+      title: "INTERIOR EXCELLENCE",
       subtitle: "Where Design Meets Sophistication",
       cta: "Explore Projects",
     },
     {
       image:
         "https://res.cloudinary.com/djw8eyyg4/image/upload/v1765189409/hotels/Allenger/View_2.jpg",
-      title: "Commercial Innovation",
+      title: "LANDSCAPE INNOVATION",
       subtitle: "Building Tomorrow's Workspaces",
       cta: "Explore Projects",
     },
@@ -278,22 +278,22 @@ const Home = () => {
 
   const services = [
     {
-      title: "Architecture",
+      title: "ARCHITECTURE",
       desc: "Contemporary structures and sustainable design solutions for residential and commercial projects.",
       icon: "A",
     },
     {
-      title: "Interior Design",
+      title: "INTERIOR DESIGN",
       desc: "Sophisticated interior spaces that blend functionality with aesthetic excellence.",
       icon: "I",
     },
     {
-      title: "Commercial Spaces",
+      title: "LANDSCAPE",
       desc: "Innovative office and retail environments designed for modern businesses.",
-      icon: "C",
+      icon: "L",
     },
     {
-      title: "Urban Design",
+      title: "URBAN DESIGN",
       desc: "Custom furniture and lighting collections that combine craft with creativity.",
       icon: "P",
     },

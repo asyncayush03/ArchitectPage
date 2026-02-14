@@ -149,7 +149,7 @@ const Projects = () => {
                       : "bg-white text-gray-700 border border-gray-200 hover:border-red-600 hover:text-red-600 hover:shadow-md"
                   }`}
                 >
-                  {category.label}
+                  {category.label.toUpperCase()}
                 </button>
               ))}
             </div>
