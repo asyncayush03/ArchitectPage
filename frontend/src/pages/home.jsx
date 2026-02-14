@@ -25,6 +25,7 @@ import logo9 from "../assets/Picture9.png";
 import logo10 from "../assets/Picture10.png";
 import logo11 from "../assets/picture11.png";
 import logo12 from "../assets/picture12.png";
+import DANNILICORUS from "../assets/DANNILICORUS.png";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -314,6 +315,7 @@ const Home = () => {
     { name: "VAS", logo: logo10, url: "https://modern.com" },
     { name: "DHALIWALS", logo: logo11, url: "https://modern.com" },
     { name: "YASHIKA INFOTRONICS", logo: logo12, url: "https://modern.com" },
+    { name: "DANNILI CORUS", logo: DANNILICORUS, url: "https://www.danieli-corus.com/" },
   ];
 
   return (
