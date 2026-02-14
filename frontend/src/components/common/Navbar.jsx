@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
-import CentanniLogo from "../../assets/centanni-logo.png"; // <-- update path if needed
+import CentanniLogo from "../../assets/centanni-logo.jpeg"; // <-- update path if needed
 import { Link, NavLink } from "react-router-dom";
 
 const Navbar = () => {
@@ -58,9 +58,11 @@ const Navbar = () => {
               <img
                 src={CentanniLogo}
                 alt="CENT'ANNI logo"
-                className="h-8 md:h-10 w-auto transform group-hover:scale-110 group-hover:translate-y-0.5 transition-transform duration-300"
+                className="h-8 md:h-12 w-auto transform group-hover:scale-110 group-hover:translate-y-0.5 transition-transform duration-300"
               />
+              
             </Link>
+            
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-1">

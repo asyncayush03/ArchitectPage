@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import CentanniLogo from "../../assets/centanni-logo.png"; // <-- update path if needed
+import CentanniLogo from "../../assets/centanni-logo.jpeg"; // <-- update path if needed
 
 const ModernFooter = () => {
   const [hoveredSocial, setHoveredSocial] = useState(null);
@@ -85,14 +85,11 @@ const ModernFooter = () => {
               <img
                 src={CentanniLogo}
                 alt="CENT'ANNI logo"
-                className="h-10 md:h-12 w-auto float-animation"
+                className="h-10 md:h-14 w-auto float-animation"
               />
               
             </div>
-            <p className="text-gray-500 text-xs tracking-[0.3em] uppercase mt-[-6px] ml-1 font-medium mb-4">
-  For Generations
-</p>
-
+            
 
             <p className="text-gray-600 text-sm leading-relaxed mb-6">
               We deliver environments that inspire, empower, and endure for
