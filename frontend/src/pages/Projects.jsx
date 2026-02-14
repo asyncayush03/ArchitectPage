@@ -56,6 +56,7 @@ const Projects = () => {
     { id: "exhibitions", label: "Exhibitions" },
     { id: "competitions", label: "Competitions" },
     { id: "sketches", label: "Sketches" },
+     { id: "epc", label: "E.P.C" },
   ];
 
   const filteredProjects =
