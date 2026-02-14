@@ -236,6 +236,7 @@ export default function AddProjects() {
                     <option value="Exhibitions">Exhibitions</option>
                     <option value="Competitions">Competitions</option>
                     <option value="Sketches">Sketches</option>
+                    <option value="EPC">E.P.C</option>
                   </select>
 
                   <input
