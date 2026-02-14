@@ -353,7 +353,9 @@ const getProjects = async (req, res) => {
   try {
     const projects = await Project.find().sort({ startDate: -1 }); 
     // -1 = newest first
-
+    projects.forEach(p => {
+  console.log(p.startDate);
+});
     return res.send({ success: true, projects });
   } catch (error) {
     console.log("Fetch Projects Error:", error);
