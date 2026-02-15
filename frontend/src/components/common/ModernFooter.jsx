@@ -32,6 +32,7 @@ const ModernFooter = () => {
     { label: "Landscape Architecture", url: "/projects" },
     { label: "Urban Planning", url: "/projects" },
     { label: "Exhibitions", url: "/projects" },
+    { label: "E.P.C", url: "/projects" },
   ];
 
   const socialLinks = [

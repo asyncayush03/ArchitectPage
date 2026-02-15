@@ -70,6 +70,7 @@ const Projects = () => {
 
   const totalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
 
+  
   return (
     <>
       <style>{`
