@@ -26,6 +26,7 @@ import logo10 from "../assets/Picture10.png";
 import logo11 from "../assets/picture11.png";
 import logo12 from "../assets/picture12.png";
 import DANNILICORUS from "../assets/DANNILICORUS.png";
+import VIMSHOSPITAL from "../assets/vimshospital.png";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -302,6 +303,7 @@ const Home = () => {
 
   // 🔹 All company logos used in carousel
   const partners = [
+    { name: "VIMS HOSPITAL", logo: VIMSHOSPITAL, url: "https://vimshospital.edu.in/" },
     { name: "Group108", logo: logo1, url: "https://www.group-108.com/" },
     { name: "Allengers", logo: logo2, url: "https://www.allengers.com/" },
     { name: "Mobec", logo: logo6, url: "https://mobec.io/" },
@@ -316,6 +318,8 @@ const Home = () => {
     { name: "DHALIWALS", logo: logo11, url: "https://modern.com" },
     { name: "YASHIKA INFOTRONICS", logo: logo12, url: "https://modern.com" },
     { name: "DANNILI CORUS", logo: DANNILICORUS, url: "https://www.danieli-corus.com/" },
+    
+
   ];
 
   return (
@@ -427,12 +431,12 @@ const Home = () => {
               Trusted By Industry Leaders
             </p>
           </div>
-          <div className="relative">
+         <div className="relative overflow-hidden">
             <div className="text-gray-400 text-sm tracking-widest mb-6 text-center">
               Our Clients
             </div>
-            <div className="flex gap-16 px-8 animate-scroll">
-              {partners.map((partner, index) => (
+           <div className="flex gap-16 px-8 animate-scroll">
+              {[...partners, ...partners].map((partner, index) => (
                 <a
                   key={index}
                   href={partner.url}

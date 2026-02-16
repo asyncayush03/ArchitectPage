@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+/* Smooth infinite scroll */
+
+.animate-scroll {
+  animation: scroll 12s linear infinite;
+  width: max-content;
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
